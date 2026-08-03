@@ -5,11 +5,15 @@ local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 
 open EuclideanGeometry ContDiff Laplacian Filter
 
-variable (n : ℕ) (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ) (φ : ℝ → ℝ^n)
+variable {n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ) (φ : ℝ → ℝ^n)
 
 structure HasPDESetup : Prop where
   smooth : ContDiff ℝ ∞ f
-  strict_positive : D.IsPositive ∧ Function.Injective D
+  positive : D.IsPositive
+  kernel : Function.Injective D
+
+noncomputable def ContinuousLinearMap.complexify {n : ℕ} (L : ℝ^n →L[ℝ] ℝ^n) :=
+  Matrix.toEuclideanLin.symm L.toLinearMap|>.map (fun x ↦ (x : ℂ))|>.toEuclideanLin
 
 structure IsSmoothFront : Prop where
   smooth : ContDiff ℝ 2 φ
@@ -17,16 +21,17 @@ structure IsSmoothFront : Prop where
   left_endpoint : ∃ φ₁, Tendsto φ atBot φ₁
   right_endpoint : ∃ φ₂, Tendsto φ atTop φ₂
 
-structure IsTransverseResolventSolution (k : ℝ) (l : ℂ) (v w : ℝ → ℂ^n) : Prop where
+structure IsTransverseResolventSolution (l : ℂ) (k : ℝ)  (v w : ℝ → ℂ^n) : Prop where
   smooth : ContDiff ℝ 2 v
   unif k (hk : k ≤ 2) : UniformContinuous (iteratedDeriv k v ·)
-  sol x : (Δ v x) = 0
-  sol x : D (Δ v x) - k ^ 2 • D (v x) + c • deriv v x + (fderiv ℝ f (φ x)) (v x) = w x
+  sol x : (D.complexify) (Δ v x) - (k ^ 2) • D.complexify (v x) + (fderiv ℝ f (φ x)).complexify (v x) = w x
 
-structure IsInTransverseResolve (λ : ℂ)
+def TransverseSpectrum (k : ℝ) : Set ℂ :=
+  {l | ∀ w, UniformContinuous w → ∃! v, IsTransverseResolventSolution f D φ l k v w}ᶜ
 
-def operator_spectrum : Set ℝ :=
-    {}
-
-structure IsSpectrallyStable : Prop where
-  kernel : True
+structure IsSpectrallyStableWith (κ : ℝ) (θ : ℝ) where
+  hθ : θ > 0
+  horizontal_spectral_gap : ∀ l ∈ TransverseSpectrum f D φ 0, l.re = 0 ∨ l.re ≤ -θ
+  horizontal_simple_kernel : True
+  transverse_low_wavenumber k (h : |k| ≤ κ) : ∀ l ∈ TransverseSpectrum f D φ k, l.re ≤ -θ * (k ^ 2)
+  transverse_high_wavenumber k (h : κ ≤ |k|) : ∀ l ∈ TransverseSpectrum f D φ k, l.re ≤ -θ
