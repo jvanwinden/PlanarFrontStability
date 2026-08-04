@@ -10,7 +10,7 @@ This file formalizes the statement of Theorem 1.6 from De Rijk and Van Winden, "
 planar fronts in reaction-diffusion systems under nonlocalized perturbations.", arXiv.2601.05832.
 -/
 
-open EuclideanGeometry ContDiff Laplacian Filter Gradient Set Function MeasureTheory InnerProductSpace
+open EuclideanGeometry ContDiff Laplacian Filter Gradient Set Function MeasureTheory InnerProductSpace Topology
 
 -- PDE data: dimension, nonlinearity, diffusion matrix.
 variable {d n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n)
@@ -21,35 +21,39 @@ variable (u : ℝ → ℝ^d → ℝ^n) (σ : ℝ → ℝ^(d - 1) → ℝ)
 
 section PDESetup
 
+def IsBUCOn {α β : Type*} [UniformSpace α] [UniformSpace β] [Norm β] (f : α → β) (s : Set α) :=
+  UniformContinuousOn f s ∧ ∃ C, ∀ x ∈ s, ‖f x‖ ≤ C
+
+def IsBUC {α β : Type*} [UniformSpace α] [UniformSpace β] [Norm β] (f : α → β) := IsBUCOn f univ
+
 /-- The PDE is uniformly parabolic and the nonlinearity is smooth. -/
 structure IsSmoothParabolic : Prop where
   smooth : ContDiff ℝ ∞ f
   positive : D.IsPositive
   kernel : Injective D
 
-/-- Define our notion of (local) solution for the reaction-diffusion equation. -/
-structure IsSmoothLocalRDESolution (t : ℝ) : Prop where
-  cont : UniformContinuousOn (uncurry u) (Icc 0 t ×ˢ univ)
-  smooth : ContDiffOn ℝ ∞ (uncurry u) (Ioc 0 t ×ˢ univ)
-  pde : ∀ s ∈ Ioc 0 t, ∀ x, deriv (u · x) s = D (Δ (u s ·) x) + f (u s x)
+/-- Define our notion of (global) solution for the reaction-diffusion equation. -/
+structure IsRDESolution : Prop where
+  cont : ∀ t > 0, IsBUCOn (uncurry u) (Icc 0 t ×ˢ univ)
+  smooth : ContDiffOn ℝ ∞ (uncurry u) (Ioi 0 ×ˢ univ)
+  pde : ∀ t > 0, ∀ x, deriv (u · x) t = D (Δ (u t ·) x) + f (u t x)
 
 noncomputable def d_perp : ℝ := ∫ x, ⟪ψ x, D (deriv φ x)⟫_ℝ
 
 /-- Define our notion of (global) solution for the viscous Hamilton-Jacobi equation. -/
 structure IsVHJSolution (d_perp : ℝ) : Prop where
-  cont : ∀ s > 0, UniformContinuousOn (Function.uncurry σ) (Icc 0 s ×ˢ univ)
-  smooth : ContDiffOn ℝ ∞ (Function.uncurry σ) (Ioi 0 ×ˢ univ)
-  pde : ∀ t > 0, ∀ y, deriv (σ · y) t = c + d_perp * (Δ (σ t ·) y) + ((c ^ 2) / 2) * ‖∇ (σ t ·) y‖^2
+  cont : ∀ t > 0, IsBUCOn (uncurry σ) (Icc 0 t ×ˢ univ)
+  smooth : ContDiffOn ℝ ∞ (uncurry σ) (Ioi 0 ×ˢ univ)
+  pde : ∀ t > 0, ∀ y, deriv (σ · y) t = d_perp * (Δ (σ t ·) y) + (c / 2) * ‖∇ (σ t ·) y‖^2
 
 end PDESetup
 
 /-- The front is twice continuously differentiable, has left and right limits, and satisfies the
 traveling wave ODE. -/
 structure IsSmoothFront : Prop where
-  smooth : ContDiff ℝ 2 φ
-  ode : ∀ x, D (Δ φ x) + c • deriv φ x + f (φ x) = 0
-  left_endpoint : ∃ φ₁, Tendsto φ atBot φ₁
-  right_endpoint : ∃ φ₂, Tendsto φ atTop φ₂
+  smooth : ContDiff ℝ ∞ φ
+  ode : ∀ z, D (Δ φ z) + c • deriv φ z + f (φ z) = 0
+  endpoints : ∃ φ₁ φ₂, Tendsto φ atBot (𝓝 φ₁) ∧ Tendsto φ atTop (𝓝 φ₂)
 
 section SpectralStability
 
@@ -64,13 +68,14 @@ noncomputable def embed (x : ℝ^n) : ℂ^n := .toLp 2 fun i ↦ ↑(x i)
 structure IsTransverseResolventSolution (k : ℝ) (l : ℂ) (v w : ℝ → ℂ^n) : Prop where
   /-- v is twice continuously differentiable. -/
   smooth : ContDiff ℝ 2 v
-  /-- The first two derivatives of v are uniformly continuous. -/
-  smooth_unif : ∀ i ≤ 2, UniformContinuous (iteratedDeriv i v ·)
+  /-- The first two derivatives of v are bounded uniformly continuous. -/
+  buc : ∀ i ≤ 2, IsBUC (iteratedDeriv i (v ·))
   /-- v satisfies the resolvent equation. -/
-  sol x : (D.complexify) ((Δ v x) - (k ^ 2) • (v x)) + c • (deriv v x) + (fderiv ℝ f (φ x)).complexify (v x) = w x
+  pde : ∀ z, (D.complexify) ((Δ v z) - (k ^ 2) • (v z)) +
+    c • (deriv v z) + (fderiv ℝ f (φ z)).complexify (v z) - l • v z = w z
 
 def TransverseSpectrum (k : ℝ) : Set ℂ :=
-  compl {l | ∀ w, UniformContinuous w → ∃! v, IsTransverseResolventSolution f D c φ k l v w}
+  compl {l | ∀ w, IsBUC w → ∃! v, IsTransverseResolventSolution f D c φ k l v w}
 
 structure IsSpectrallyStableWithAdjoint : Prop where
   /-- Integrability of the adjoint eigenfunction. -/
@@ -83,8 +88,8 @@ structure IsSpectrallyStableWithAdjoint : Prop where
   horizontal_kernel : ∀ v, IsTransverseResolventSolution f D c φ 0 0 v 0 →
     ∃ c : ℂ, ∀ x, v x = c • embed (deriv φ x)
   /-- L₀ v = w has a solution iff w is orthogonal to ψ. -/
-  horizontal_solvability : ∀ w, UniformContinuous w →
-     ∫ x, ⟪embed (ψ x), w x⟫_ℂ = 0 ↔ ∃ v, IsTransverseResolventSolution f D c φ 0 0 v w
+  horizontal_solvability : ∀ w, IsBUC w →
+     ∫ z, ⟪embed (ψ z), w z⟫_ℂ = 0 ↔ ∃ v, IsTransverseResolventSolution f D c φ 0 0 v w
   /-- Transverse spectral stability for small wavenumbers. -/
   transverse_low_wavenumber : d_perp D φ ψ > 0
   /-- Transverse spectral stability for medium-high wavenumbers. -/
@@ -111,16 +116,15 @@ def IsCloseToFront (u : ℝ^d → ℝ^n) (ε : ℝ) : Prop := ∀ x, ‖u x - φ
 /-- A solution to the RDE which starts close to a planar front is well-approximated by the front
 shifted according to a viscous Hamilton-Jacobi equation.
 -/
-theorem vHJ_approximates_planar_front {t : ℝ}
-  (hn : 1 ≤ n) (hd : 2 ≤ d) (ht : 0 < t)
+theorem vHJ_approximates_planar_front
+  (hn : 1 ≤ n) (hd : 2 ≤ d)
   (h₁ : IsSmoothParabolic f D)
   (h₂ : IsSmoothFront f D c φ)
   (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
-  ∃ C : ℝ, ∃ ε > 0, ∀ E_0 ∈ Icc 0 ε, ∀ u : ℝ → ℝ^d → ℝ^n,
-      IsSmoothLocalRDESolution f D u t → IsCloseToFront φ (u 0) E_0 → ∃ σ,
-        IsVHJSolution c σ (d_perp D φ ψ) ∧
-        ∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ ∧
-        ∀ s ∈ Icc 0 t, ∀ x,
-          ‖u s x - φ (horizontal x - σ t (transverse x))‖ ≤ C * (E_0 ^ 2 + (1 + s)⁻¹ * E_0) := sorry
+  ∃ C > 0, ∃ ε > 0, ∀ E_0 ∈ Icc 0 ε, ∀ u₀ : ℝ^d → ℝ^n, IsBUC u₀ → IsCloseToFront φ u₀ E_0 →
+    ∃ u σ, IsRDESolution f D u ∧ IsVHJSolution c σ (d_perp D φ ψ) ∧
+      u 0 = u₀ ∧ (∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ) ∧
+      ∀ t ≥ 0, ∀ x, ‖u t x - φ (horizontal x - c * t - σ t (transverse x))‖ ≤
+        C * E_0 * (E_0 + (1 + t)⁻¹ * Real.log (2 + t)) := sorry
 
 end NonlinearStability
