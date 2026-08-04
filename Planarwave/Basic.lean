@@ -6,8 +6,13 @@ local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 /-!
 # Stability of planar fronts in reaction diffusion systems.
 
-This file formalizes the statement of Theorem 1.6 from De Rijk and Van Winden, "Stability and dynamics of
-planar fronts in reaction-diffusion systems under nonlocalized perturbations.", arXiv.2601.05832.
+This file contains a formalization of the statement that the dynamics near a spectrally stable
+planar front in a reaction-diffusion equation are described by a viscous Hamilton-Jacobi equation.
+
+The main theorem is `vHJ_approximates_planar_front`, which corresponds to Theorem 1.6 in [1].
+
+* [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
+  nonlocalized perturbations.", arXiv.2601.05832.
 -/
 
 open EuclideanGeometry ContDiff Laplacian Filter Gradient Set Function MeasureTheory InnerProductSpace Topology
@@ -84,8 +89,8 @@ structure IsSpectrallyStableWithAdjoint : Prop where
   normalized : ∫ x, ⟪ψ x, deriv φ x⟫_ℝ = 1
   /-- L₀ has a spectral gap. -/
   horizontal_spectral_gap : ∃ θ > 0, ∀ l ∈ TransverseSpectrum f D c φ 0, l = 0 ∨ l.re ≤ -θ
-  /-- L₀ v = 0 implies v is a multiple of φ'. -/
-  horizontal_kernel : ∀ v, IsTransverseResolventSolution f D c φ 0 0 v 0 →
+  /-- L₀ v = 0 iff v is a multiple of φ'. -/
+  horizontal_kernel : ∀ v, IsTransverseResolventSolution f D c φ 0 0 v 0 ↔
     ∃ c : ℂ, ∀ x, v x = c • embed (deriv φ x)
   /-- L₀ v = w has a solution iff w is orthogonal to ψ. -/
   horizontal_solvability : ∀ w, IsBUC w →
