@@ -12,6 +12,8 @@ variable (c : ℝ) (φ : ℝ → ℝ^n) (d_perp : ℝ)
 -- Prospective solutions to the relevant PDEs.
 variable (u : ℝ → ℝ^d → ℝ^n) (σ : ℝ → ℝ^(d - 1) → ℝ)
 
+section PDESetup
+
 /-- The PDE is uniformly parabolic and the nonlinearity is smooth. -/
 structure IsSmoothParabolic : Prop where
   smooth : ContDiff ℝ ∞ f
@@ -30,6 +32,8 @@ structure IsVHJSolution : Prop where
   smooth : ContDiffOn ℝ ∞ (Function.uncurry σ) (Set.Ioi 0 ×ˢ Set.univ)
   pde : ∀ t ∈ Ioi 0, ∀ y, deriv (σ · y) t = c + d_perp * (Δ (σ t ·) y) + ((c ^ 2) / 2) * ‖∇ (σ t ·) y‖^2
 
+end PDESetup
+
 /-- The front is twice continuously differentiable, has left and right limits, and satisfies the
 traveling wave ODE. -/
 structure IsSmoothFront : Prop where
@@ -45,7 +49,7 @@ noncomputable def ContinuousLinearMap.complexify (L : ℝ^n →L[ℝ] ℝ^n) :=
 
 noncomputable def embed (x : ℝ^n) : ℂ^n := WithLp.toLp 2 (fun i ↦ (x i : ℂ))
 
-/-- Define what it means to solve the resolvent equation at transverse wavenumber k. -/
+/-- Define our notion of solution to the resolvent equation at transverse wavenumber k. -/
 structure IsTransverseResolventSolution (l : ℂ) (k : ℝ) (v w : ℝ → ℂ^n) : Prop where
   /-- v is twice continuously differentiable. -/
   smooth : ContDiff ℝ 2 v
@@ -58,12 +62,12 @@ structure IsTransverseResolventSolution (l : ℂ) (k : ℝ) (v w : ℝ → ℂ^n
 def TransverseSpectrum (k : ℝ) : Set ℂ :=
   {l | ∀ w, UniformContinuous w → ∃! v, IsTransverseResolventSolution f D c φ l k v w}ᶜ
 
-structure IsSpectrallyStableWith (ψ : ℝ → ℝ^n) (k₀ : ℝ) (θ : ℝ) where
+structure IsSpectrallyStableWith (ψ : ℝ → ℝ^n) (k₀ : ℝ) (θ : ℝ) : Prop where
   theta_pos : θ > 0
   /-- Integrability of the adjoint eigenfunction. -/
   integrable : MeasureTheory.Integrable ψ
   /-- Spectral gap for k = 0. -/
-  horizontal_spectral_gap : ∀ l ∈ TransverseSpectrum f D c φ 0, l.re = 0 ∨ l.re ≤ -θ
+  horizontal_spectral_gap : ∀ l ∈ TransverseSpectrum f D c φ 0, l = 0 ∨ l.re ≤ -θ
   /-- Uniqueness modulo the translational eigenfunction. -/
   zero_almost_unique : ∀ w, UniformContinuous w → ∀ v₁ v₂,
     IsTransverseResolventSolution f D c φ 0 0 v₁ w → IsTransverseResolventSolution f D c φ 0 0 v₂ w →
