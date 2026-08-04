@@ -21,7 +21,8 @@ the solutions omitted).
   nonlocalized perturbations.", arXiv.2601.05832.
 -/
 
-open EuclideanGeometry ContDiff Laplacian Filter Gradient Set Function MeasureTheory InnerProductSpace Topology
+open scoped Gradient Laplacian EuclideanGeometry Topology InnerProductSpace ContDiff
+open Filter Function Set MeasureTheory
 
 -- PDE data: dimension, nonlinearity, diffusion matrix.
 variable {d n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n)
