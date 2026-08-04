@@ -121,6 +121,6 @@ theorem vHJ_approximates_planar_front {t : ℝ}
         IsVHJSolution c σ (d_perp D φ ψ) ∧
         ∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ ∧
         ∀ s ∈ Icc 0 t, ∀ x,
-          ‖u s x - φ (x ⟨0, by grind⟩ - σ t (transverse x))‖ ≤ C * (E_0 ^ 2 + (1 + s)⁻¹ * E_0) := sorry
+          ‖u s x - φ (horizontal x - σ t (transverse x))‖ ≤ C * (E_0 ^ 2 + (1 + s)⁻¹ * E_0) := sorry
 
 end NonlinearStability
