@@ -1,4 +1,4 @@
-# Stability of planar fronts in reaction diffusion equations.
+# Stability of planar fronts in reaction-diffusion systems
 
 This project contains the statement of one of the main results from [1]. The statement is contained in 
 the file `Planarwave/Challenge.lean`.
