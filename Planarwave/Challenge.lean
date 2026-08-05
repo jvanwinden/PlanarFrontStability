@@ -50,9 +50,6 @@ structure IsRDESolution : Prop where
   smooth : ContDiffOn ℝ ∞ (uncurry u) (Ioi 0 ×ˢ univ)
   pde : ∀ t > 0, ∀ x, deriv (u · x) t = D (Δ (u t ·) x) + f (u t x)
 
-def IsUniqueRDESolution : Prop :=
-  IsRDESolution f D u ∧ ∀ u', IsRDESolution f D u' → ∀ t ≥ 0, u' t = u t
-
 noncomputable def d_perp : ℝ := ∫ x, ⟪ψ x, D (deriv φ x)⟫_ℝ
 
 /-- Define our notion of (global) solution for the viscous Hamilton-Jacobi equation. -/
@@ -60,9 +57,6 @@ structure IsVHJSolution (d_perp : ℝ) : Prop where
   cont : ∀ t > 0, IsBUCOn (uncurry σ) (Icc 0 t ×ˢ univ)
   smooth : ContDiffOn ℝ ∞ (uncurry σ) (Ioi 0 ×ˢ univ)
   pde : ∀ t > 0, ∀ y, deriv (σ · y) t = d_perp * (Δ (σ t ·) y) + (c / 2) * ‖∇ (σ t ·) y‖^2
-
-def IsUniqueVHJSolution (d_perp : ℝ) : Prop :=
-  IsVHJSolution c σ d_perp ∧ ∀ σ', IsVHJSolution c σ' d_perp → ∀ t ≥ 0, σ' t = σ t
 
 end PDESetup
 
@@ -140,7 +134,7 @@ theorem vHJ_approximates_planar_front
   (h₂ : IsSmoothFront f D c φ)
   (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
   ∃ C > 0, ∃ ε > 0, ∀ E_0 ∈ Icc 0 ε, ∀ u₀ : ℝ^d → ℝ^n, IsBUC u₀ → IsCloseToFront φ u₀ E_0 →
-    ∃ u σ, IsUniqueRDESolution f D u ∧ IsUniqueVHJSolution c σ (d_perp D φ ψ) ∧
+    ∃ u σ, IsRDESolution f D u ∧ IsVHJSolution c σ (d_perp D φ ψ) ∧
       u 0 = u₀ ∧ (∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ) ∧
       ∀ t ≥ 0, ∀ x, ‖u t x - φ (horizontal x - c * t - σ t (transverse x))‖ ≤
         C * E_0 * (E_0 + (1 + t)⁻¹ * Real.log (2 + t)) :=
