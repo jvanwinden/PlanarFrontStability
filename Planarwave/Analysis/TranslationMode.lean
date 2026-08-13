@@ -8,6 +8,8 @@ module
 import all Planarwave.Challenge
 import all Planarwave.Analysis.ChallengeBridge
 import all Planarwave.Analysis.PhaseFunctional
+import all Planarwave.Analysis.ComplexBUC2
+import all Planarwave.Analysis.ProfileProjection
 
 /-!
 # The bundled translation mode
@@ -47,7 +49,7 @@ theorem isBUC_translationMode
     (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) : IsBUC (translationModeFun φ) := by
   have hbuc := (translationMode_resolvent f D c φ ψ h₃).buc 0 (by omega)
   change IsBUC (fun x ↦ embed (deriv φ x))
-  simpa only [translationModeFun] using hbuc
+  simpa only [iteratedDeriv_zero, translationModeFun] using hbuc
 
 /-- The canonical BUC representative of the translation eigenfunction. -/
 def translationModeBUC (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
@@ -75,6 +77,140 @@ theorem translationModeBUC_ne_zero
   have := phaseFunctional_translationMode_eq_one f D c φ ψ h₃
   rw [hzero, map_zero] at this
   norm_num at this
+
+/-! ## The translation mode in the common `BUC²` graph domain -/
+
+/-- The first iterated derivative of the translation mode is BUC. -/
+theorem isBUC_iteratedDeriv_one_translationMode
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
+    IsBUC (iteratedDeriv 1 (translationModeFun φ)) := by
+  exact (translationMode_resolvent f D c φ ψ h₃).buc 1 (by omega)
+
+/-- The second iterated derivative of the translation mode is BUC. -/
+theorem isBUC_iteratedDeriv_two_translationMode
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
+    IsBUC (iteratedDeriv 2 (translationModeFun φ)) := by
+  exact (translationMode_resolvent f D c φ ψ h₃).buc 2 (by omega)
+
+/-- The canonical translation mode in the paper's common complex graph domain
+`BUC²(ℝ, ℂⁿ)`.  Its three BUC components are obtained directly from the `i = 0,1,2`
+parts of `translationMode_resolvent.buc`; the derivative identities follow from its `C²`
+smoothness. -/
+def translationModeComplexBUC2
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) : ComplexBUC2 (ℂ^n) := by
+  let modeDeriv : BUC ℝ (ℂ^n) :=
+    BUC.ofIsBUC (isBUC_iteratedDeriv_one_translationMode f D c φ ψ h₃)
+  let modeDeriv2 : BUC ℝ (ℂ^n) :=
+    BUC.ofIsBUC (isBUC_iteratedDeriv_two_translationMode f D c φ ψ h₃)
+  refine ⟨((translationModeBUC f D c φ ψ h₃, modeDeriv), modeDeriv2), ?_⟩
+  intro z
+  have hsmooth := (translationMode_resolvent f D c φ ψ h₃).smooth
+  have hdiff0 : Differentiable ℝ (translationModeFun φ) :=
+    hsmooth.differentiable (by norm_num)
+  have hdiff1 : Differentiable ℝ (deriv (translationModeFun φ)) :=
+    hsmooth.differentiable_deriv_two
+  have hvalue_eq :
+      (translationModeBUC f D c φ ψ h₃ : ℝ → ℂ^n) = translationModeFun φ := by
+    funext x
+    rfl
+  have hderiv_eq : (modeDeriv : ℝ → ℂ^n) = iteratedDeriv 1 (translationModeFun φ) := by
+    funext x
+    rfl
+  have hiteratedDeriv_one :
+      iteratedDeriv 1 (translationModeFun φ) = deriv (translationModeFun φ) :=
+    iteratedDeriv_one
+  have hiteratedDeriv_two :
+      iteratedDeriv 2 (translationModeFun φ) = deriv (deriv (translationModeFun φ)) := by
+    rw [show (2 : ℕ) = 1 + 1 by omega, iteratedDeriv_succ, iteratedDeriv_one]
+  constructor
+  · rw [hvalue_eq]
+    change HasDerivAt (translationModeFun φ) (iteratedDeriv 1 (translationModeFun φ) z) z
+    simpa only [iteratedDeriv_one] using (hdiff0 z).hasDerivAt
+  · rw [hderiv_eq]
+    dsimp only [modeDeriv2]
+    change HasDerivAt (iteratedDeriv 1 (translationModeFun φ))
+      (iteratedDeriv 2 (translationModeFun φ) z) z
+    rw [hiteratedDeriv_one, hiteratedDeriv_two]
+    exact (hdiff1 z).hasDerivAt
+
+/-- The graph-domain translation mode has the expected value. -/
+@[simp]
+theorem translationModeComplexBUC2_apply
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) (z : ℝ) :
+    translationModeComplexBUC2 f D c φ ψ h₃ z = embed (deriv φ z) :=
+  rfl
+
+/-- Its bundled BUC value is the previously defined canonical translation mode. -/
+@[simp]
+theorem translationModeComplexBUC2_value
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
+    ComplexBUC2.value (ℂ^n) (translationModeComplexBUC2 f D c φ ψ h₃) =
+      translationModeBUC f D c φ ψ h₃ :=
+  rfl
+
+/-- Application of the bundled first derivative. -/
+@[simp]
+theorem translationModeComplexBUC2_deriv_apply
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) (z : ℝ) :
+    ComplexBUC2.deriv (ℂ^n) (translationModeComplexBUC2 f D c φ ψ h₃) z =
+      iteratedDeriv 1 (translationModeFun φ) z :=
+  rfl
+
+/-- Application of the bundled second derivative. -/
+@[simp]
+theorem translationModeComplexBUC2_deriv2_apply
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) (z : ℝ) :
+    ComplexBUC2.deriv2 (ℂ^n) (translationModeComplexBUC2 f D c φ ψ h₃) z =
+      iteratedDeriv 2 (translationModeFun φ) z :=
+  rfl
+
+/-! ## The canonical profile projection -/
+
+/-- `P₀` specialized to the canonical bundled translation mode. -/
+def translationModeProjection
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
+    LongitudinalBUC n →L[ℂ] LongitudinalBUC n :=
+  profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃)
+
+@[simp]
+theorem translationModeProjection_apply
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) (v : LongitudinalBUC n) :
+    translationModeProjection f D c φ ψ h₃ v =
+      phaseFunctional ψ h₃.integrable v • translationModeBUC f D c φ ψ h₃ :=
+  rfl
+
+/-- The range of the canonical projection is the span of the graph-domain translation mode's
+value. -/
+theorem range_translationModeProjection
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
+    LinearMap.range (translationModeProjection f D c φ ψ h₃).toLinearMap =
+      Submodule.span ℂ
+        {ComplexBUC2.value (ℂ^n) (translationModeComplexBUC2 f D c φ ψ h₃)} := by
+  simpa [translationModeProjection] using
+    range_profileProjection h₃ (translationModeBUC f D c φ ψ h₃)
+      (translationModeBUC_apply f D c φ ψ h₃)
+
+/-- The kernel of the canonical projection is the kernel of the phase functional. -/
+theorem ker_translationModeProjection
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
+    LinearMap.ker (translationModeProjection f D c φ ψ h₃).toLinearMap =
+      LinearMap.ker (phaseFunctional ψ h₃.integrable).toLinearMap := by
+  simpa [translationModeProjection] using
+    ker_profileProjection h₃ (translationModeBUC f D c φ ψ h₃)
+      (translationModeBUC_apply f D c φ ψ h₃)
+
+/-- On the common graph domain, the homogeneous resolvent kernel is exactly the range of the
+canonical profile projection. -/
+theorem horizontal_kernel_complexBUC2_iff_value_mem_range_translationModeProjection
+    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
+    (v : ComplexBUC2 (ℂ^n)) :
+    IsTransverseResolventSolution f D c φ 0 0 (v : ℝ → ℂ^n) 0 ↔
+      ComplexBUC2.value (ℂ^n) v ∈
+        LinearMap.range (translationModeProjection f D c φ ψ h₃).toLinearMap := by
+  exact horizontal_kernel_iff_mem_range_profileProjection h₃
+    (translationModeBUC f D c φ ψ h₃)
+    (translationModeBUC_apply f D c φ ψ h₃)
+    (ComplexBUC2.value (ℂ^n) v)
 
 end
 

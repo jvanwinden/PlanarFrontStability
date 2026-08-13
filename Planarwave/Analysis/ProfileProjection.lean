@@ -170,22 +170,14 @@ theorem horizontal_kernel_complexBUC2_iff_value_mem_span
 
 omit hΦ
 /-- Challenge's horizontal-solvability hypothesis is precisely vanishing of the bundled phase
-functional on `BUC`.  As written, the field in `Challenge` parses with
-`IsBUC w → phaseIntegral w = 0` as the left side of the equivalence; bundling `w` supplies the
-`IsBUC` premise and recovers the intended statement here. -/
+functional on `BUC`. -/
 theorem phaseFunctional_eq_zero_iff_horizontal_solvable (w : LongitudinalBUC n) :
     phaseFunctional ψ hstable.integrable w = 0 ↔
       ∃ v, IsTransverseResolventSolution f D c φ 0 0 v
         (w : ℝ → EuclideanSpace ℂ (Fin n)) := by
   rw [phaseFunctional_apply]
-  constructor
-  · intro hphase
-    apply (hstable.horizontal_solvability (w : ℝ → EuclideanSpace ℂ (Fin n))).mp
-    intro _
-    exact hphase
-  · intro hsolution
-    exact (hstable.horizontal_solvability (w : ℝ → EuclideanSpace ℂ (Fin n))).mpr
-      hsolution (isBUC_coe w)
+  have hw : IsBUC (w : ℝ → EuclideanSpace ℂ (Fin n)) := isBUC_coe w
+  exact hstable.horizontal_solvability (w : ℝ → EuclideanSpace ℂ (Fin n)) hw
 include hΦ
 
 omit hΦ

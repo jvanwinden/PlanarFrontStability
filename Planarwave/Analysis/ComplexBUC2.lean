@@ -7,6 +7,8 @@ module
 
 public import Planarwave.Analysis.BUC2
 public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Calculus.ContDiff.Deriv
+public import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
 
 @[expose] public section
 
@@ -89,6 +91,21 @@ theorem hasDerivAt_value (v : ComplexBUC2 F) (x : ℝ) :
 theorem hasDerivAt_deriv (v : ComplexBUC2 F) (x : ℝ) :
     HasDerivAt (deriv F v : ℝ → F) (deriv2 F v x) x := (v.property x).2
 
+/-- Every member of the common graph domain is a classical `C²` function. -/
+theorem contDiff_two (v : ComplexBUC2 F) : ContDiff ℝ 2 (v : ℝ → F) := by
+  rw [show (2 : WithTop ℕ∞) = 1 + 1 by norm_num, contDiff_succ_iff_deriv]
+  refine ⟨fun x ↦ (hasDerivAt_value F v x).differentiableAt, by simp, ?_⟩
+  have hderiv : _root_.deriv (v : ℝ → F) = deriv F v := by
+    funext x
+    exact (hasDerivAt_value F v x).deriv
+  rw [hderiv, contDiff_one_iff_deriv]
+  refine ⟨fun x ↦ (hasDerivAt_deriv F v x).differentiableAt, ?_⟩
+  have hderiv2 : _root_.deriv (deriv F v : ℝ → F) = deriv2 F v := by
+    funext x
+    exact (hasDerivAt_deriv F v x).deriv
+  rw [hderiv2]
+  exact (deriv2 F v).continuous
+
 @[simp] theorem deriv_eq (v : ComplexBUC2 F) (x : ℝ) :
     _root_.deriv (v : ℝ → F) x = deriv F v x := (hasDerivAt_value F v x).deriv
 
@@ -97,6 +114,19 @@ theorem hasDerivAt_deriv (v : ComplexBUC2 F) (x : ℝ) :
   have hfun : _root_.deriv (v : ℝ → F) = deriv F v := funext (deriv_eq F v)
   rw [hfun]
   exact (hasDerivAt_deriv F v x).deriv
+
+@[simp]
+theorem iteratedDeriv_one_eq (v : ComplexBUC2 F) :
+    iteratedDeriv 1 (v : ℝ → F) = deriv F v := by
+  funext x
+  simp [deriv_eq]
+
+@[simp]
+theorem iteratedDeriv_two_eq (v : ComplexBUC2 F) :
+    iteratedDeriv 2 (v : ℝ → F) = deriv2 F v := by
+  funext x
+  rw [show (2 : ℕ) = 1 + 1 by omega, iteratedDeriv_succ, iteratedDeriv_one,
+    second_deriv_eq]
 
 /-- Complex-linear inclusion into longitudinal BUC. -/
 def valueCLM : ComplexBUC2 F →L[ℂ] BUC ℝ F :=
