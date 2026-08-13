@@ -103,7 +103,7 @@ structure IsSpectrallyStableWithAdjoint : Prop where
     ∃ c : ℂ, ∀ x, v x = c • embed (deriv φ x)
   /-- L₀ v = w has a solution iff w is orthogonal to ψ. -/
   horizontal_solvability : ∀ w, IsBUC w →
-     ∫ z, ⟪embed (ψ z), w z⟫_ℂ = 0 ↔ ∃ v, IsTransverseResolventSolution f D c φ 0 0 v w
+    ∫ z, ⟪embed (ψ z), w z⟫_ℂ = 0 ↔ ∃ v, IsTransverseResolventSolution f D c φ 0 0 v w
   /-- Transverse spectral stability for small wavenumbers. -/
   transverse_low_wavenumber : d_perp D φ ψ > 0
   /-- Transverse spectral stability for medium-high wavenumbers. -/
