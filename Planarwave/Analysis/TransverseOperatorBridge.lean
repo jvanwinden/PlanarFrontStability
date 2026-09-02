@@ -65,6 +65,13 @@ def challengeResolventMap
   challengeTransverseOperator D c A k - l • ComplexBUC2.valueCLM (ℂ^n)
 
 @[simp]
+theorem challengeResolventMap_zero
+    (A : BUC ℝ (ℂ^n →L[ℂ] ℂ^n)) (k : ℝ) :
+    challengeResolventMap D c A k 0 = challengeTransverseOperator D c A k := by
+  ext v z
+  simp [challengeResolventMap]
+
+@[simp]
 theorem challengeResolventMap_apply
     (A : BUC ℝ (ℂ^n →L[ℂ] ℂ^n)) (k : ℝ) (l : ℂ)
     (v : ComplexBUC2 (ℂ^n)) (z : ℝ) :
@@ -197,6 +204,70 @@ theorem coe_complexBUC2OfTransverseResolventSolution
     (complexBUC2OfTransverseResolventSolution f D c φ hv : ℝ → ℂ^n) = v := by
   funext z
   rfl
+
+include hA
+
+/-- Unique classical resolvent solvability for every BUC forcing is exactly bijectivity of the
+common-domain resolvent map.  This is the key bridge from `TransverseSpectrum` to the operator
+spectrum used in Section 2 of the paper. -/
+theorem challenge_uniqueSolvability_iff_bijective
+    (k : ℝ) (l : ℂ) :
+    (∀ w : ℝ → ℂ^n, IsBUC w →
+        ∃! v : ℝ → ℂ^n, IsTransverseResolventSolution f D c φ k l v w) ↔
+      Function.Bijective (challengeResolventMap D c A k l) := by
+  rw [Function.bijective_iff_existsUnique]
+  constructor
+  · intro h w
+    obtain ⟨v, hv, hvuniq⟩ := h (w : ℝ → ℂ^n) (isBUC_coe w)
+    let V : ComplexBUC2 (ℂ^n) :=
+      complexBUC2OfTransverseResolventSolution f D c φ hv
+    have hVres : IsTransverseResolventSolution f D c φ k l
+        (V : ℝ → ℂ^n) (w : ℝ → ℂ^n) := by
+      simpa [V, coe_complexBUC2OfTransverseResolventSolution] using hv
+    refine ⟨V, operatorEquation_of_isTransverseResolventSolution f D c φ A hA hVres, ?_⟩
+    intro U hU
+    apply DFunLike.coe_injective
+    funext z
+    have hUres := isTransverseResolventSolution_of_operatorEquation f D c φ A hA hU
+    have huv : (U : ℝ → ℂ^n) = v := hvuniq (U : ℝ → ℂ^n) hUres
+    exact congrFun (huv.trans
+      (coe_complexBUC2OfTransverseResolventSolution f D c φ hv).symm) z
+  · intro h w hw
+    let W : BUC ℝ (ℂ^n) := BUC.ofIsBUC hw
+    have hW : (W : ℝ → ℂ^n) = w := by
+      funext z
+      rfl
+    obtain ⟨V, hV, hVuniq⟩ := h W
+    have hVres := isTransverseResolventSolution_of_operatorEquation f D c φ A hA hV
+    refine ⟨(V : ℝ → ℂ^n), ?_, ?_⟩
+    · rw [hW] at hVres
+      exact hVres
+    · intro v hv
+      let U : ComplexBUC2 (ℂ^n) :=
+        complexBUC2OfTransverseResolventSolution f D c φ hv
+      have hUres : IsTransverseResolventSolution f D c φ k l
+          (U : ℝ → ℂ^n) (W : ℝ → ℂ^n) := by
+        rw [hW]
+        simpa [U, coe_complexBUC2OfTransverseResolventSolution] using hv
+      have hU : challengeResolventMap D c A k l U = W :=
+        operatorEquation_of_isTransverseResolventSolution f D c φ A hA hUres
+      have huv : U = V := hVuniq U hU
+      calc
+        v = (U : ℝ → ℂ^n) :=
+          (coe_complexBUC2OfTransverseResolventSolution f D c φ hv).symm
+        _ = (V : ℝ → ℂ^n) := congrArg (fun q : ComplexBUC2 (ℂ^n) ↦ (q : ℝ → ℂ^n)) huv
+
+/-- The semantic transverse spectrum in `Challenge.lean` agrees with failure of bijectivity of
+the bundled common-domain resolvent map. -/
+theorem mem_transverseSpectrum_iff_not_bijective
+    (k : ℝ) (l : ℂ) :
+    l ∈ TransverseSpectrum f D c φ k ↔
+      ¬ Function.Bijective (challengeResolventMap D c A k l) := by
+  change ¬ (∀ w : ℝ → ℂ^n, IsBUC w →
+      ∃! v : ℝ → ℂ^n, IsTransverseResolventSolution f D c φ k l v w) ↔ _
+  rw [challenge_uniqueSolvability_iff_bijective f D c φ A hA k l]
+
+omit hA
 
 end PointwiseCoefficient
 

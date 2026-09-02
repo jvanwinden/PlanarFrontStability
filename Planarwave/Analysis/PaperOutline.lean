@@ -10,12 +10,27 @@ public import Planarwave.Analysis.BUC2
 public import Planarwave.Analysis.BUCBilinear
 public import Planarwave.Analysis.ChallengeBridge
 public import Planarwave.Analysis.ClosedOperator
+public import Planarwave.Analysis.ClosedOperatorFromResolvent
 public import Planarwave.Analysis.ColeHopf
+public import Planarwave.Analysis.ColeHopfLaplacian
+public import Planarwave.Analysis.ColeHopfPDE
 public import Planarwave.Analysis.ComplexBUC2
+public import Planarwave.Analysis.ConcreteFredholm
+public import Planarwave.Analysis.FredholmProjection
+public import Planarwave.Analysis.FrontCoefficient
+public import Planarwave.Analysis.FrontEigenvalueBranch
 public import Planarwave.Analysis.HeatSemigroup
+public import Planarwave.Analysis.HeatSmoothing
+public import Planarwave.Analysis.HeatSmoothingMultidimensional
+public import Planarwave.Analysis.LongitudinalOperator
 public import Planarwave.Analysis.PhaseFunctional
 public import Planarwave.Analysis.PositiveDiffusion
+public import Planarwave.Analysis.ProfileProjection
 public import Planarwave.Analysis.Semigroup
+public import Planarwave.Analysis.SimpleEigenvaluePerturbation
+public import Planarwave.Analysis.TranslationMode
+public import Planarwave.Analysis.TransverseOperatorBridge
+public import Planarwave.Analysis.TwoEndedBUC
 public import Planarwave.Coordinates
 
 @[expose] public section
@@ -38,6 +53,11 @@ The paper proof is being formalized in this order:
 5. Section 5: Cole--Hopf estimates and the nonlinear bootstrap.
 6. Section 6: continuation of the reaction--diffusion solution and comparison of the forced and
    unforced viscous Hamilton--Jacobi phases.
+
+The eigenvalue portion of step 1 is now formalized: `FrontEigenvalueBranch` constructs the
+normalized local eigenpair and proves
+`lambda_c(k) = -d_perp * k^2 + O(k^4)`.  The corresponding Riesz-projection expansion remains the
+next obligation within the critical-spectrum stage.
 
 The imported modules provide the foundational objects for those steps: a Banach space of bounded
 uniformly continuous functions, a fixed-domain closed-operator resolvent, the Gaussian heat
