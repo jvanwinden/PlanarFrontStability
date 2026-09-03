@@ -15,7 +15,10 @@ public import Planarwave.Analysis.ColeHopf
 public import Planarwave.Analysis.ColeHopfLaplacian
 public import Planarwave.Analysis.ColeHopfPDE
 public import Planarwave.Analysis.ComplexBUC2
+public import Planarwave.Analysis.ComplexFrequencyCriticalSpectrum
+public import Planarwave.Analysis.ComplexFrequencySemigroupBounds
 public import Planarwave.Analysis.ConcreteFredholm
+public import Planarwave.Analysis.ConvectiveHeatSemigroup
 public import Planarwave.Analysis.FredholmProjection
 public import Planarwave.Analysis.FrontCoefficient
 public import Planarwave.Analysis.FrontEigenvalueBranch
@@ -28,6 +31,7 @@ public import Planarwave.Analysis.PositiveDiffusion
 public import Planarwave.Analysis.ProfileProjection
 public import Planarwave.Analysis.Semigroup
 public import Planarwave.Analysis.SimpleEigenvaluePerturbation
+public import Planarwave.Analysis.SimpleSpectralProjection
 public import Planarwave.Analysis.TranslationMode
 public import Planarwave.Analysis.TransverseOperatorBridge
 public import Planarwave.Analysis.TwoEndedBUC
@@ -54,10 +58,22 @@ The paper proof is being formalized in this order:
 6. Section 6: continuation of the reaction--diffusion solution and comparison of the forced and
    unforced viscous Hamilton--Jacobi phases.
 
-The eigenvalue portion of step 1 is now formalized: `FrontEigenvalueBranch` constructs the
-normalized local eigenpair and proves
-`lambda_c(k) = -d_perp * k^2 + O(k^4)`.  The corresponding Riesz-projection expansion remains the
-next obligation within the critical-spectrum stage.
+The local analytic portion of step 1 is now formalized: `FrontEigenvalueBranch` constructs the
+normalized local eigenpair, proves bounded-window separation of the remaining transverse
+spectrum, and establishes the scalar-parameter Taylor estimates.  `SimpleSpectralProjection`
+constructs the corresponding holomorphic rank-one spectral splitting.  Finally,
+`ComplexFrequencyCriticalSpectrum` pulls this construction back along the paper's holomorphic
+quadratic form `lambda_0(ξ) = ∑ i, ξ_i^2`, giving the multidimensional holomorphic eigenvalue and
+projection together with `lambda_c(ξ) = -d_perp * lambda_0(ξ) + O(‖ξ‖^4)` and
+`P_ξ = P_0 + O(‖ξ‖^2)`.  The remaining part of the critical-spectrum stage is the unbounded
+spectral-parameter separation needed for the subsequent semigroup estimates.
+
+The formalization of step 2 has also begun in the order used in Lemma 2.2.  The scalar
+convective heat evolution is now a strongly continuous contraction semigroup,
+`Re lambda_0(ξ₀ + i ξ₁) = ‖ξ₀‖^2 - ‖ξ₁‖^2` gives the elementary heat-multiplier bound, and the
+bounded contour-shift perturbation satisfies the paper's Young-inequality estimate (2.4).  The
+remaining work in that lemma is to connect the sectorial longitudinal generators to these
+semigroups and apply the bounded perturbation theorem.
 
 The imported modules provide the foundational objects for those steps: a Banach space of bounded
 uniformly continuous functions, a fixed-domain closed-operator resolvent, the Gaussian heat

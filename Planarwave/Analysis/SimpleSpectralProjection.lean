@@ -87,6 +87,53 @@ theorem continuous_complementPencil (B : Dom →L[ℂ] X) :
   unfold complementPencil affinePencil
   fun_prop
 
+/-- The full affine pencil is holomorphic in `(q,z)`. -/
+theorem contDiff_affinePencil (B : Dom →L[ℂ] X) :
+    ContDiff ℂ ω (fun p : ℂ × ℂ ↦ S.affinePencil B p.1 p.2) := by
+  unfold affinePencil
+  fun_prop
+
+/-- A compact set of resolvent points of the unperturbed pencil remains uniformly in the
+resolvent for all sufficiently small perturbation parameters.  This is the compact-set form of
+the resolvent-stability argument used to separate the noncritical spectrum in Proposition 2.1. -/
+theorem eventually_forall_affinePencil_isInvertible_on_compact
+    (B : Dom →L[ℂ] X) {K : Set ℂ} (hK : IsCompact K)
+    (hres : ∀ z ∈ K, (S.affinePencil B 0 z).IsInvertible) :
+    ∀ᶠ q in nhds 0, ∀ z ∈ K, (S.affinePencil B q z).IsInvertible := by
+  let U : Set (Dom →L[ℂ] X) :=
+    Set.range ((↑) : (Dom ≃L[ℂ] X) → Dom →L[ℂ] X)
+  have hU : IsOpen U := ContinuousLinearEquiv.isOpen
+  apply hK.eventually_forall_of_forall_eventually
+  intro z hz
+  have hbase : S.affinePencil B 0 z ∈ U := hres z hz
+  have hpreimage :
+      (fun p : ℂ × ℂ ↦ S.affinePencil B p.1 p.2) ⁻¹' U ∈ nhds (0, z) :=
+    (S.contDiff_affinePencil B).continuous.continuousAt (hU.mem_nhds hbase)
+  filter_upwards [hpreimage] with p hp
+  exact hp
+
+/-- The Fredholm-complement block is holomorphic in `(q,z)`. -/
+theorem contDiff_complementPencil (B : Dom →L[ℂ] X) :
+    ContDiff ℂ ω (fun p : ℂ × ℂ ↦ S.complementPencil B p.1 p.2) := by
+  unfold complementPencil affinePencil
+  fun_prop
+
+/-- The complementary block at `(0,0)` is invertible. -/
+theorem complementPencil_zero_zero_isInvertible (B : Dom →L[ℂ] X) :
+    (S.complementPencil B 0 0).IsInvertible := by
+  refine ⟨S.complementOperatorEquiv, ?_⟩
+  exact (S.complementPencil_zero_zero B).symm
+
+/-- The inverse complementary block is holomorphic at `(0,0)`. -/
+theorem contDiffAt_complementPencil_inverse (B : Dom →L[ℂ] X) :
+    ContDiffAt ℂ ω
+      (fun p : ℂ × ℂ ↦ (S.complementPencil B p.1 p.2).inverse) (0, 0) := by
+  have hinverse : ContDiffAt ℂ ω ContinuousLinearMap.inverse
+      (S.complementPencil B 0 0) :=
+    (S.complementPencil_zero_zero_isInvertible B).contDiffAt_map_inverse
+  have hcomp := hinverse.comp (0, 0) (S.contDiff_complementPencil B).contDiffAt
+  exact hcomp.congr_of_eventuallyEq (Eventually.of_forall fun _ ↦ rfl)
+
 /-- Invertibility of the Fredholm-complement block persists for `(q,z)` near `(0,0)`.  This is
 the fixed-domain form of the openness-of-the-resolvent argument used in analytic perturbation
 theory. -/
@@ -105,6 +152,422 @@ theorem eventually_complementPencil_isInvertible (B : Dom →L[ℂ] X) :
     (S.continuous_complementPencil B).continuousAt (hU.mem_nhds hzero)
   filter_upwards [hpreimage] with p hp
   exact hp
+
+/-- Remove the normalized neutral coordinate of a graph-domain vector. -/
+def domainComplementPart (x : Dom) : S.domainComplement :=
+  ⟨x - S.functional (S.inclusion x) • S.mode, by
+    change S.functional
+      (S.inclusion (x - S.functional (S.inclusion x) • S.mode)) = 0
+    simp [S.normalized]⟩
+
+@[simp]
+theorem domainComplementPart_coe (x : Dom) :
+    (S.domainComplementPart x : Dom) =
+      x - S.functional (S.inclusion x) • S.mode :=
+  rfl
+
+/-- Domain decomposition into the normalized neutral mode and the fixed complement. -/
+theorem domain_eq_neutral_add_complement (x : Dom) :
+    x = S.functional (S.inclusion x) • S.mode + S.domainComplementPart x := by
+  simp [domainComplementPart]
+
+/-! ## The normalized kernel candidate for a general spectral parameter -/
+
+/-- The Schur-complement correction of the neutral mode for the general pencil
+`A₀-qB-z i`. -/
+def kernelCorrection (B : Dom →L[ℂ] X) (q z : ℂ) : S.domainComplement :=
+  -((S.complementPencil B q z).inverse
+    (S.complementProjection (S.affinePencil B q z S.mode)))
+
+/-- The corresponding normalized candidate for a kernel vector. -/
+def kernelCandidate (B : Dom →L[ℂ] X) (q z : ℂ) : Dom :=
+  S.mode + (S.kernelCorrection B q z : Dom)
+
+/-- The scalar Schur complement of the general pencil. -/
+def characteristicValue (B : Dom →L[ℂ] X) (q z : ℂ) : ℂ :=
+  S.functional (S.affinePencil B q z (S.kernelCandidate B q z))
+
+/-- The complementary solution operator for the general two-parameter pencil. -/
+def pencilComplementSolution (B : Dom →L[ℂ] X) (q z : ℂ) :
+    X →L[ℂ] S.domainComplement :=
+  (S.complementPencil B q z).inverse.comp S.complementProjection
+
+@[simp]
+theorem kernelCorrection_zero_zero (B : Dom →L[ℂ] X) :
+    S.kernelCorrection B 0 0 = 0 := by
+  simp [kernelCorrection]
+
+@[simp]
+theorem kernelCandidate_zero_zero (B : Dom →L[ℂ] X) :
+    S.kernelCandidate B 0 0 = S.mode := by
+  simp [kernelCandidate]
+
+@[simp]
+theorem characteristicValue_zero_zero (B : Dom →L[ℂ] X) :
+    S.characteristicValue B 0 0 = 0 := by
+  simp [characteristicValue]
+
+/-- The normalized kernel correction is holomorphic at `(0,0)`. -/
+theorem contDiffAt_kernelCorrection (B : Dom →L[ℂ] X) :
+    ContDiffAt ℂ ω
+      (fun p : ℂ × ℂ ↦ S.kernelCorrection B p.1 p.2) (0, 0) := by
+  have hinverse := S.contDiffAt_complementPencil_inverse B
+  have hpencil := (S.contDiff_affinePencil B).contDiffAt (x := ((0, 0) : ℂ × ℂ))
+  unfold kernelCorrection
+  fun_prop
+
+/-- Coordinates of the normalized general-pencil kernel candidate in the implicit eigenpair
+equation. -/
+def kernelCandidateCoordinates (B : Dom →L[ℂ] X) (p : ℂ × ℂ) :
+    ℂ × (ℂ × S.domainComplement) :=
+  (p.1, (p.2, S.kernelCorrection B p.1 p.2))
+
+@[simp]
+theorem kernelCandidateCoordinates_zero (B : Dom →L[ℂ] X) :
+    S.kernelCandidateCoordinates B (0, 0) = (0, (0, 0)) := by
+  simp [kernelCandidateCoordinates]
+
+/-- The candidate-coordinate map is holomorphic at the origin. -/
+theorem contDiffAt_kernelCandidateCoordinates (B : Dom →L[ℂ] X) :
+    ContDiffAt ℂ ω (S.kernelCandidateCoordinates B) (0, 0) := by
+  have hcorrection := S.contDiffAt_kernelCorrection B
+  unfold kernelCandidateCoordinates
+  fun_prop
+
+/-- The implicit eigenpair equation at the candidate coordinates is exactly the general pencil
+applied to the normalized kernel candidate. -/
+theorem eigenpairEquation_kernelCandidateCoordinates
+    (B : Dom →L[ℂ] X) (q z : ℂ) :
+    S.eigenpairEquation B (S.kernelCandidateCoordinates B (q, z)) =
+      S.affinePencil B q z (S.kernelCandidate B q z) :=
+  rfl
+
+/-- The kernel candidate retains the fixed phase normalization exactly. -/
+theorem kernelCandidate_normalized (B : Dom →L[ℂ] X) (q z : ℂ) :
+    S.functional (S.inclusion (S.kernelCandidate B q z)) = 1 := by
+  have hcorrection :
+      S.functional (S.inclusion ((S.kernelCorrection B q z : S.domainComplement) : Dom)) = 0 :=
+    (S.kernelCorrection B q z).property
+  simp [kernelCandidate, S.normalized, hcorrection]
+
+/-- In particular, the normalized kernel candidate never vanishes. -/
+theorem kernelCandidate_ne_zero (B : Dom →L[ℂ] X) (q z : ℂ) :
+    S.kernelCandidate B q z ≠ 0 := by
+  intro hzero
+  have hnormal := S.kernelCandidate_normalized B q z
+  rw [hzero, map_zero, map_zero] at hnormal
+  exact zero_ne_one hnormal
+
+/-- If the complementary block is invertible, the correction cancels the complementary image
+of the neutral mode. -/
+theorem complementPencil_kernelCorrection
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible) :
+    S.complementPencil B q z (S.kernelCorrection B q z) =
+      -S.complementProjection (S.affinePencil B q z S.mode) := by
+  simp only [kernelCorrection, map_neg]
+  rw [hC.self_apply_inverse]
+
+/-- The pencil image of the kernel candidate has no Fredholm-complement component. -/
+theorem complementProjection_affinePencil_kernelCandidate
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible) :
+    S.complementProjection (S.affinePencil B q z (S.kernelCandidate B q z)) = 0 := by
+  rw [kernelCandidate, map_add, map_add]
+  change S.complementProjection (S.affinePencil B q z S.mode) +
+      S.complementPencil B q z (S.kernelCorrection B q z) = 0
+  rw [S.complementPencil_kernelCorrection B q z hC, add_neg_cancel]
+
+/-- A vector with vanishing complementary projection is its phase coefficient times the
+embedded neutral mode. -/
+theorem eq_functional_smul_inclusion_mode_of_complementProjection_eq_zero
+    (w : X) (hw : S.complementProjection w = 0) :
+    w = S.functional w • S.inclusion S.mode := by
+  have hval := congrArg Subtype.val hw
+  change w - S.projection w = 0 at hval
+  rw [sub_eq_zero] at hval
+  simpa only [S.projection_apply] using hval
+
+/-- Schur-complement identity: the general pencil maps its normalized candidate to the scalar
+characteristic value times the neutral mode. -/
+theorem affinePencil_kernelCandidate
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible) :
+    S.affinePencil B q z (S.kernelCandidate B q z) =
+      S.characteristicValue B q z • S.inclusion S.mode := by
+  exact S.eq_functional_smul_inclusion_mode_of_complementProjection_eq_zero _
+    (S.complementProjection_affinePencil_kernelCandidate B q z hC)
+
+/-- Vanishing of the scalar Schur complement produces a nonzero normalized kernel vector. -/
+theorem kernelCandidate_mem_kernel_of_characteristicValue_eq_zero
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible)
+    (hzero : S.characteristicValue B q z = 0) :
+    S.affinePencil B q z (S.kernelCandidate B q z) = 0 := by
+  rw [S.affinePencil_kernelCandidate B q z hC, hzero, zero_smul]
+
+/-- The general complementary solution solves the projected pencil equation. -/
+theorem complementPencil_pencilComplementSolution
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible) (w : X) :
+    S.complementPencil B q z (S.pencilComplementSolution B q z w) =
+      S.complementProjection w := by
+  exact hC.self_apply_inverse (S.complementProjection w)
+
+/-- Decomposition of an ambient vector into a neutral residual and a general-pencil value. -/
+theorem eq_residual_add_affinePencil_pencilComplementSolution
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible) (w : X) :
+    w =
+      S.functional
+          (w - S.affinePencil B q z
+            ((S.pencilComplementSolution B q z w : S.domainComplement) : Dom)) •
+        S.inclusion S.mode +
+      S.affinePencil B q z
+        ((S.pencilComplementSolution B q z w : S.domainComplement) : Dom) := by
+  let u : S.domainComplement := S.pencilComplementSolution B q z w
+  let r : X := w - S.affinePencil B q z (u : Dom)
+  have hcomp : S.complementProjection r = 0 := by
+    rw [show r = w - S.affinePencil B q z (u : Dom) by rfl, map_sub]
+    change S.complementProjection w - S.complementPencil B q z u = 0
+    rw [S.complementPencil_pencilComplementSolution B q z hC w, sub_self]
+  have hr := S.eq_functional_smul_inclusion_mode_of_complementProjection_eq_zero r hcomp
+  have hr' :
+      w - S.affinePencil B q z (u : Dom) =
+        S.functional (w - S.affinePencil B q z (u : Dom)) • S.inclusion S.mode := by
+    simpa only [r] using hr
+  exact (sub_eq_iff_eq_add).mp hr'
+
+/-- Every kernel vector of the general pencil is a scalar multiple of the normalized kernel
+candidate, provided the complementary block is invertible. -/
+theorem eq_smul_kernelCandidate_of_affinePencil_eq_zero
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible)
+    (x : Dom) (hxzero : S.affinePencil B q z x = 0) :
+    x = S.functional (S.inclusion x) • S.kernelCandidate B q z := by
+  let a : ℂ := S.functional (S.inclusion x)
+  let x₀ : S.domainComplement := S.domainComplementPart x
+  let k : S.domainComplement := S.kernelCorrection B q z
+  have hx : x = a • S.mode + (x₀ : Dom) := by
+    simpa [a, x₀] using S.domain_eq_neutral_add_complement x
+  have hprojected :
+      a • S.complementProjection (S.affinePencil B q z S.mode) +
+        S.complementPencil B q z x₀ = 0 := by
+    have h := congrArg S.complementProjection hxzero
+    rw [map_zero] at h
+    have h' :
+        a • S.complementProjection (S.affinePencil B q z S.mode) +
+          S.complementProjection (S.affinePencil B q z (x₀ : Dom)) = 0 := by
+      simpa only [hx, map_add, map_smul] using h
+    exact h'
+  have hx₀ : x₀ = a • k := by
+    apply hC.injective
+    rw [map_smul]
+    have hk := S.complementPencil_kernelCorrection B q z hC
+    change S.complementPencil B q z x₀ = a • S.complementPencil B q z k
+    rw [hk]
+    rw [smul_neg]
+    exact eq_neg_of_add_eq_zero_right hprojected
+  change x = a • S.kernelCandidate B q z
+  rw [hx, hx₀]
+  simp only [kernelCandidate, k, Submodule.coe_smul, smul_add]
+
+/-- A nonzero Schur complement makes the general pencil injective. -/
+theorem affinePencil_injective_of_characteristicValue_ne_zero
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible)
+    (hchar : S.characteristicValue B q z ≠ 0) :
+    Injective (S.affinePencil B q z) := by
+  intro x y hxy
+  have hzero : S.affinePencil B q z (x - y) = 0 := by
+    simpa only [map_sub, sub_eq_zero] using hxy
+  have hrepr := S.eq_smul_kernelCandidate_of_affinePencil_eq_zero B q z hC (x - y) hzero
+  have himage := congrArg (S.affinePencil B q z) hrepr
+  rw [map_smul, S.affinePencil_kernelCandidate B q z hC, hzero] at himage
+  have ha : S.functional (S.inclusion (x - y)) = 0 := by
+    have hsmul :
+        (S.functional (S.inclusion (x - y)) * S.characteristicValue B q z) •
+          S.inclusion S.mode = 0 := by
+      simpa only [smul_smul] using himage.symm
+    have hprod :
+        S.functional (S.inclusion (x - y)) * S.characteristicValue B q z = 0 :=
+      (smul_eq_zero_iff_left S.inclusion_mode_ne_zero).mp hsmul
+    exact (mul_eq_zero.mp hprod).resolve_right hchar
+  apply sub_eq_zero.mp
+  rw [hrepr, ha, zero_smul]
+
+/-- A nonzero Schur complement makes the general pencil surjective. -/
+theorem affinePencil_surjective_of_characteristicValue_ne_zero
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible)
+    (hchar : S.characteristicValue B q z ≠ 0) :
+    Surjective (S.affinePencil B q z) := by
+  intro w
+  let u : S.domainComplement := S.pencilComplementSolution B q z w
+  let r : X := w - S.affinePencil B q z (u : Dom)
+  let a : ℂ := S.functional r / S.characteristicValue B q z
+  refine ⟨(u : Dom) + a • S.kernelCandidate B q z, ?_⟩
+  rw [map_add, map_smul, S.affinePencil_kernelCandidate B q z hC]
+  have hscalar :
+      a • (S.characteristicValue B q z • S.inclusion S.mode) =
+        S.functional r • S.inclusion S.mode := by
+    rw [smul_smul]
+    change (S.functional r / S.characteristicValue B q z *
+      S.characteristicValue B q z) • S.inclusion S.mode = _
+    rw [div_mul_cancel₀ _ hchar]
+  rw [hscalar]
+  have hr : r = S.functional r • S.inclusion S.mode := by
+    have hdecomp :=
+      S.eq_residual_add_affinePencil_pencilComplementSolution B q z hC w
+    change w = S.functional r • S.inclusion S.mode +
+      S.affinePencil B q z (u : Dom) at hdecomp
+    dsimp only [r]
+    calc
+      w - S.affinePencil B q z (u : Dom) =
+          (S.functional r • S.inclusion S.mode +
+            S.affinePencil B q z (u : Dom)) -
+              S.affinePencil B q z (u : Dom) := by rw [hdecomp]
+      _ = S.functional r • S.inclusion S.mode := by abel
+  rw [← hr]
+  dsimp only [r]
+  abel
+
+/-- A nonzero Schur complement upgrades the general pencil to a Banach-space isomorphism. -/
+theorem affinePencil_isInvertible_of_characteristicValue_ne_zero
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible)
+    (hchar : S.characteristicValue B q z ≠ 0) :
+    (S.affinePencil B q z).IsInvertible := by
+  let e : Dom ≃L[ℂ] X := ContinuousLinearEquiv.ofBijective (S.affinePencil B q z)
+    (LinearMap.ker_eq_bot.mpr
+      (S.affinePencil_injective_of_characteristicValue_ne_zero B q z hC hchar))
+    (LinearMap.range_eq_top.mpr
+      (S.affinePencil_surjective_of_characteristicValue_ne_zero B q z hC hchar))
+  exact ⟨e, rfl⟩
+
+/-- With an invertible complementary block, failure of invertibility of the full pencil is
+equivalent to vanishing of its scalar Schur complement. -/
+theorem not_affinePencil_isInvertible_iff_characteristicValue_eq_zero
+    (B : Dom →L[ℂ] X) (q z : ℂ)
+    (hC : (S.complementPencil B q z).IsInvertible) :
+    ¬(S.affinePencil B q z).IsInvertible ↔ S.characteristicValue B q z = 0 := by
+  constructor
+  · contrapose!
+    exact S.affinePencil_isInvertible_of_characteristicValue_ne_zero B q z hC
+  · intro hzero hinvertible
+    have hkernel :=
+      S.kernelCandidate_mem_kernel_of_characteristicValue_eq_zero B q z hC hzero
+    have hcandzero : S.kernelCandidate B q z = 0 :=
+      hinvertible.injective (by simpa only [map_zero] using hkernel)
+    exact S.kernelCandidate_ne_zero B q z hcandzero
+
+/-! ## Local uniqueness of the critical spectral point -/
+
+/-- The implicit-function uniqueness neighborhood, pulled back along the normalized kernel
+candidate.  Any nearby candidate that solves the eigenpair equation is the constructed branch. -/
+theorem eventually_eigenpairBranch_eq_kernelCandidateCoordinates_of_eq_zero
+    (B : Dom →L[ℂ] X) :
+    ∀ᶠ p in nhds (0, 0),
+      S.eigenpairEquation B (S.kernelCandidateCoordinates B p) = 0 →
+        S.eigenpairBranch B p.1 =
+          (p.2, S.kernelCorrection B p.1 p.2) := by
+  have hIFT :
+      ∀ᶠ v in nhds (0, (0, 0)),
+        S.eigenpairEquation B v = 0 ↔ S.eigenpairBranch B v.1 = v.2 := by
+    simpa only [S.eigenpairEquation_zero, eigenpairBranch] using
+      (S.contDiff_eigenpairEquation B).contDiffAt.eventually_apply_eq_iff_implicitFunction
+        (by simp) (S.eigenpairEquation_partialDerivative_isInvertible B)
+  have hcoordinates :
+      Tendsto (S.kernelCandidateCoordinates B) (nhds (0, 0))
+        (nhds (0, (0, 0))) := by
+    have h := (S.contDiffAt_kernelCandidateCoordinates B).continuousAt
+    have h' : Tendsto (S.kernelCandidateCoordinates B) (nhds (0, 0))
+        (nhds (S.kernelCandidateCoordinates B (0, 0))) := h
+    simpa only [S.kernelCandidateCoordinates_zero B] using h'
+  filter_upwards [hcoordinates.eventually hIFT] with p hp
+  exact fun hzero ↦ hp.mp hzero
+
+/-- In a neighborhood of `(q,z)=(0,0)`, failure of invertibility of the full pencil occurs
+exactly on the Lyapunov--Schmidt eigenvalue graph `z=λ(q)`.  This supplies the local spectral
+uniqueness part of analytic perturbation theory. -/
+theorem eventually_not_affinePencil_isInvertible_iff_eq_eigenvalueBranch
+    (B : Dom →L[ℂ] X) :
+    ∀ᶠ p in nhds (0, 0),
+      ¬(S.affinePencil B p.1 p.2).IsInvertible ↔
+        p.2 = S.eigenvalueBranch B p.1 := by
+  have heigenpair :
+      ∀ᶠ p : ℂ × ℂ in nhds (0, 0),
+        S.operator (S.eigenvectorBranch B p.1) -
+            p.1 • B (S.eigenvectorBranch B p.1) =
+          S.eigenvalueBranch B p.1 •
+            S.inclusion (S.eigenvectorBranch B p.1) := by
+    have hfst : Tendsto (fun p : ℂ × ℂ ↦ p.1) (nhds (0, 0)) (nhds 0) :=
+      continuousAt_fst
+    exact hfst.eventually (S.eventually_eigenvalue_equation B)
+  filter_upwards [S.eventually_complementPencil_isInvertible B,
+    S.eventually_eigenpairBranch_eq_kernelCandidateCoordinates_of_eq_zero B,
+    heigenpair] with p hC hunique heigen
+  constructor
+  · intro hnot
+    have hchar : S.characteristicValue B p.1 p.2 = 0 :=
+      (S.not_affinePencil_isInvertible_iff_characteristicValue_eq_zero
+        B p.1 p.2 hC).mp hnot
+    have hkernel :=
+      S.kernelCandidate_mem_kernel_of_characteristicValue_eq_zero B p.1 p.2 hC hchar
+    have hequation :
+        S.eigenpairEquation B (S.kernelCandidateCoordinates B p) = 0 := by
+      rw [S.eigenpairEquation_kernelCandidateCoordinates]
+      exact hkernel
+    have hbranch := hunique hequation
+    have hfirst := congrArg Prod.fst hbranch
+    simpa only [eigenvalueBranch] using hfirst.symm
+  · intro hz hinvertible
+    have hkernel :
+        S.affinePencil B p.1 p.2 (S.eigenvectorBranch B p.1) = 0 := by
+      rw [hz]
+      simpa only [affinePencil_apply, sub_eq_zero] using heigen
+    have hvector_ne : S.eigenvectorBranch B p.1 ≠ 0 := by
+      intro hzero
+      have hnormal := S.eigenvectorBranch_normalized B p.1
+      rw [hzero, map_zero, map_zero] at hnormal
+      exact zero_ne_one hnormal
+    apply hvector_ne
+    apply hinvertible.injective
+    simpa only [map_zero] using hkernel
+
+/-- For maps between the Banach graph domain and ambient space, Mathlib's bundled notion of
+invertibility is equivalent to algebraic bijectivity. -/
+theorem affinePencil_isInvertible_iff_bijective
+    (B : Dom →L[ℂ] X) (q z : ℂ) :
+    (S.affinePencil B q z).IsInvertible ↔
+      Function.Bijective (S.affinePencil B q z) := by
+  constructor
+  · exact ContinuousLinearMap.IsInvertible.bijective
+  · intro hbij
+    refine ⟨ContinuousLinearEquiv.ofBijective (S.affinePencil B q z)
+      (LinearMap.ker_eq_bot.mpr hbij.injective)
+      (LinearMap.range_eq_top.mpr hbij.surjective), rfl⟩
+
+/-- Bijectivity form of the local spectral-graph theorem. -/
+theorem eventually_not_bijective_affinePencil_iff_eq_eigenvalueBranch
+    (B : Dom →L[ℂ] X) :
+    ∀ᶠ p in nhds (0, 0),
+      ¬Function.Bijective (S.affinePencil B p.1 p.2) ↔
+        p.2 = S.eigenvalueBranch B p.1 := by
+  filter_upwards [S.eventually_not_affinePencil_isInvertible_iff_eq_eigenvalueBranch B]
+    with p hp
+  rw [← hp, S.affinePencil_isInvertible_iff_bijective B p.1 p.2]
+
+/-- Equivalently, the scalar Schur complement has exactly one nearby zero. -/
+theorem eventually_characteristicValue_eq_zero_iff_eq_eigenvalueBranch
+    (B : Dom →L[ℂ] X) :
+    ∀ᶠ p in nhds (0, 0),
+      S.characteristicValue B p.1 p.2 = 0 ↔
+        p.2 = S.eigenvalueBranch B p.1 := by
+  filter_upwards [S.eventually_complementPencil_isInvertible B,
+    S.eventually_not_affinePencil_isInvertible_iff_eq_eigenvalueBranch B] with p hC hspectrum
+  rw [← hspectrum,
+    S.not_affinePencil_isInvertible_iff_characteristicValue_eq_zero B p.1 p.2 hC]
 
 /-! ## The complementary block along the critical branch -/
 
@@ -267,24 +730,6 @@ theorem contDiffAt_inclusion_eigenvectorBranch (B : Dom →L[ℂ] X) :
     ContDiffAt ℂ ω (fun q ↦ S.inclusion (S.eigenvectorBranch B q)) 0 :=
   S.inclusion.contDiff.contDiffAt.comp 0 (S.contDiffAt_eigenvectorBranch B)
 
-/-- Remove the normalized neutral coordinate of a graph-domain vector. -/
-def domainComplementPart (x : Dom) : S.domainComplement :=
-  ⟨x - S.functional (S.inclusion x) • S.mode, by
-    change S.functional
-      (S.inclusion (x - S.functional (S.inclusion x) • S.mode)) = 0
-    simp [S.normalized]⟩
-
-@[simp]
-theorem domainComplementPart_coe (x : Dom) :
-    (S.domainComplementPart x : Dom) =
-      x - S.functional (S.inclusion x) • S.mode :=
-  rfl
-
-/-- Domain decomposition into the normalized neutral mode and the fixed complement. -/
-theorem domain_eq_neutral_add_complement (x : Dom) :
-    x = S.functional (S.inclusion x) • S.mode + S.domainComplementPart x := by
-  simp [domainComplementPart]
-
 /-- The inverse complementary block solves the projected resolvent equation. -/
 theorem complementPencil_criticalComplementSolution
     (B : Dom →L[ℂ] X) (q : ℂ)
@@ -388,15 +833,13 @@ theorem criticalCokernelFunctional_criticalPencil
     module
   rw [hpencil, sub_self]
 
-/-- Near zero, the critical pencil has the exact perturbed Fredholm alternative: its range is
-the kernel of the perturbed left eigenfunctional. -/
-theorem eventually_range_criticalPencil_eq_kernel_criticalCokernelFunctional
-    (B : Dom →L[ℂ] X) :
-    ∀ᶠ q in nhds 0,
-      LinearMap.range (S.criticalPencil B q).toLinearMap =
-        LinearMap.ker (S.criticalCokernelFunctional B q).toLinearMap := by
-  filter_upwards [S.eventually_criticalComplementPencil_isInvertible B,
-    S.eventually_criticalPencil_eigenvector_eq_zero B] with q hC heig
+/-- Pointwise form of the perturbed Fredholm alternative at the critical eigenvalue. -/
+theorem range_criticalPencil_eq_kernel_criticalCokernelFunctional
+    (B : Dom →L[ℂ] X) (q : ℂ)
+    (hC : (S.criticalComplementPencil B q).IsInvertible)
+    (heig : S.criticalPencil B q (S.eigenvectorBranch B q) = 0) :
+    LinearMap.range (S.criticalPencil B q).toLinearMap =
+      LinearMap.ker (S.criticalCokernelFunctional B q).toLinearMap := by
   ext w
   rw [LinearMap.mem_range, LinearMap.mem_ker]
   constructor
@@ -409,6 +852,17 @@ theorem eventually_range_criticalPencil_eq_kernel_criticalCokernelFunctional
     have hdecomp := S.eq_cokernel_smul_mode_add_criticalPencil_solution B q hC w
     rw [hw, zero_smul, zero_add] at hdecomp
     exact hdecomp.symm
+
+/-- Near zero, the critical pencil has the exact perturbed Fredholm alternative: its range is
+the kernel of the perturbed left eigenfunctional. -/
+theorem eventually_range_criticalPencil_eq_kernel_criticalCokernelFunctional
+    (B : Dom →L[ℂ] X) :
+    ∀ᶠ q in nhds 0,
+      LinearMap.range (S.criticalPencil B q).toLinearMap =
+        LinearMap.ker (S.criticalCokernelFunctional B q).toLinearMap := by
+  filter_upwards [S.eventually_criticalComplementPencil_isInvertible B,
+    S.eventually_criticalPencil_eigenvector_eq_zero B] with q hC heig
+  exact S.range_criticalPencil_eq_kernel_criticalCokernelFunctional B q hC heig
 
 /-! ## The normalized perturbed projection -/
 
@@ -484,6 +938,89 @@ theorem criticalLeftFunctional_eigenvector
   change (S.criticalNormalization B q)⁻¹ * S.criticalNormalization B q = 1
   exact inv_mul_cancel₀ hq
 
+/-- The embedded critical eigenvector is nonzero for every parameter, as its original phase
+normalization is exactly one. -/
+theorem inclusion_eigenvectorBranch_ne_zero (B : Dom →L[ℂ] X) (q : ℂ) :
+    S.inclusion (S.eigenvectorBranch B q) ≠ 0 := by
+  intro hzero
+  have hnormal := S.eigenvectorBranch_normalized B q
+  rw [hzero, map_zero] at hnormal
+  exact zero_ne_one hnormal
+
+/-- The normalized perturbed left functional is nonzero whenever its normalization denominator
+is nonzero. -/
+theorem criticalLeftFunctional_ne_zero
+    (B : Dom →L[ℂ] X) (q : ℂ) (hq : S.criticalNormalization B q ≠ 0) :
+    S.criticalLeftFunctional B q ≠ 0 := by
+  intro hzero
+  have hnormal := S.criticalLeftFunctional_eigenvector B q hq
+  rw [hzero, zero_apply] at hnormal
+  exact zero_ne_one hnormal
+
+/-- The range of the critical projection is exactly the perturbed critical eigenline. -/
+theorem range_criticalProjection_eq_span
+    (B : Dom →L[ℂ] X) (q : ℂ) (hq : S.criticalNormalization B q ≠ 0) :
+    LinearMap.range (S.criticalProjection B q).toLinearMap =
+      Submodule.span ℂ {S.inclusion (S.eigenvectorBranch B q)} := by
+  simpa [criticalProjection] using
+    ContinuousLinearMap.range_smulRight_apply
+      (S.criticalLeftFunctional_ne_zero B q hq)
+      (S.inclusion (S.eigenvectorBranch B q))
+
+/-- The critical projection has rank one whenever its normalization denominator is nonzero. -/
+theorem finrank_range_criticalProjection
+    (B : Dom →L[ℂ] X) (q : ℂ) (hq : S.criticalNormalization B q ≠ 0) :
+    Module.finrank ℂ (LinearMap.range (S.criticalProjection B q).toLinearMap) = 1 := by
+  rw [S.range_criticalProjection_eq_span B q hq]
+  exact finrank_span_singleton (S.inclusion_eigenvectorBranch_ne_zero B q)
+
+/-- The projection kernel is the kernel of the normalized perturbed left functional. -/
+theorem kernel_criticalProjection_eq_kernel_criticalLeftFunctional
+    (B : Dom →L[ℂ] X) (q : ℂ) :
+    LinearMap.ker (S.criticalProjection B q).toLinearMap =
+      LinearMap.ker (S.criticalLeftFunctional B q).toLinearMap := by
+  ext w
+  simp only [LinearMap.mem_ker]
+  exact smul_eq_zero_iff_left (S.inclusion_eigenvectorBranch_ne_zero B q)
+
+/-- Normalizing by a nonzero scalar does not change the cokernel hyperplane. -/
+theorem kernel_criticalLeftFunctional_eq_kernel_criticalCokernelFunctional
+    (B : Dom →L[ℂ] X) (q : ℂ) (hq : S.criticalNormalization B q ≠ 0) :
+    LinearMap.ker (S.criticalLeftFunctional B q).toLinearMap =
+      LinearMap.ker (S.criticalCokernelFunctional B q).toLinearMap := by
+  ext w
+  simp only [LinearMap.mem_ker]
+  change (S.criticalNormalization B q)⁻¹ *
+      S.criticalCokernelFunctional B q w = 0 ↔
+    S.criticalCokernelFunctional B q w = 0
+  simp [hq]
+
+/-- The spectral splitting identity: the critical projection kernel is precisely the range of
+the shifted operator at the critical eigenvalue. -/
+theorem kernel_criticalProjection_eq_range_criticalPencil
+    (B : Dom →L[ℂ] X) (q : ℂ)
+    (hC : (S.criticalComplementPencil B q).IsInvertible)
+    (heig : S.criticalPencil B q (S.eigenvectorBranch B q) = 0)
+    (hq : S.criticalNormalization B q ≠ 0) :
+    LinearMap.ker (S.criticalProjection B q).toLinearMap =
+      LinearMap.range (S.criticalPencil B q).toLinearMap := by
+  rw [S.kernel_criticalProjection_eq_kernel_criticalLeftFunctional B q,
+    S.kernel_criticalLeftFunctional_eq_kernel_criticalCokernelFunctional B q hq,
+    ← S.range_criticalPencil_eq_kernel_criticalCokernelFunctional B q hC heig]
+
+/-- The critical projection annihilates every value of the shifted critical pencil. -/
+theorem criticalProjection_criticalPencil
+    (B : Dom →L[ℂ] X) (q : ℂ)
+    (hC : (S.criticalComplementPencil B q).IsInvertible)
+    (heig : S.criticalPencil B q (S.eigenvectorBranch B q) = 0)
+    (x : Dom) :
+    S.criticalProjection B q (S.criticalPencil B q x) = 0 := by
+  rw [criticalProjection_apply]
+  change ((S.criticalNormalization B q)⁻¹ *
+    S.criticalCokernelFunctional B q (S.criticalPencil B q x)) •
+      S.inclusion (S.eigenvectorBranch B q) = 0
+  rw [S.criticalCokernelFunctional_criticalPencil B q hC heig, mul_zero, zero_smul]
+
 /-- The critical rank-one map is a projection near zero. -/
 theorem eventually_criticalProjection_idempotent (B : Dom →L[ℂ] X) :
     ∀ᶠ q in nhds 0, ∀ w : X,
@@ -492,6 +1029,19 @@ theorem eventually_criticalProjection_idempotent (B : Dom →L[ℂ] X) :
   filter_upwards [S.eventually_criticalNormalization_ne_zero B] with q hq
   intro w
   simp [criticalProjection_apply, S.criticalLeftFunctional_eigenvector B q hq]
+
+/-- Near zero, the projection has rank one and its kernel is exactly the range of the shifted
+critical pencil. -/
+theorem eventually_criticalProjection_spectralSplitting (B : Dom →L[ℂ] X) :
+    ∀ᶠ q in nhds 0,
+      Module.finrank ℂ (LinearMap.range (S.criticalProjection B q).toLinearMap) = 1 ∧
+      LinearMap.ker (S.criticalProjection B q).toLinearMap =
+        LinearMap.range (S.criticalPencil B q).toLinearMap := by
+  filter_upwards [S.eventually_criticalComplementPencil_isInvertible B,
+    S.eventually_criticalPencil_eigenvector_eq_zero B,
+    S.eventually_criticalNormalization_ne_zero B] with q hC heig hq
+  exact ⟨S.finrank_range_criticalProjection B q hq,
+    S.kernel_criticalProjection_eq_range_criticalPencil B q hC heig hq⟩
 
 /-- The actual perturbed projection has the operator-norm estimate `P(q)-P(0)=O(q)`. -/
 theorem criticalProjection_sub_projection_isBigO (B : Dom →L[ℂ] X) :
