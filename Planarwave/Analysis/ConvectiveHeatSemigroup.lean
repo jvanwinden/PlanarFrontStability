@@ -193,6 +193,89 @@ theorem convectiveHeatContractionSemigroup_apply (a : ℝ) (ha : 0 ≤ a) (b : E
 
 end ConvectiveHeat
 
+section ComplexConvectiveHeat
+
+variable {E : Type*}
+  [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+  [MeasurableSpace E] [BorelSpace E]
+
+/-- Complex linearity of convective heat flow. -/
+theorem convectiveHeatFlowBUC_smul_complex
+    (a t : ℝ) (b : E) (r : ℂ) (f : BUC E ℂ) :
+    convectiveHeatFlowBUC a t b (r • f) = r • convectiveHeatFlowBUC a t b f := by
+  ext x
+  rw [convectiveHeatFlowBUC_apply, BUC.smul_apply, convectiveHeatFlowBUC_apply]
+  unfold heatFlow
+  simp_rw [BUC.smul_apply, smul_eq_mul]
+  exact MeasureTheory.integral_const_mul r _
+
+/-- Complex-linear convective heat evolution. -/
+def complexConvectiveHeatOperator (a t : ℝ) (b : E) :
+    BUC E ℂ →L[ℂ] BUC E ℂ :=
+  LinearMap.mkContinuous
+    { toFun := convectiveHeatFlowBUC a t b
+      map_add' := convectiveHeatFlowBUC_add a t b
+      map_smul' := fun r f ↦ convectiveHeatFlowBUC_smul_complex a t b r f }
+    1 (fun f ↦ by simpa using norm_convectiveHeatFlowBUC_le a t b f)
+
+@[simp]
+theorem complexConvectiveHeatOperator_apply (a t : ℝ) (b : E) (f : BUC E ℂ) :
+    complexConvectiveHeatOperator a t b f = convectiveHeatFlowBUC a t b f := rfl
+
+theorem norm_complexConvectiveHeatOperator_le (a t : ℝ) (b : E) :
+    ‖complexConvectiveHeatOperator a t b‖ ≤ 1 := by
+  apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
+  intro f
+  simpa using norm_convectiveHeatFlowBUC_le a t b f
+
+@[simp]
+theorem complexConvectiveHeatOperator_zero (a : ℝ) (b : E) :
+    complexConvectiveHeatOperator a 0 b = ContinuousLinearMap.id ℂ (BUC E ℂ) := by
+  ext f
+  simp
+
+/-- Semigroup law for the complex-linear realization. -/
+theorem complexConvectiveHeatOperator_add_time {a s t : ℝ} (ha : 0 ≤ a)
+    (hs : 0 ≤ s) (ht : 0 ≤ t) (b : E) :
+    (complexConvectiveHeatOperator a s b).comp (complexConvectiveHeatOperator a t b) =
+      complexConvectiveHeatOperator a (s + t) b := by
+  apply ContinuousLinearMap.ext
+  intro f
+  change BUC.translate (-(s • b))
+      (heatFlowBUC a s (BUC.translate (-(t • b)) (heatFlowBUC a t f))) =
+    BUC.translate (-((s + t) • b)) (heatFlowBUC a (s + t) f)
+  rw [heatFlowBUC_translate, BUC.translate_add]
+  have hheat := congrArg (fun L ↦ L f)
+    (heatOperator_add_time (E := E) (F := ℂ) ha hs ht)
+  change heatFlowBUC a s (heatFlowBUC a t f) = heatFlowBUC a (s + t) f at hheat
+  rw [hheat]
+  congr 1
+  module
+
+/-- Complex-linear convective heat flow as a strongly continuous semigroup. -/
+def complexConvectiveHeatC0Semigroup (a : ℝ) (ha : 0 ≤ a) (b : E) :
+    C0Semigroup ℂ (BUC E ℂ) where
+  toFun t := complexConvectiveHeatOperator a t b
+  map_zero' := complexConvectiveHeatOperator_zero a b
+  map_add' s t := by
+    simpa using
+      (complexConvectiveHeatOperator_add_time (E := E) ha s.2 t.2 b).symm
+  strongContinuous' f := by
+    exact (continuous_convectiveHeatFlowBUC_time a b f).comp continuous_subtype_val
+
+@[simp]
+theorem complexConvectiveHeatC0Semigroup_apply (a : ℝ) (ha : 0 ≤ a) (b : E)
+    (t : NNReal) (f : BUC E ℂ) :
+    complexConvectiveHeatC0Semigroup a ha b t f = convectiveHeatFlowBUC a t b f := rfl
+
+/-- The complex-linear convective heat evolution is a contraction semigroup. -/
+def complexConvectiveHeatContractionSemigroup (a : ℝ) (ha : 0 ≤ a) (b : E) :
+    ContractionSemigroup ℂ (BUC E ℂ) :=
+  ContractionSemigroup.ofNormApplyLE (complexConvectiveHeatC0Semigroup a ha b)
+    (fun t f ↦ norm_convectiveHeatFlowBUC_le a t b f)
+
+end ComplexConvectiveHeat
+
 end
 
 end Planarwave

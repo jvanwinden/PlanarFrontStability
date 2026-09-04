@@ -19,6 +19,7 @@ public import Planarwave.Analysis.ComplexFrequencyCriticalSpectrum
 public import Planarwave.Analysis.ComplexFrequencySemigroupBounds
 public import Planarwave.Analysis.ConcreteFredholm
 public import Planarwave.Analysis.ConvectiveHeatSemigroup
+public import Planarwave.Analysis.DiagonalDiffusionSemigroup
 public import Planarwave.Analysis.FredholmProjection
 public import Planarwave.Analysis.FrontCoefficient
 public import Planarwave.Analysis.FrontEigenvalueBranch
@@ -30,6 +31,7 @@ public import Planarwave.Analysis.PhaseFunctional
 public import Planarwave.Analysis.PositiveDiffusion
 public import Planarwave.Analysis.ProfileProjection
 public import Planarwave.Analysis.Semigroup
+public import Planarwave.Analysis.SemigroupOperations
 public import Planarwave.Analysis.SimpleEigenvaluePerturbation
 public import Planarwave.Analysis.SimpleSpectralProjection
 public import Planarwave.Analysis.TranslationMode
@@ -69,11 +71,14 @@ projection together with `lambda_c(ξ) = -d_perp * lambda_0(ξ) + O(‖ξ‖^4)`
 spectral-parameter separation needed for the subsequent semigroup estimates.
 
 The formalization of step 2 has also begun in the order used in Lemma 2.2.  The scalar
-convective heat evolution is now a strongly continuous contraction semigroup,
+convective heat evolution is now a strongly continuous contraction semigroup.  Diagonalizing the
+positive diffusion matrix gives a finite product semigroup with the paper's strictly positive
+Gaussian damping rate.  Moreover,
 `Re lambda_0(ξ₀ + i ξ₁) = ‖ξ₀‖^2 - ‖ξ₁‖^2` gives the elementary heat-multiplier bound, and the
 bounded contour-shift perturbation satisfies the paper's Young-inequality estimate (2.4).  The
-remaining work in that lemma is to connect the sectorial longitudinal generators to these
-semigroups and apply the bounded perturbation theorem.
+remaining work in that lemma is to conjugate the diagonal semigroup back to the original state
+space, connect the sectorial longitudinal generators to these semigroups, and apply the bounded
+perturbation theorem.
 
 The imported modules provide the foundational objects for those steps: a Banach space of bounded
 uniformly continuous functions, a fixed-domain closed-operator resolvent, the Gaussian heat
