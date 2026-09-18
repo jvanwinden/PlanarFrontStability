@@ -152,4 +152,45 @@ theorem deriv_exp_mul_of_forced_vHJ
 
 end FieldCancellation
 
+section InverseCancellation
+
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+  [FiniteDimensional ℝ E]
+
+/-- Conversely, the inverse normalized Cole--Hopf transform of a classical heat solution
+satisfies the viscous Hamilton--Jacobi equation. This includes `c = β = 0`. -/
+theorem hasDerivAt_coleHopfInv_of_heat
+    (w : ℝ → E → ℝ) (t : ℝ) (x : E) (a c β : ℝ)
+    (htime : HasDerivAt (fun s => w s x) (a * Δ (w t) x) t)
+    (hspace : ContDiff ℝ 2 (w t))
+    (hdomain : ∀ y, w t y ∈ coleHopfDomain β)
+    (hcancel : a * β = c / 2) :
+    HasDerivAt (fun s => coleHopfInv β (w s x))
+      (a * Δ (coleHopfInv β ∘ w t) x +
+        (c / 2) * ‖∇ (coleHopfInv β ∘ w t) x‖ ^ 2) t := by
+  let σ : E → ℝ := coleHopfInv β ∘ w t
+  have hσ : ContDiff ℝ 2 σ := by
+    rw [← contDiffOn_univ]
+    apply ((contDiffOn_coleHopfInv β).of_le (show (2 : ℕ∞ω) ≤ ∞ from
+      WithTop.coe_le_coe.mpr (show (2 : ℕ∞) ≤ ⊤ from le_top))).comp
+      hspace.contDiffOn
+    intro y _
+    exact hdomain y
+  have htransform : coleHopf β ∘ σ = w t := by
+    funext y
+    exact coleHopf_coleHopfInv (hdomain y)
+  have hlap := laplacian_coleHopf_comp_apply β σ hσ x
+  rw [htransform] at hlap
+  have hderiv := (hasDerivAt_coleHopfInv (hdomain x)).comp t htime
+  have hexp : 1 + β * w t x = Real.exp (β * σ x) :=
+    (exp_mul_coleHopfInv (hdomain x)).symm
+  have hcoef : (1 + β * w t x)⁻¹ * (a * Δ (w t) x) =
+      a * Δ σ x + (c / 2) * ‖∇ σ x‖ ^ 2 := by
+    rw [hexp, hlap, ← hcancel]
+    field_simp
+  rw [hcoef] at hderiv
+  exact hderiv
+
+end InverseCancellation
+
 end Planarwave

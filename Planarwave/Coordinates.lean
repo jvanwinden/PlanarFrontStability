@@ -97,4 +97,19 @@ theorem coordinateEquiv_apply {d : ℕ} (hd : 2 ≤ d) (x : ℝ^d) :
 theorem coordinateEquiv_symm_apply {d : ℕ} (hd : 2 ≤ d) (p : ℝ^(d - 1) × ℝ) :
     (coordinateEquiv hd).symm p = full p.1 p.2 := rfl
 
+/-! ## The initial closeness condition -/
+
+/-- The global closeness condition can be checked on the assembled transverse/longitudinal
+coordinates.  This is the form used when the initial phase is defined by integrating along each
+longitudinal slice. -/
+theorem isCloseToFront_iff_full_coordinates
+    {d n : ℕ} (hd : 2 ≤ d) (φ : ℝ → ℝ^n) (u : ℝ^d → ℝ^n) (ε : ℝ) :
+    IsCloseToFront φ u ε ↔
+      ∀ y : ℝ^(d - 1), ∀ z : ℝ, ‖u (full y z) - φ z‖ ≤ ε := by
+  constructor
+  · intro h y z
+    simpa [horizontal_full hd] using h (full y z)
+  · intro h x
+    simpa [full_transverse_horizontal hd] using h (transverse x) (horizontal x)
+
 end Planarwave

@@ -12,6 +12,7 @@ public import Planarwave.Analysis.ChallengeBridge
 public import Planarwave.Analysis.ClosedOperator
 public import Planarwave.Analysis.ClosedOperatorFromResolvent
 public import Planarwave.Analysis.ColeHopf
+public import Planarwave.Analysis.ColeHopfEvolution
 public import Planarwave.Analysis.ColeHopfLaplacian
 public import Planarwave.Analysis.ColeHopfPDE
 public import Planarwave.Analysis.ComplexBUC2
@@ -24,6 +25,7 @@ public import Planarwave.Analysis.FredholmProjection
 public import Planarwave.Analysis.FrontCoefficient
 public import Planarwave.Analysis.FrontEigenvalueBranch
 public import Planarwave.Analysis.HeatSemigroup
+public import Planarwave.Analysis.HeatEquationOneDimensional
 public import Planarwave.Analysis.HeatSmoothing
 public import Planarwave.Analysis.HeatSmoothingMultidimensional
 public import Planarwave.Analysis.LongitudinalOperator
@@ -79,6 +81,23 @@ bounded contour-shift perturbation satisfies the paper's Young-inequality estima
 remaining work in that lemma is to conjugate the diagonal semigroup back to the original state
 space, connect the sectorial longitudinal generators to these semigroups, and apply the bounded
 perturbation theorem.
+
+The initial phase required by the nonlinear theorem is constructed in `ChallengeInitialPhase`.
+Its defining longitudinal integral is integrable on each transverse slice, and the resulting
+phase belongs to transverse BUC. Its BUC norm is at most `E_0 * ∫ z, ‖ψ z‖`, and the phase map
+depends Lipschitz continuously on the initial datum in the supremum norm. This supplies initial
+data for the viscous Hamilton--Jacobi construction.
+
+`ColeHopfEvolution` constructs that phase evolution, proves its initial value, semigroup law,
+uniform-in-time norm bound, strong time continuity, and uniform continuity on finite time slabs.
+The inverse cancellation calculation in `ColeHopfPDE` turns classical heat solutions into vHJ
+solutions. `HeatSmoothReal`, `HeatEquationReal`, and `HeatJointSmoothReal` prove all-order spatial
+smoothing, the heat equation, and joint positive-time smoothness for Banach-valued real-line BUC
+data. Orthogonal invariance transfers these results to the one-dimensional transverse Euclidean
+space. Consequently `Planarwave.isVHJSolution_challengePhaseEvolution_two`, in the module
+`ChallengePhaseEvolution`, proves the full phase solution predicate for ambient dimension two.
+Higher-dimensional classical heat regularity, the reaction--diffusion solution construction,
+and the nonlinear approximation estimate remain outstanding.
 
 The imported modules provide the foundational objects for those steps: a Banach space of bounded
 uniformly continuous functions, a fixed-domain closed-operator resolvent, the Gaussian heat
