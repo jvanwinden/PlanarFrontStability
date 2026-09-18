@@ -28,6 +28,9 @@ public import Planarwave.Analysis.HeatSemigroup
 public import Planarwave.Analysis.HeatEquationOneDimensional
 public import Planarwave.Analysis.HeatSmoothing
 public import Planarwave.Analysis.HeatSmoothingMultidimensional
+public import Planarwave.Analysis.HeatSmoothMultidimensional
+public import Planarwave.Analysis.HeatEquationMultidimensional
+public import Planarwave.Analysis.HeatJointSmoothMultidimensional
 public import Planarwave.Analysis.LongitudinalOperator
 public import Planarwave.Analysis.PhaseFunctional
 public import Planarwave.Analysis.PositiveDiffusion
@@ -77,10 +80,11 @@ convective heat evolution is now a strongly continuous contraction semigroup.  D
 positive diffusion matrix gives a finite product semigroup with the paper's strictly positive
 Gaussian damping rate.  Moreover,
 `Re lambda_0(ξ₀ + i ξ₁) = ‖ξ₀‖^2 - ‖ξ₁‖^2` gives the elementary heat-multiplier bound, and the
-bounded contour-shift perturbation satisfies the paper's Young-inequality estimate (2.4).  The
-remaining work in that lemma is to conjugate the diagonal semigroup back to the original state
-space, connect the sectorial longitudinal generators to these semigroups, and apply the bounded
-perturbation theorem.
+bounded contour-shift perturbation satisfies the paper's Young-inequality estimate (2.4).
+Abstract conjugation of the diagonal semigroup, with its condition-number bound, is also proved.
+The remaining work in that lemma is to instantiate the function-space change of coordinates
+with the concrete diffusion eigenbasis, identify the longitudinal generators, and apply the
+bounded perturbation theorem.
 
 The initial phase required by the nonlinear theorem is constructed in `ChallengeInitialPhase`.
 Its defining longitudinal integral is integrable on each transverse slice, and the resulting
@@ -91,13 +95,37 @@ data for the viscous Hamilton--Jacobi construction.
 `ColeHopfEvolution` constructs that phase evolution, proves its initial value, semigroup law,
 uniform-in-time norm bound, strong time continuity, and uniform continuity on finite time slabs.
 The inverse cancellation calculation in `ColeHopfPDE` turns classical heat solutions into vHJ
-solutions. `HeatSmoothReal`, `HeatEquationReal`, and `HeatJointSmoothReal` prove all-order spatial
-smoothing, the heat equation, and joint positive-time smoothness for Banach-valued real-line BUC
-data. Orthogonal invariance transfers these results to the one-dimensional transverse Euclidean
-space. Consequently `Planarwave.isVHJSolution_challengePhaseEvolution_two`, in the module
-`ChallengePhaseEvolution`, proves the full phase solution predicate for ambient dimension two.
-Higher-dimensional classical heat regularity, the reaction--diffusion solution construction,
-and the nonlinear approximation estimate remain outstanding.
+solutions. `HeatDirectionalSmoothing` identifies the multidimensional Fréchet derivative using
+orthogonal Gaussian splitting. `HeatSmoothMultidimensional` proves that this derivative is BUC,
+with a dimension-independent norm bound, and obtains all-order spatial smoothing by splitting
+the heat semigroup. `HeatEquationMultidimensional` proves the classical heat equation, and
+`HeatJointSmoothMultidimensional` proves joint positive-time smoothness, all for Banach-valued
+data in arbitrary finite dimension. Consequently
+`Planarwave.isVHJSolution_challengePhaseEvolution` proves the full phase solution predicate for
+every `d ≥ 2`. `Planarwave.exists_challengePhaseSolution` packages the solution, its exact initial
+integral, and its uniform smallness bound. This completes unforced-phase existence; the
+reaction--diffusion construction and nonlinear approximation estimate remain outstanding.
+
+## Milestones still needed for the challenge theorem
+
+The phase construction is an independent prerequisite for the final comparison. Completing it
+does not discharge the spectral and nonlinear stages listed above. The next main-line target is
+the longitudinal generator/semigroup identification, followed by these concrete milestones:
+
+* Prove uniform complex-frequency semigroup and resolvent estimates, including separation for
+  unbounded spectral parameters. Local holomorphic eigenpairs alone do not give these bounds.
+* Construct the full spatial semigroup and its decomposition into the transverse heat evolution
+  on the translation mode plus a decaying remainder, with the derivative estimates needed by
+  Duhamel's formula.
+* Construct local classical reaction--diffusion solutions from BUC perturbations, together with
+  a continuation criterion; derive the exact inverse-modulation and phase-forcing equations.
+* Close the nonlinear bootstrap using those linear estimates and Cole--Hopf bounds, keeping the
+  constants uniform over `0 ≤ E_0 ≤ ε`, and use continuation to obtain a global solution.
+* Compare the forced modulation phase to the unforced solution constructed here, obtaining
+  `C * E_0 * (E_0 + (1+t)⁻¹ * log (2+t))`, then assemble the unchanged challenge statement.
+
+Each milestone must be proved from the original hypotheses. No auxiliary regularity or decay
+assumption should be added to `vHJ_approximates_planar_front` to bypass these obligations.
 
 The imported modules provide the foundational objects for those steps: a Banach space of bounded
 uniformly continuous functions, a fixed-domain closed-operator resolvent, the Gaussian heat

@@ -164,16 +164,16 @@ theorem lipschitzWith_heatFlow {a t : ℝ} (ha : 0 < a) (ht : 0 < t) (f : BUC E 
     intro r
     rw [(hasDerivAt_heatFlow_unit_direction_kernel ha ht v hv f x r).deriv]
     exact norm_gaussianGradientKernel_unit_le ha ht v hv f _
-  rw [lipschitzWith_iff_dist_le_mul]
+  apply LipschitzWith.of_dist_le_mul
   intro x y
   by_cases hxy : x = y
   · simp [hxy]
   have hn : ‖x - y‖ ≠ 0 := norm_ne_zero_iff.mpr (sub_ne_zero.mpr hxy)
   let v := ‖x - y‖⁻¹ • (x - y)
-  have hv : ‖v‖ = 1 := by simp [v, norm_smul, Real.norm_eq_abs, hn]
+  have hv : ‖v‖ = 1 := by simp [v, norm_smul, hn]
   have heq : y + ‖x - y‖ • v = x := by simp [v, smul_smul, hn]
   have h := (hline v hv y).dist_le_mul ‖x - y‖ 0
-  simpa only [heq, zero_smul, add_zero, dist_zero_right, norm_norm, dist_eq_norm] using h
+  simpa [heq, dist_eq_norm, C] using h
 
 /-- The first Hermite kernel is the Fréchet derivative of multidimensional heat flow. -/
 theorem hasFDerivAt_heatFlow {a t : ℝ} (ha : 0 < a) (ht : 0 < t) (f : BUC E F) (x : E) :
