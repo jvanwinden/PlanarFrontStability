@@ -6,6 +6,7 @@ Authors: Joris van Winden, OpenAI
 module
 
 public import Planarwave.Analysis.BUC
+public import Planarwave.Analysis.BUCCompactSupport
 public import Planarwave.Analysis.BUC2
 public import Planarwave.Analysis.BUCBilinear
 public import Planarwave.Analysis.BUCFDerivCoordinates
@@ -46,7 +47,10 @@ public import Planarwave.Analysis.DiffusionSmoothing
 public import Planarwave.Analysis.DiffusionAnalytic
 public import Planarwave.Analysis.FredholmProjection
 public import Planarwave.Analysis.FrontCoefficient
+public import Planarwave.Analysis.FrontAdjointEquation
+public import Planarwave.Analysis.FrontAdjointRegularization
 public import Planarwave.Analysis.FrontNonlinearity
+public import Planarwave.Analysis.FrontProjectedNonlinearity
 public import Planarwave.Analysis.FrontEigenvalueBranch
 public import Planarwave.Analysis.FrontLinearizedMild
 public import Planarwave.Analysis.FrontLinearizedSemigroup
@@ -95,6 +99,7 @@ public import Planarwave.Analysis.GaussianHeatKernel
 public import Planarwave.Analysis.GaussianFrequencySplit
 public import Planarwave.Analysis.GaussianKernelDecay
 public import Planarwave.Analysis.HeatSemigroup
+public import Planarwave.Analysis.HeatDivergenceSmoothing
 public import Planarwave.Analysis.HeatEquationOneDimensional
 public import Planarwave.Analysis.HeatSmoothing
 public import Planarwave.Analysis.HeatSmoothingMultidimensional
@@ -105,11 +110,16 @@ public import Planarwave.Analysis.HolomorphicTimeExtension
 public import Planarwave.Analysis.HolomorphicIntegral
 public import Planarwave.Analysis.HorizontalContourShift
 public import Planarwave.Analysis.LongitudinalOperator
+public import Planarwave.Analysis.L1Smoothing
+public import Planarwave.Analysis.L1Mollification
+public import Planarwave.Analysis.LongitudinalPairing
+public import Planarwave.Analysis.LongitudinalPairingDerivative
 public import Planarwave.Analysis.LongitudinalClosedness
 public import Planarwave.Analysis.PhaseFunctional
 public import Planarwave.Analysis.PiContourShift
 public import Planarwave.Analysis.PositiveDiffusion
 public import Planarwave.Analysis.ProfileProjection
+public import Planarwave.Analysis.ProjectedNonlinearity
 public import Planarwave.Analysis.Semigroup
 public import Planarwave.Analysis.SemigroupGenerator
 public import Planarwave.Analysis.SemigroupSmoothing
@@ -605,9 +615,58 @@ perturbation ball. No extra Taylor or coefficient bounds are assumed.
 BUC and its exact supremum norm. `FrontNonlinearity` uses the challenge's own
 coordinate maps to equate the inverse-modulated norm bound with the forward
 physical-space error bound in the final theorem. At zero phase and time shift,
-this is exactly the original `IsCloseToFront` hypothesis. The transformed PDE,
-the smoothed nonlinear estimate of Lemma 4.2, and the forcing construction are
-not asserted by these norm identities and remain to be proved.
+this is exactly the original `IsCloseToFront` hypothesis. The transformed PDE
+and forcing construction are not asserted by these norm identities and remain
+to be proved.
+
+The analytic estimate in Lemma 4.2 is now proved for a twice differentiable
+integrable weight with two integrable derivatives. `LongitudinalPairing`
+constructs the real adjoint pairing as a bounded map from joint spatial BUC
+to transverse BUC and proves one and two integrations by parts on the whole
+line. Integrability supplies the vanishing boundary terms; the perturbation
+itself need not be integrable or decay at either end. `LongitudinalPairingDerivative`
+justifies differentiation under the pairing by an integrable majorant and
+constructs its transverse BUC derivative. Differentiating the first integration
+by parts proves the mixed-term identity without assuming a mixed-derivative
+interchange.
+
+`HeatDivergenceSmoothing` proves that heat averaging of an actual divergence is
+bounded by the undifferentiated vector-field norm times `dim(Y)/sqrt(2*b*t)`.
+It also proves the scalar-vector product rule and identifies divergence of an
+actual phase gradient with the challenge's Laplacian. `ProjectedNonlinearity`
+then proves the exact six-term identity displayed in the paper and the uniform
+bound `C*‖v‖*(‖v‖+‖Δσ‖+‖∇σ‖+‖∇σ‖²+‖g‖)`, choosing the constant before all
+perturbation, phase, and forcing fields. No derivative norm of `v` remains.
+
+`FrontProjectedNonlinearity` specializes that estimate to the actual front,
+the original `d_perp`, heat time `1/8`, and genuine first and second spatial
+derivative fields. Its remaining extra prerequisite is explicit: the supplied
+integrable adjoint must have an almost-everywhere equal representative with
+two integrable derivatives. This regularity has not yet been derived from
+the spectral assumptions. The pairing is proved invariant under replacing
+the weight almost everywhere; pointwise smoothness of an arbitrary measurable
+representative is neither required nor asserted. Thus Lemma 4.2 is not yet
+unconditionally discharged from the original challenge hypotheses.
+
+The weak adjoint equation and its classical regularizations are now derived
+from the original spectral assumptions. `FrontAdjointEquation` embeds real BUC
+test jets in the actual complex longitudinal domain, uses Fredholm solvability
+to show that the real adjoint annihilates that operator, and obtains
+`D ψ'' - c ψ' + f'(φ)* ψ = 0` in the weak sense. No pointwise derivative of the
+supplied measurable adjoint is assumed. The adjoint reaction term is proved
+integrable using the actual bounded front coefficient.
+
+`BUCCompactSupport`, `L1Smoothing`, and `L1Mollification` construct normalized
+smooth compactly supported kernels, prove differentiation under convolution,
+and obtain smooth BUC approximations with two integrable derivatives. The
+approximations converge to the original integrable data almost everywhere by
+Lebesgue differentiation, and their L1 masses are uniformly bounded by the
+original L1 mass. `FrontAdjointRegularization` applies this construction to the
+original adjoint and its reaction term. It proves the exact classical equation
+for each approximation, retaining the variable coefficient inside its
+convolution, and uniform L1 bounds on both the adjoint and the reaction source.
+Uniform derivative bounds and passage to a twice differentiable representative
+are still missing; smoothness of the approximations alone does not supply them.
 
 ## Milestones still needed for the challenge theorem
 
@@ -621,8 +680,11 @@ nonlinear stages:
 * Extend the proved principal spatial derivative bounds and full linearized
   analytic generation to the high spatial derivative and tame smoothing estimates
   needed by the nonlinear Duhamel argument.
-* Prove the smoothed nonlinear estimate of Lemma 4.2, including the adjoint
-  integration-by-parts and heat-divergence bounds; Lemma 4.1 is already proved.
+* Construct an almost-everywhere equal adjoint representative with two integrable
+  derivatives from the proved weak ODE and classical regularizations, including
+  the required estimates uniform in the regularization index. This is the remaining prerequisite
+  for the proved integration-by-parts, heat-divergence, and smoothed nonlinear
+  estimate to discharge Lemma 4.2 for the challenge. Lemma 4.1 is already proved.
 * Construct local classical reaction--diffusion solutions from BUC perturbations, together with
   a continuation criterion; derive the exact inverse-modulation and phase-forcing equations.
 * Close the nonlinear bootstrap using those linear estimates and Cole--Hopf bounds, keeping the

@@ -64,6 +64,33 @@ theorem norm_longitudinalSecondDerivativeField_le
   (norm_longitudinalDerivativeField_le _).trans
     (norm_longitudinalDerivativeField_le (F := (Y × ℝ) →L[ℝ] F) h)
 
+/-- Restrict a spatial derivative to the transverse directions. -/
+def transverseDerivativeField (g : BUC (Y × ℝ) ((Y × ℝ) →L[ℝ] F)) :
+    BUC (Y × ℝ) (Y →L[ℝ] F) :=
+  postcompCLM (𝕜 := ℝ) (E := (Y × ℝ) →L[ℝ] F) (F := Y →L[ℝ] F)
+    (ContinuousLinearMap.precomp F (ContinuousLinearMap.inl ℝ Y ℝ)) g
+
+@[simp]
+theorem transverseDerivativeField_apply (g : BUC (Y × ℝ) ((Y × ℝ) →L[ℝ] F))
+    (x : Y × ℝ) (y : Y) : transverseDerivativeField g x y = g x (y, 0) := rfl
+
+theorem norm_transverseDerivativeField_le (g : BUC (Y × ℝ) ((Y × ℝ) →L[ℝ] F)) :
+    ‖transverseDerivativeField g‖ ≤ ‖g‖ := by
+  apply (BUC.norm_le (norm_nonneg g)).mpr
+  intro x
+  apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg g)
+  intro y
+  calc
+    ‖g x (y, 0)‖ ≤ ‖g x‖ * ‖(y, (0 : ℝ))‖ := (g x).le_opNorm _
+    _ ≤ ‖g‖ * ‖y‖ := by simpa using mul_le_mul_of_nonneg_right (g.norm_apply_le x) (norm_nonneg y)
+
+/-- The extracted transverse field is the actual derivative on a transverse slice. -/
+theorem hasFDerivAt_transverseDerivativeField (v : BUC (Y × ℝ) F)
+    (g : BUC (Y × ℝ) ((Y × ℝ) →L[ℝ] F))
+    (hg : ∀ x, HasFDerivAt v (g x) x) (y : Y) (z : ℝ) :
+    HasFDerivAt (fun w ↦ v (w, z)) (transverseDerivativeField g (y, z)) y :=
+  (hg (y, z)).comp y ((hasFDerivAt_id y).prodMk (hasFDerivAt_const z y))
+
 /-- The transverse derivative of the longitudinal derivative. -/
 def mixedDerivativeField
     (h : BUC (Y × ℝ) ((Y × ℝ) →L[ℝ] (Y × ℝ) →L[ℝ] F)) : BUC (Y × ℝ) (Y →L[ℝ] F) :=
