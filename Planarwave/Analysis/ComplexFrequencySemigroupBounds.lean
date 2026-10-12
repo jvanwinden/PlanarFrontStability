@@ -17,8 +17,8 @@ calculation is based on the exact identity
 
 `Re λ₀(ξ₀ + i ξ₁) = ‖ξ₀‖² - ‖ξ₁‖²`.
 
-The operator-semigroup part of Lemma 2.2 requires the sectorial generation and bounded
-perturbation theory developed in the remainder of this stage.
+`FrontAllFrequencySemigroup` completes the operator-semigroup part of Lemma 2.2 by applying
+the bounded-perturbation theorem twice and using the contour-shift estimates proved here.
 -/
 
 open scoped BigOperators ComplexConjugate InnerProductSpace
