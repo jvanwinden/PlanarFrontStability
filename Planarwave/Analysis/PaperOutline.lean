@@ -8,6 +8,9 @@ module
 public import Planarwave.Analysis.BUC
 public import Planarwave.Analysis.BUC2
 public import Planarwave.Analysis.BUCBilinear
+public import Planarwave.Analysis.BUCFDerivCoordinates
+public import Planarwave.Analysis.BUCNonlinear
+public import Planarwave.Analysis.BUCPartialDerivatives
 public import Planarwave.Analysis.BUCOperatorConvolution
 public import Planarwave.Analysis.BUCConvolutionComposition
 public import Planarwave.Analysis.BUCVolterraUniqueness
@@ -32,6 +35,7 @@ public import Planarwave.Analysis.ConcreteFredholm
 public import Planarwave.Analysis.ConvectiveHeatSemigroup
 public import Planarwave.Analysis.ConvectiveHeatGeneratorMultidimensional
 public import Planarwave.Analysis.ConvectiveHeatSmoothing
+public import Planarwave.Analysis.ConvectiveHeatSmoothingMultidimensional
 public import Planarwave.Analysis.CoordinateGaussian
 public import Planarwave.Analysis.DiagonalDiffusionSemigroup
 public import Planarwave.Analysis.DiagonalHeatFourier
@@ -42,6 +46,7 @@ public import Planarwave.Analysis.DiffusionSmoothing
 public import Planarwave.Analysis.DiffusionAnalytic
 public import Planarwave.Analysis.FredholmProjection
 public import Planarwave.Analysis.FrontCoefficient
+public import Planarwave.Analysis.FrontNonlinearity
 public import Planarwave.Analysis.FrontEigenvalueBranch
 public import Planarwave.Analysis.FrontLinearizedMild
 public import Planarwave.Analysis.FrontLinearizedSemigroup
@@ -66,6 +71,7 @@ public import Planarwave.Analysis.FrontBoundedDuhamel
 public import Planarwave.Analysis.FrontFourierInitial
 public import Planarwave.Analysis.FrontFourierIdentification
 public import Planarwave.Analysis.FrontSpatialDecay
+public import Planarwave.Analysis.FrontSpatialAnalytic
 public import Planarwave.Analysis.FrontSpatialSemigroup
 public import Planarwave.Analysis.FrontSpatialGenerator
 public import Planarwave.Analysis.FrontSpatialTranslation
@@ -145,6 +151,9 @@ public import Planarwave.Analysis.SimpleEigenvaluePerturbation
 public import Planarwave.Analysis.SimpleSpectralProjection
 public import Planarwave.Analysis.SimpleSpectralRestriction
 public import Planarwave.Analysis.SpatialDiffusionSemigroup
+public import Planarwave.Analysis.SpatialDiffusionSmoothing
+public import Planarwave.Analysis.InverseModulationCoordinates
+public import Planarwave.Analysis.InverseModulationNonlinearity
 public import Planarwave.Analysis.SpatialDiffusionFourier
 public import Planarwave.Analysis.SpatialHeatFourier
 public import Planarwave.Analysis.SpectralTaylorEstimate
@@ -447,6 +456,20 @@ eigenvector coordinate by full-dimensional convective heat flow and conjugates b
 the actual diffusion matrix. It proves a uniform norm bound and the generator action on
 twice BUC differentiable coordinate data.
 
+The corresponding quantitative spatial smoothing is now proved as well.
+`ConvectiveHeatSmoothingMultidimensional` differentiates successive half-time
+Gaussian evolutions to produce BUC first and second Fréchet derivatives with
+the bounds `‖v‖ / sqrt (2*a*t)` and `‖v‖ / (a*t)`. The same bounds hold after
+translation. Trace contraction gives the full-dimensional short-time scalar
+generator estimate, uniformly over diffusion rates bounded below by a positive
+constant. `BUCFDerivCoordinates` transports these derivative fields through a
+finite linear change of coordinates, preserving their quantitative bounds.
+`SpatialDiffusionSmoothing` applies this to the actual diffusion eigenbasis:
+the first two derivatives in the original state coordinates have the expected
+Gaussian bounds, and the positive-time principal orbit is spatially smooth to
+every order. It proves the principal generator's `C/t` operator bound and
+identifies the actual operator-valued time derivative with `D Δ + b · ∇`.
+
 `FrontSpatialSemigroup` adds the actual multiplication operator `f'(φ(horizontal x))` by
 bounded perturbation. It proves the spatial Duhamel identity, the full generator-domain
 perturbation identity, and exponential and short-time uniform norm bounds. The drift and
@@ -458,6 +481,16 @@ dense in spatial BUC. This is supremum-norm density, not yet a graph-norm core t
 bounded perturbations; `FrontSpatialTranslation` applies it to prove that the constructed
 full spatial semigroup commutes with every transverse translation. No Fourier representation
 or decay estimate for this semigroup is assumed in these constructions.
+
+`FrontSpatialAnalytic` upgrades the full-dimensional principal generator bound
+to a holomorphic time sector, with the complex semigroup law and strong initial
+limit, and then applies the proved bounded-perturbation theorem to the actual
+reaction coefficient. Consequently the actual spatial front evolution is
+analytic, and hence smooth, in positive real time in operator norm. The Cauchy
+estimate in `SemigroupAnalyticSmoothing` proves `‖A S(t)‖ ≤ C/t` for the full
+spatial linearized generator at short times. These time-generator bounds do not
+by themselves assert high spatial derivative estimates for the reaction-perturbed
+evolution or the nonlinear solution; those regularity steps still need proofs.
 
 The Gaussian part of the Fourier representation is now identified exactly.
 `GaussianHeatKernel` computes the inverse Fourier Gaussian with the paper's
@@ -552,6 +585,30 @@ including time zero, in the spatial supremum norm expressed via isometric
 slices. It also proves the first iterated Fourier representation for the actual
 spatial semigroup and its uniform operator-norm bound for all nonnegative times.
 
+The first nonlinear estimate, Lemma 4.1, is now proved.
+`BUCNonlinear` constructs continuous nonlinear composition on BUC by compactness
+of the value range. It bounds the second reaction derivative on a compact ball,
+then applies the mean value estimate to the first derivative and the Taylor
+remainder to prove a uniform quadratic bound on every fixed perturbation ball.
+`InverseModulationNonlinearity` constructs the exact five-term expression in
+`eq:defN`, preserving the mixed-term and forcing signs, and estimates all terms
+in the spatial supremum norm. `BUCPartialDerivatives` extracts the longitudinal
+first and second derivatives and the transverse-longitudinal mixed derivative
+from genuine BUC Frechet derivative fields, with the required norm bounds.
+`FrontNonlinearity` specializes the result to the original reaction, diffusion,
+front profile, and `d_perp`, using the end-state hypotheses for profile boundedness.
+It identifies the bundled nonlinearity with the classical derivative expression
+and proves the paper's quadratic-plus-`C²` estimate uniformly over the fixed-size
+perturbation ball. No extra Taylor or coefficient bounds are assumed.
+
+`InverseModulationCoordinates` proves that the spatial modulation shear preserves
+BUC and its exact supremum norm. `FrontNonlinearity` uses the challenge's own
+coordinate maps to equate the inverse-modulated norm bound with the forward
+physical-space error bound in the final theorem. At zero phase and time shift,
+this is exactly the original `IsCloseToFront` hypothesis. The transformed PDE,
+the smoothed nonlinear estimate of Lemma 4.2, and the forcing construction are
+not asserted by these norm identities and remain to be proved.
+
 ## Milestones still needed for the challenge theorem
 
 The phase construction is an independent prerequisite for the final comparison. Completing it
@@ -561,8 +618,11 @@ The spatial Fourier identification and the all-time semigroup decomposition
 estimate are proved as well. The next main-line targets are the smoothing and
 nonlinear stages:
 
-* Establish the spatial derivative and tame smoothing estimates needed by the
-  nonlinear Duhamel argument, using the proved semigroup decomposition and heat bounds.
+* Extend the proved principal spatial derivative bounds and full linearized
+  analytic generation to the high spatial derivative and tame smoothing estimates
+  needed by the nonlinear Duhamel argument.
+* Prove the smoothed nonlinear estimate of Lemma 4.2, including the adjoint
+  integration-by-parts and heat-divergence bounds; Lemma 4.1 is already proved.
 * Construct local classical reaction--diffusion solutions from BUC perturbations, together with
   a continuation criterion; derive the exact inverse-modulation and phase-forcing equations.
 * Close the nonlinear bootstrap using those linear estimates and Cole--Hopf bounds, keeping the
