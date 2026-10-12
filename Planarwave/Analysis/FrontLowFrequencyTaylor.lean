@@ -14,7 +14,7 @@ import Planarwave.Analysis.SpectralTaylorEstimate
 This proves the second estimate in Lemma 2.3. We use the exact critical semigroup identity,
 the fourth-order eigenvalue and second-order projection expansions, and the paper's absorption
 of the polynomial prefactor into a weaker Gaussian. The complementary spectral-subspace
-estimate is separate and still requires the analytic-semigroup spectral bound theorem.
+estimate is proved separately and combined with this result in `FrontLowFrequencySemigroup`.
 -/
 
 open Filter Set Topology
