@@ -18,7 +18,8 @@ Specialize Lemma 4.1 to the challenge's reaction, profile, and transverse
 diffusion coefficient. All boundedness and Taylor constants follow from the
 original smoothness and end-state hypotheses. The derivative fields used in
 the formula are extracted from the full first and second spatial derivatives.
-The inverse-modulated PDE itself is a separate obligation.
+The inverse-modulated PDE for classical solutions is derived in
+`FrontModulationPDE`, with this exact bundled remainder.
 -/
 
 open scoped Gradient Laplacian ContDiff

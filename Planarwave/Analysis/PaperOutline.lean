@@ -6,9 +6,17 @@ Authors: Joris van Winden, OpenAI
 module
 
 public import Planarwave.Analysis.BUC
+public import Planarwave.Analysis.BoundedSmoothDerivatives
+public import Planarwave.Analysis.BUCSpatialRegularity
+public import Planarwave.Analysis.BUCSpatialBounds
+public import Planarwave.Analysis.BUCSpatialComposition
+public import Planarwave.Analysis.BUCAutonomousODEBounds
 public import Planarwave.Analysis.BUCCompactSupport
 public import Planarwave.Analysis.BUC2
 public import Planarwave.Analysis.BUCBilinear
+public import Planarwave.Analysis.BUCFirstJet
+public import Planarwave.Analysis.ScalarFirstJet
+public import Planarwave.Analysis.VectorFirstJet
 public import Planarwave.Analysis.BUCFDerivCoordinates
 public import Planarwave.Analysis.BUCNonlinear
 public import Planarwave.Analysis.BUCPartialDerivatives
@@ -17,14 +25,53 @@ public import Planarwave.Analysis.BUCConvolutionComposition
 public import Planarwave.Analysis.BUCVolterraUniqueness
 public import Planarwave.Analysis.BUCSlices
 public import Planarwave.Analysis.ChallengeBridge
+public import Planarwave.Analysis.ClassicalODELimit
 public import Planarwave.Analysis.ClosedOperator
 public import Planarwave.Analysis.ClosedOperatorFromResolvent
 public import Planarwave.Analysis.ClosedOperatorResolvent
 public import Planarwave.Analysis.ClosedOperatorRestriction
 public import Planarwave.Analysis.ColeHopf
 public import Planarwave.Analysis.ColeHopfEvolution
+public import Planarwave.Analysis.ColeHopfInverseDerivative
+public import Planarwave.Analysis.ColeHopfInverseSecondDerivative
+public import Planarwave.Analysis.ColeHopfInverseHigherBounds
+public import Planarwave.Analysis.ColeHopfInverseHigherRegularity
 public import Planarwave.Analysis.ColeHopfLaplacian
 public import Planarwave.Analysis.ColeHopfPDE
+public import Planarwave.Analysis.IntegralGronwall
+public import Planarwave.Analysis.IntegrableDecayGronwall
+public import Planarwave.Analysis.IntegrablePolynomialConvolution
+public import Planarwave.Analysis.LogarithmicDecayWeights
+public import Planarwave.Analysis.DerivativeInterpolation
+public import Planarwave.Analysis.NinthDerivativeInterpolation
+public import Planarwave.Analysis.TrackingInterpolation
+public import Planarwave.Analysis.SpatialTrackingInterpolation
+public import Planarwave.Analysis.NonlinearBootstrapPowers
+public import Planarwave.Analysis.IntegrableLogarithmicDecay
+public import Planarwave.Analysis.ImprovedColeHopfSource
+public import Planarwave.Analysis.ForcedColeHopfBounds
+public import Planarwave.Analysis.ForcedColeHopfPhase
+public import Planarwave.Analysis.ForcedColeHopfComparison
+public import Planarwave.Analysis.ForcedColeHopfExistence
+public import Planarwave.Analysis.ForcedColeHopfRegularity
+public import Planarwave.Analysis.ForcedColeHopfFirstDerivativeBounds
+public import Planarwave.Analysis.ForcedColeHopfSecondRegularity
+public import Planarwave.Analysis.ForcedColeHopfSecondDerivativeBounds
+public import Planarwave.Analysis.ForcedColeHopfDerivativeDecay
+public import Planarwave.Analysis.ForcedColeHopfClassical
+public import Planarwave.Analysis.ForcedPhaseClassical
+public import Planarwave.Analysis.ForcedPhaseFirstDerivativeBounds
+public import Planarwave.Analysis.ForcedPhaseSecondDerivativeBounds
+public import Planarwave.Analysis.ForcedPhaseDerivativeDecay
+public import Planarwave.Analysis.ForcedPhaseComparison
+public import Planarwave.Analysis.HeatDuhamel
+public import Planarwave.Analysis.HeatDuhamelDerivative
+public import Planarwave.Analysis.HeatDerivativeDecay
+public import Planarwave.Analysis.HeatDuhamelTimeRegularity
+public import Planarwave.Analysis.HeatDuhamelBilinearBounds
+public import Planarwave.Analysis.HeatVolterra
+public import Planarwave.Analysis.HeatVolterraInvariant
+public import Planarwave.Analysis.HeatLinearRegularity
 public import Planarwave.Analysis.ComplexBUC2
 public import Planarwave.Analysis.ComplexBUC2Density
 public import Planarwave.Analysis.ComplexFrequencyCriticalSpectrum
@@ -38,6 +85,7 @@ public import Planarwave.Analysis.ConvectiveHeatGeneratorMultidimensional
 public import Planarwave.Analysis.ConvectiveHeatSmoothing
 public import Planarwave.Analysis.ConvectiveHeatSmoothingMultidimensional
 public import Planarwave.Analysis.CoordinateGaussian
+public import Planarwave.Analysis.CoordinateLaplacian
 public import Planarwave.Analysis.DiagonalDiffusionSemigroup
 public import Planarwave.Analysis.DiagonalHeatFourier
 public import Planarwave.Analysis.DiagonalGaussianConvolution
@@ -45,12 +93,55 @@ public import Planarwave.Analysis.DiffusionSemigroup
 public import Planarwave.Analysis.DiffusionGenerator
 public import Planarwave.Analysis.DiffusionSmoothing
 public import Planarwave.Analysis.DiffusionAnalytic
+public import Planarwave.Analysis.DelayedHeatForcing
+public import Planarwave.Analysis.DelayedHeatForcingSmoothing
+public import Planarwave.Analysis.DelayedHeatForcingRegularity
+public import Planarwave.Analysis.DelayedHeatForcingDerivative
+public import Planarwave.Analysis.DelayedHeatForcingFirstDerivativeBounds
+public import Planarwave.Analysis.DelayedHeatForcingSecondDerivative
+public import Planarwave.Analysis.DelayedHeatForcingSecondDerivativeBounds
+public import Planarwave.Analysis.DelayedHeatForcingDecay
+public import Planarwave.Analysis.DelayedHeatForcingHigherDerivativeBounds
+public import Planarwave.Analysis.DelayedHeatForcingHigherRegularity
+public import Planarwave.Analysis.DelayedHeatForcingImprovedDecay
+public import Planarwave.Analysis.DelayedHeatForcingCancellation
+public import Planarwave.Analysis.DelayedPolynomialDecay
+public import Planarwave.Analysis.HeatCriticalResidualDecay
+public import Planarwave.Analysis.TemporalCutoff
+public import Planarwave.Analysis.LinearCutoffJet
+public import Planarwave.Analysis.ScalingVariation
 public import Planarwave.Analysis.FredholmProjection
 public import Planarwave.Analysis.FrontCoefficient
 public import Planarwave.Analysis.FrontAdjointEquation
 public import Planarwave.Analysis.FrontAdjointRegularization
+public import Planarwave.Analysis.FrontAdjointEstimates
+public import Planarwave.Analysis.FrontAdjointRegularity
 public import Planarwave.Analysis.FrontNonlinearity
+public import Planarwave.Analysis.FrontInterpolatedNonlinearity
+public import Planarwave.Analysis.FrontModulationPDE
+public import Planarwave.Analysis.ModulationHigherBounds
+public import Planarwave.Analysis.FrontProfileHigherBounds
+public import Planarwave.Analysis.FrontModulationHigherBounds
+public import Planarwave.Analysis.FrontRealProfileDerivatives
+public import Planarwave.Analysis.FrontModulationSource
+public import Planarwave.Analysis.FrontNonlinearDispersion
+public import Planarwave.Analysis.FrontModulationProjection
+public import Planarwave.Analysis.ModulationSourceDecay
+public import Planarwave.Analysis.RealSpatialEmbedding
 public import Planarwave.Analysis.FrontProjectedNonlinearity
+public import Planarwave.Analysis.FrontSmoothedNonlinearityDecay
+public import Planarwave.Analysis.FrontImprovedForcingDecay
+public import Planarwave.Analysis.FrontPhaseComparison
+public import Planarwave.Analysis.FrontVHJComparison
+public import Planarwave.Analysis.FrontDelayedForcing
+public import Planarwave.Analysis.FrontForcedPhase
+public import Planarwave.Analysis.FrontForcedPhaseFirstDerivativeBounds
+public import Planarwave.Analysis.FrontForcedPhaseSecondDerivativeBounds
+public import Planarwave.Analysis.FrontForcedPhaseDerivativeDecay
+public import Planarwave.Analysis.FrontTrackingDecay
+public import Planarwave.Analysis.FrontForcingHigherDerivativeBounds
+public import Planarwave.Analysis.FrontForcedColeHopfHigherBounds
+public import Planarwave.Analysis.FrontForcedPhaseHigherBounds
 public import Planarwave.Analysis.FrontEigenvalueBranch
 public import Planarwave.Analysis.FrontLinearizedMild
 public import Planarwave.Analysis.FrontLinearizedSemigroup
@@ -75,6 +166,13 @@ public import Planarwave.Analysis.FrontBoundedDuhamel
 public import Planarwave.Analysis.FrontFourierInitial
 public import Planarwave.Analysis.FrontFourierIdentification
 public import Planarwave.Analysis.FrontSpatialDecay
+public import Planarwave.Analysis.FrontSpatialRemainderDuhamelDecay
+public import Planarwave.Analysis.FrontTrackingRemainderDecay
+public import Planarwave.Analysis.FrontPhaseRemainderEstimate
+public import Planarwave.Analysis.FrontTrackingCriticalDecomposition
+public import Planarwave.Analysis.FrontPhaseTrackingEstimate
+public import Planarwave.Analysis.FrontPhaseHigherTrackingEstimate
+public import Planarwave.Analysis.LogarithmicConvolution
 public import Planarwave.Analysis.FrontSpatialAnalytic
 public import Planarwave.Analysis.FrontSpatialSemigroup
 public import Planarwave.Analysis.FrontSpatialGenerator
@@ -104,6 +202,11 @@ public import Planarwave.Analysis.HeatEquationOneDimensional
 public import Planarwave.Analysis.HeatSmoothing
 public import Planarwave.Analysis.HeatSmoothingMultidimensional
 public import Planarwave.Analysis.HeatSmoothMultidimensional
+public import Planarwave.Analysis.HeatHigherDerivativeBounds
+public import Planarwave.Analysis.HeatHigherRegularity
+public import Planarwave.Analysis.HeatHigherDuhamelBounds
+public import Planarwave.Analysis.ForcedColeHopfHigherRegularity
+public import Planarwave.Analysis.ForcedColeHopfHigherBounds
 public import Planarwave.Analysis.HeatEquationMultidimensional
 public import Planarwave.Analysis.HeatJointSmoothMultidimensional
 public import Planarwave.Analysis.HolomorphicTimeExtension
@@ -112,6 +215,10 @@ public import Planarwave.Analysis.HorizontalContourShift
 public import Planarwave.Analysis.LongitudinalOperator
 public import Planarwave.Analysis.L1Smoothing
 public import Planarwave.Analysis.L1Mollification
+public import Planarwave.Analysis.L1DerivativeInterpolation
+public import Planarwave.Analysis.L1DerivativeBoundedness
+public import Planarwave.Analysis.L1EllipticEstimate
+public import Planarwave.Analysis.LipschitzAELimit
 public import Planarwave.Analysis.LongitudinalPairing
 public import Planarwave.Analysis.LongitudinalPairingDerivative
 public import Planarwave.Analysis.LongitudinalClosedness
@@ -164,6 +271,9 @@ public import Planarwave.Analysis.SpatialDiffusionSemigroup
 public import Planarwave.Analysis.SpatialDiffusionSmoothing
 public import Planarwave.Analysis.InverseModulationCoordinates
 public import Planarwave.Analysis.InverseModulationNonlinearity
+public import Planarwave.Analysis.InverseModulationPDE
+public import Planarwave.Analysis.ModulationChainRule
+public import Planarwave.Analysis.ModulationProfileDerivatives
 public import Planarwave.Analysis.SpatialDiffusionFourier
 public import Planarwave.Analysis.SpatialHeatFourier
 public import Planarwave.Analysis.SpectralTaylorEstimate
@@ -595,6 +705,61 @@ including time zero, in the spatial supremum norm expressed via isometric
 slices. It also proves the first iterated Fourier representation for the actual
 spatial semigroup and its uniform operator-norm bound for all nonnegative times.
 
+`LogarithmicConvolution` proves the borderline `α = γ = 1` time convolution
+from `lem:convolution`, including its exact value
+`2*log(1+t)/(2+t)` and the bound `2*log(2+t)/(1+t)`.
+`FrontSpatialRemainderDuhamelDecay` applies it to the actual spatial semigroup
+remainder, with the initial term included. A source bounded by `M/(1+t)`
+gives the Step 3a bound `C*M*log(2+t)/(1+t)`. The module also identifies this
+remainder in the full spatial Duhamel decomposition by strong continuity and
+interchange of the bounded slice map with the time integral.
+
+The source estimate needed here is now proved for the actual tracking source.
+`FrontRealProfileDerivatives` recovers real BUC representatives of `φ'` and
+`φ''` from the canonical translation-mode jet. `ModulationSourceDecay`
+bundles the four terms of `eq:defNtilde`, proves continuity on continuous
+paths, and bounds them separately by the triangle inequality. Squaring the
+half-power gradient estimate gives full-power decay, and `M ≤ 1` absorbs
+the extra amplitude. `FrontModulationSource` specializes the profiles to
+`d_perp φ' - Dφ'`, `Dφ'' + (c/2)φ'`, and `φ'`. It proves the exact pointwise
+formula and `eq:Ntildeest`, deriving the delayed forcing bound internally.
+`RealSpatialEmbedding` transports real split-coordinate BUC data to the
+complex spatial-semigroup space and proves exact preservation of its norm.
+`FrontTrackingRemainderDecay` then proves `eq:west` for this source, including
+the initial term and time zero, without assuming a separate full-source bound.
+It also specializes the exact spatial Duhamel decomposition to these paths.
+`FrontPhaseRemainderEstimate` constructs the classical phase and obtains its
+weighted derivatives, the full source bound, and the logarithmic remainder
+bound together, starting only from the supplied `5/4` nonlinear source bound
+and small initial data. This joins the low-order part of Step 1 to Step 3a
+for the same phase.
+
+The critical contribution is now identified and estimated as well.
+`FrontNonlinearDispersion` proves Lemma `lem:ndispersion` from the original
+hypotheses: the parameter derivative of `φ(z/α)` is `-z φ'(z)`, and its
+actual longitudinal equation has right side `-2 Dφ'' - cφ'`.
+`LinearCutoffJet` and `ScalingVariation` justify pairing this variation
+with the integrable adjoint using expanding smooth cutoffs and dominated
+convergence. Normalization then gives `⟨ψ,Dφ''⟩ = -c/2` without any extra
+localization assumptions. `FrontModulationProjection` applies this identity
+and the definition of `d_perp` to prove the exact cancellation
+`⟨ψ,Ntilde⟩ = ⟨ψ,N⟩ - g`. Its critical Duhamel amplitude equals the previously
+estimated cancelled residual, so it inherits the `5/4` decay of `N`.
+`FrontTrackingCriticalDecomposition` identifies the complex rank-one heat
+evolution on real data with that real amplitude times the translation mode.
+Commuting the fixed profile map with the time integral gives the exact
+`ζ φ' + w` decomposition for the actual spatial-semigroup Duhamel solution.
+Combining the two estimates proves `eq:vkeyest` in the spatial supremum
+norm. `FrontPhaseTrackingEstimate` joins this with the constructed classical
+phase, with constants and smallness chosen before the paths and horizon.
+`FrontPhaseHigherTrackingEstimate` now retains the full uniform C⁹ phase
+bound, all time-continuous spatial BUC derivative paths, and the Cole--Hopf
+identity together with this same logarithmic spatial response estimate.
+Only continuous `N` and its `5/4` decay bound are supplied; the phase bounds
+and the full-source bound are proved. Constructing and closing the coupled
+nonlinear tracking system, proving the required higher parabolic regularity,
+and applying the final comparison to the resulting global solution remain.
+
 The first nonlinear estimate, Lemma 4.1, is now proved.
 `BUCNonlinear` constructs continuous nonlinear composition on BUC by compactness
 of the value range. It bounds the second reaction derivative on a compact ball,
@@ -611,16 +776,395 @@ It identifies the bundled nonlinearity with the classical derivative expression
 and proves the paper's quadratic-plus-`C²` estimate uniformly over the fixed-size
 perturbation ball. No extra Taylor or coefficient bounds are assumed.
 
+The interpolation in Step 4 is now proved. `DerivativeInterpolation` obtains
+the adjustable-scale adjacent-order estimate for actual Fréchet derivatives
+by the mean value theorem; isometric currying avoids a dimension-dependent
+norm loss. `NinthDerivativeInterpolation` eliminates orders one through
+eight and optimizes the scale, giving the `7/9` exponent for the C² norm
+from a small supremum norm and a bounded ninth derivative. It also treats
+zero initial amplitude, without dividing by that amplitude.
+
+`TrackingInterpolation` uses the gap `7/9 - 3/4 = 1/36` to absorb the
+logarithm and proves `eq:vestC2`, in the actual BUC two-jet norm used by
+Lemma 4.1, wherever the uniform C⁹ bound is available. The constants and
+smallness threshold precede the datum and time. `NonlinearBootstrapPowers`
+then carries out Step 5's power counting. `FrontInterpolatedNonlinearity`
+substitutes these estimates into the original front nonlinearity and
+obtains `C*M^(7/4)*(1+t)^(-5/4)`, with no small first- or second-derivative
+bound assumed. The uniform C⁹ bound still needs to be derived from the
+parabolic PDE away from time zero. The initial-time cutoff argument and
+continuity closure of the bootstrap are not supplied by this interpolation
+result, so a global source estimate is not yet asserted.
+
+The higher-regularity transfer in Step 4 is now proved as well.
+`BUCSpatialComposition` proves quantitative repeated chain rules for
+uniformly continuous coordinate changes with genuine bounded derivative
+fields, without requiring the coordinate map itself to be bounded.
+`ModulationHigherBounds` applies this to the actual shear, whose derivative
+is `I + (0, Dσ ∘ fst)`. The constants are independent of the translation
+`c*t`. Its cutoff version transfers the bound on `χ • u` even when `χ = 0`,
+without imposing smoothness on the uncut initial datum.
+
+`BUCAutonomousODEBounds` proves all-order BUC derivative bounds for smooth
+observables of a bounded autonomous ODE trajectory. `FrontProfileHigherBounds`
+applies it to `(φ, φ')`, using the actual traveling-wave ODE, invertibility
+of the original diffusion, and the already proved BUC translation mode.
+Thus the fixed profile's C⁹ bound is derived from the original hypotheses,
+not assumed when subtracting it in the modulation transfer.
+
+`FrontModulationHigherBounds` combines this profile estimate with the phase
+bound derived from the source bootstrap. Its constants and smallness
+threshold precede all paths, data, and the time horizon. It obtains the
+cut off perturbation's uniform C⁹ bound from the corresponding bound on
+the reaction--diffusion slice alone. `SpatialTrackingInterpolation` then
+constructs the genuine BUC first and second derivatives and obtains
+`C*M^(3/4)*(1+t)^(-3/4)` for the actual cut off perturbation. The remaining
+high-order input is the parabolic estimate for `χ • u`; it is not claimed
+by these transfer and interpolation results. The logarithmic tracking bound
+and the supplied nonlinear source must still be identified with the coupled
+reaction--diffusion construction.
+
 `InverseModulationCoordinates` proves that the spatial modulation shear preserves
 BUC and its exact supremum norm. `FrontNonlinearity` uses the challenge's own
 coordinate maps to equate the inverse-modulated norm bound with the forward
 physical-space error bound in the final theorem. At zero phase and time shift,
-this is exactly the original `IsCloseToFront` hypothesis. The transformed PDE
-and forcing construction are not asserted by these norm identities and remain
-to be proved.
+this is exactly the original `IsCloseToFront` hypothesis.
 
-The analytic estimate in Lemma 4.2 is now proved for a twice differentiable
-integrable weight with two integrable derivatives. `LongitudinalPairing`
+The transformed PDE calculation in Section 4 is now proved for classical
+fields. `ModulationChainRule` derives the time and second spatial chain rules,
+including the mixed `-2` term, and sums over an orthonormal basis to obtain
+the gradient-square and phase-Laplacian terms. `InverseModulationPDE` derives
+`eq:utildepde` and substitutes the forced phase equation to obtain
+`eq:utildepde2`. Only pointwise joint time-space differentiability is needed
+at the evaluation point; no smoothness at initial time is assumed.
+
+`ModulationProfileDerivatives` proves that subtracting the stationary profile
+contributes only its longitudinal derivatives and no mixed transverse term.
+`FrontModulationPDE` then uses the original front ODE to derive `eq:pdev`, with
+exactly `frontInverseModulationNonlinearity`, the remainder already bounded
+in Lemmas 4.1 and 4.2. `CoordinateLaplacian` proves the Euclidean-to-split
+Laplacian identity by tracing along the actual coordinate basis, and obtains
+the split reaction--diffusion equation from the challenge's `IsRDESolution`
+predicate. Thus `frontInverseModulatedPerturbation_pde_of_solution` starts
+from that predicate, the inverse-modulation Ansatz, and genuine phase and
+perturbation derivative data. These are equation identities, not existence
+results: constructing the coupled classical solution and forced phase with
+the required BUC regularity remains necessary.
+
+The delayed forcing in Section 4.2 is now constructed from a supplied
+nonlinear source. `TemporalCutoff` constructs the smooth nonnegative unit-mass
+cutoff supported in `[1/4,3/4]`. `DelayedHeatForcing` implements `eq:defgnew`
+with the paper's positive-integer indexing, proves that its series is locally
+finite, and reduces each unit time interval to its single active pulse. The
+forcing on `[k,k+1]` depends only on source values in `[0,k]`, and vanishes
+through time `1/4`. `DelayedHeatForcingRegularity` proves BUC-valued time
+continuity and joint space-time smoothness without differentiating the source
+in time: every completed block is a fixed BUC input to a positive-time heat
+pulse. The cutoff removes the singularity at pulse age zero.
+
+`DelayedHeatForcingSmoothing` proves the exact extraction of a heat factor
+of age `1/8` onto the source, including interchange with the block integral.
+`FrontDelayedForcing` specializes the construction to the actual `d_perp`
+and adjoint pairing. It proves the initial and block supremum bounds and
+combines the extraction identity with Lemma 4.2 to bound the nonlinear
+forcing by the derivative-free quantity
+`C * ρ(τ) * sup_r (‖v(r)‖ * (‖v(r)‖ + ‖Δσ(r)‖ + ‖∇σ(r)‖ + ‖∇σ(r)‖² + ‖g(r)‖))`
+on the preceding block, expressed formally using any uniform upper bound.
+The coupled blockwise existence construction is not yet supplied by these
+statements. The higher-derivative forcing estimate is now proved separately:
+`HeatHigherDerivativeBounds` distributes derivatives over positive heat
+intervals, iterating the first Gaussian estimate and commuting derivatives
+through the remaining heat flow. It gives a uniform bound for every
+derivative through any finite order after a fixed positive heat age.
+`BoundedSmoothDerivatives` uses the next derivative's bound to obtain uniform
+continuity, so these are genuine BUC derivative fields.
+
+`DelayedHeatForcingHigherDerivativeBounds` applies these estimates on the
+cutoff support, proves both the direct and `1/8`-smoothed-source block bounds
+at every order, and transfers polynomial time decay to all spatial derivatives.
+`FrontForcingHigherDerivativeBounds` uses the original adjoint projection
+and diffusivity to prove `exists_frontDelayedForcing_cn_decay`. Taking
+order nine and exponent `5/4` gives `eq:gest`, with constants independent
+of the source, horizon, time, and bootstrap size. No source derivative is
+assumed. The transfer to the Cole--Hopf variable is now proved by the
+all-order regularity and Grönwall argument described below. Quantitative
+transfer to the inverse phase is now proved as well; high-order
+reaction--diffusion regularity remains a separate obligation.
+
+`DelayedHeatForcingCancellation` proves the tracking cancellation in
+Step 3b of the nonlinear iteration. Each completed pulse reproduces its
+preceding source block in the heat Duhamel integral. Summing the finitely
+many pulses gives `eq:T3a` and the resulting recent-history formula for the
+critical residual: the initial heat orbit and all older source history
+cancel exactly. The remaining expression has norm at most three times any
+uniform bound on the source over its last two blocks.
+`DelayedPolynomialDecay` compares the current decay weight with the weight
+on those recent blocks. `HeatCriticalResidualDecay` then proves that a source
+bound `M*(1+t)^(-γ)` gives the critical-residual bound
+`3*3^γ*M*(1+t)^(-γ)` for every `γ ≥ 0`, including the paper's `5/4`.
+The initial interval is handled separately using the remaining cutoff mass.
+`FrontTrackingDecay` transfers this to the actual front's adjoint projection.
+Identifying the cancelled projected source with the full nonlinear
+perturbation Duhamel decomposition remains part of the nonlinear assembly.
+
+The zero-order a priori argument in Lemma `lem:xiAP` is now proved for
+continuous BUC-valued mild solutions. `IntegralGronwall` proves the
+time-dependent integral Grönwall estimate by an integrating factor.
+`ForcedColeHopfBounds` obtains `‖ξ(t)‖ ≤ B * exp (|β| * B)` from a uniform
+bound `B` on the accumulated forcing norm. Integrating the paper's exact
+weight `(1+t)^(-5/4)` gives mass at most four and hence the explicit bound
+`‖ξ(t)‖ ≤ 4*C*exp(4*|β|*C)*M` for `0 ≤ M ≤ 1`, independently of the final
+time. It also proves uniqueness of continuous mild solutions without any
+smallness assumption, and derives their zero initial value from Duhamel.
+
+The all-order spatial version of this argument is now proved as well.
+`BUCSpatialRegularity` records genuine BUC derivative paths, continuous
+in time, and proves their product rules. `HeatHigherRegularity` iterates
+the closed first-jet argument for scalar-coefficient heat equations. At
+each step, the already proved lower regularity makes the differentiated
+inhomogeneous term legitimate; the next derivative is not assumed.
+`DelayedHeatForcingHigherRegularity` reserves a positive heat interval
+at each derivative and proves this regularity for the actual delayed
+forcing, without any derivative or continuity assumption on its source.
+
+`ForcedColeHopfHigherRegularity` gives every spatial BUC derivative of
+the existing solution, including at time zero, and spatial smoothness
+of the inverse phase on its small admissible range. `BUCSpatialBounds`
+proves the `2^k` product bound and constructs a continuous maximum of
+the genuine derivative norms. `HeatHigherDuhamelBounds` integrates a
+common source majorant without derivative loss. Applying the previously
+proved integrable-decay Grönwall theorem, `ForcedColeHopfHigherBounds`
+obtains the explicit uniform bound
+`‖ξ(t)‖_{C^k,max} ≤ 4*C*exp(4*|β|*2^k*C)*M` for `0 ≤ M ≤ 1`.
+The bound predicate is proved to control the standard iterated Fréchet
+derivatives, not just auxiliary fields.
+
+`FrontForcedColeHopfHigherBounds` specializes to the original front and
+adjoint projection, choosing the constant before the source, data, and
+horizon. It constructs the spatially smooth transformed solution from
+the unprojected source bootstrap and proves `eq:xiestC9` by taking
+`k = 9`.
+
+`ColeHopfInverseHigherBounds` transfers this estimate quantitatively to
+the inverse phase. On the small range, repeated differentiation of
+`S = (1 + β ξ)⁻¹` gives `DS = -β S² Dξ`; the product estimates bound
+all derivatives of `S`. The identity `Dσ = S Dξ` then retains the small
+factor `M`, giving `‖σ(t)‖_{C^k,max} ≤ C*M`. This works for either sign
+of β, including zero. `ColeHopfInverseHigherRegularity` constructs the
+corresponding time-continuous BUC derivative paths.
+
+`FrontForcedPhaseHigherBounds` applies these results to the same classical
+phase as the weighted gradient/Laplacian estimates. Its constants and
+positive smallness threshold precede the horizon, source, and data.
+Taking order nine gives the full `eq:sigmafullest1` estimate. A separate
+theorem supplies the literal sum of the weighted norms, using a continuous
+least common bound on the genuine derivatives through order nine.
+Joint higher space-time regularity, the C⁹ bound for the reaction--diffusion
+solution, and closure of the coupled bootstrap are not yet supplied.
+
+`ForcedColeHopfPhase` chooses the positive constants and smallness threshold
+before the forcing and final time, ensuring `|β|*‖ξ(t)‖ ≤ 1/2`. The inverse
+transform is two-Lipschitz on this range, including `β = 0` and either sign
+of `β`. It gives a continuous BUC-valued phase with norm at most `2*‖ξ(t)‖`,
+and the classical chain-rule calculation recovers the forced viscous
+Hamilton--Jacobi equation whenever the transformed solution is classical.
+
+Existence of the continuous mild solution is now supplied by
+`ForcedColeHopfExistence`. `HeatDuhamel` proves BUC-valued continuity,
+linearity, the Volterra time-factor bound, and the restart formula.
+`HeatVolterra` treats a continuous time-dependent bounded coefficient:
+the iterated operator has norm at most `(‖B‖*T)^n/n!`, so its Neumann
+series converges on every finite horizon. This produces a unique
+continuous solution without any time or coefficient smallness assumption.
+Specializing to the actual multiplication coefficient `-β*g(t)` and
+inhomogeneous source `-g(t)` gives the forced Cole--Hopf mild solution.
+Combined with the Grönwall estimate it constructs the small continuous
+phase with the uniform bound, rather than assuming a solution exists.
+
+Restriction and uniqueness prove horizon consistency and causality under
+equality of the past forcing. The mild solution obeys the exact restarted
+Duhamel equation. For the actual delayed forcing from a supplied source,
+it is zero through time `1/4`. The phase is unique in the class whose
+Cole--Hopf transforms satisfy the mild equation.
+
+The first spatial regularity step is now proved in
+`ForcedColeHopfRegularity`: a continuous BUC first derivative of the
+forcing gives a genuine first derivative of the constructed mild
+solution, continuous in time in the BUC norm and satisfying the
+differentiated Duhamel equation. `BUCFirstJet` proves that genuine
+value/derivative pairs form a closed linear subspace invariant under
+heat flow; `ScalarFirstJet` supplies the bounded product rule.
+`HeatVolterraInvariant` proves that the convergent Volterra series stays
+in this subspace. Uniqueness then identifies the value component with
+the scalar solution already constructed. `HeatDuhamelDerivative` also
+justifies differentiation of a BUC-valued heat Duhamel integral.
+
+This applies to the actual delayed forcing, not just a supplied
+derivative hypothesis: `DelayedHeatForcingDerivative` extracts the
+paper's fixed `1/8` heat factor from each pulse and constructs its BUC
+derivative, with norm bound and continuity through pulse boundaries.
+Local finiteness gives a continuous BUC derivative of the complete
+forcing without requiring spatial derivatives of its nonlinear source.
+`VectorFirstJet` and `HeatLinearRegularity` extend the closed-jet argument
+to vector-valued heat equations with scalar coefficients. Applying this
+to the first derivative's equation proves a genuine second derivative
+in `ForcedColeHopfSecondRegularity`, using only the already proved first
+derivative and two derivatives of the forcing. Both spatial derivative
+fields are continuous in time in the BUC norm.
+
+`DelayedHeatForcingSecondDerivative` constructs the actual delayed
+forcing's second BUC derivative by differentiating its fixed positive-time
+heat datum, again requiring no derivatives of the nonlinear source. It
+also proves the inverse-time second-derivative heat bound and the uniform
+second-derivative pulse bound. Thus every spatial slice of the delayed
+mild solution is `C²`, and its actual Laplacian is a BUC field continuous
+in time. The solution and both derivative fields vanish through time
+`1/4`.
+
+Time regularity and the classical forced heat equation are now proved in
+`ForcedColeHopfClassical`. `HeatDuhamelTimeRegularity` differentiates the
+short-time Duhamel integral using strong heat continuity, obtains the
+right time derivative from the restarted formula and the spatial heat
+generator, and identifies a continuous right derivative with the full
+derivative on the closed time interval. Thus the constructed solution
+has a continuous BUC time-derivative field, satisfies the pointwise PDE
+at interior times, and has the appropriate one-sided derivatives at the
+endpoints. No derivative of the completed nonlinear source is assumed.
+
+`ForcedPhaseClassical` applies the small-range inverse Cole--Hopf
+transform to this actual classical solution. It proves spatial `C²`
+regularity and the forced viscous Hamilton--Jacobi time equation for
+the BUC phase, together with the existing uniform zero-order estimate.
+`FrontForcedPhase` specializes this existence result to the original
+`d_perp`, adjoint-projected delayed forcing, and `β = c/(2*d_perp)`;
+positivity and the coefficient cancellation follow from the original
+hypotheses. Both transformed solution and phase vanish through `1/4`.
+The quantitative first-derivative step is now proved as well.
+`HeatDuhamelBilinearBounds` gives the heat-contractivity/Grönwall estimate
+in a Banach-valued BUC space, keeping the product-rule constant explicit.
+`ForcedColeHopfFirstDerivativeBounds` applies it to the genuine first
+jets with multiplication constant two. A `C¹` forcing bound
+`C*M*(1+t)^(-5/4)` gives
+`max (‖ξ(t)‖) (‖Dξ(t)‖) ≤ 4*C*exp(8*|β|*C)*M`, uniformly in the
+final time for `0 ≤ M ≤ 1`. The bounded derivative is constructed and
+identified with the existing mild solution, not assumed separately.
+
+`ColeHopfInverseDerivative` constructs the BUC inverse derivative
+coefficient `(1+β*ξ)^(-1)`, with norm at most two and a Lipschitz bound
+on the small range. It gives a genuine BUC derivative and gradient of
+the phase, both continuous in time, bounded by twice the norm of `Dξ`.
+`ForcedPhaseFirstDerivativeBounds` combines this with classical phase
+existence and chooses constants and a smallness threshold before the
+horizon and forcing. `FrontForcedPhaseFirstDerivativeBounds` specializes
+the result to the actual front coefficients and adjoint projection.
+
+`DelayedHeatForcingFirstDerivativeBounds` identifies the actual first
+derivative on each active pulse and bounds the whole `C¹` forcing norm
+by the undifferentiated initial datum or completed source block, with
+the fixed `1/8` heat factor. The corresponding actual-front source bound
+also contains no source derivatives.
+
+The quantitative second-order step is now proved.
+`ForcedColeHopfSecondRegularity` exposes both differentiated Duhamel
+equations for the genuine derivatives of the existing solution.
+`ForcedColeHopfSecondDerivativeBounds` bounds their four product-rule
+terms by one common C² majorant. `IntegrableDecayGronwall` then gives
+`max ‖ξ(t)‖ (max ‖Dξ(t)‖ ‖D²ξ(t)‖) ≤ 4*C*exp(16*|β|*C)*M`
+from the corresponding forcing decay, uniformly in the final time for
+`0 ≤ M ≤ 1`. This follows the heat-contractivity and Grönwall argument
+in `lem:xiAP`.
+
+`ColeHopfInverseSecondDerivative` constructs genuine time-continuous
+BUC derivative and Hessian fields for the inverse phase. Their bounds
+are `2*‖Dξ‖` and `2*‖D²ξ‖ + 4*|β|*‖Dξ‖²`; tracing the Hessian gives
+the actual BUC Laplacian with its bound. `ForcedPhaseSecondDerivativeBounds`
+combines these with classical phase existence, choosing uniform constants
+and a smallness threshold before the horizon and nonlinear source.
+`DelayedHeatForcingSecondDerivativeBounds` proves the C² pulse and block
+bounds from undifferentiated data using the fixed `1/8` heat age.
+`FrontForcedPhaseSecondDerivativeBounds` specializes both the block estimate
+and the classical phase construction to the original front and adjoint pairing.
+
+`DelayedHeatForcingDecay` now derives the forcing's C² time-decay bound from
+the undifferentiated source bound, using the initial datum on the first block
+and the completed source on each later block. Its constants are independent
+of the horizon and paths. `FrontTrackingDecay` specializes this to the actual
+front and combines it with the classical C² phase construction. Thus the
+forcing decay is no longer a separate hypothesis in that result: the inputs
+are `‖v₀‖ ≤ M` and `‖N(t)‖ ≤ M*(1+t)^(-5/4)`, as at the start of `lem:key`.
+The source is still supplied, not yet closed with the coupled nonlinear system.
+
+The weighted low-order part of Step 1 is now proved as well.
+`IntegrablePolynomialConvolution` proves the convolution bound with forcing
+exponent `5/4` and slow exponent `0 ≤ α ≤ 5/4`, including the needed
+`α = 1/2` and `α = 1`. `HeatDerivativeDecay` combines short-time
+contractivity on differentiated data with long-time heat smoothing, and
+integrates the resulting nonsingular estimates. The derivatives are identified
+by uniqueness with the actual heat derivatives, not assumed to obey smoothing.
+`ForcedColeHopfDerivativeDecay` applies these estimates to the value and
+first two product-rule derivatives of `g(1+βξ)`. It obtains
+`‖Dξ(t)‖ ≤ C*M*(1+t)^(-1/2)` and `‖D²ξ(t)‖ ≤ C*M*(1+t)^(-1)`
+for the existing mild solution, retaining its uniform C² bound.
+`ForcedPhaseDerivativeDecay` transfers both rates through the inverse
+Cole--Hopf transform, including the quadratic gradient term in its Hessian,
+and constructs a classical phase with time-continuous BUC gradient and
+Laplacian satisfying the same rates. `FrontForcedPhaseDerivativeDecay`
+specializes this to the actual diffusivity and adjoint-projected delayed
+forcing, starting only from `‖v₀‖ ≤ M` and `‖N(t)‖ ≤ M*(1+t)^(-5/4)`.
+Its constants and smallness threshold are chosen before the time horizon
+and source. This supplies the weighted gradient/Laplacian portion of
+`eq:sigmafullest1`; `FrontForcedPhaseHigherBounds` now joins it to the
+C⁹ portion for the same phase. The coupled source bound is still an input.
+
+The improved forcing estimate in Step 5 is now proved at order zero.
+`LogarithmicDecayWeights` performs the power count in Lemma 4.2: the
+tracking bound `K*M*log(2+t)/(1+t)` and the phase/forcing bounds give
+`C*M²*(1+t)^(-3/2)*log(2+t)` for the derivative-free nonlinear expression.
+`FrontSmoothedNonlinearityDecay` applies this to the actual front
+nonlinearity. A continuous smoothed-source path extends the bound to time
+zero, so the initial perturbation need not have spatial derivatives.
+`DelayedHeatForcingImprovedDecay` transfers the smoothed-source bound
+through each completed block, retaining the original initial-data pulse.
+`FrontImprovedForcingDecay` combines these results into the `k = 0` case
+of `eq:gbetterest`, with constants chosen before the horizon and paths.
+It uses the actual delayed forcing inside the nonlinear source and derives
+its preliminary `5/4` bound from the supplied source bootstrap. The inputs
+are the source identity, positive-time derivative witnesses, and the
+low-order phase/tracking bounds; an improved forcing bound is not assumed.
+Higher-order versions of this improved estimate remain to be proved.
+
+For the final phase comparison, `IntegrableLogarithmicDecay` proves that
+the `3/2` logarithmic weight has time mass at most 32 on any nonnegative
+subinterval. `ImprovedColeHopfSource` uses the improved forcing bound and
+the uniform Cole--Hopf bound to prove `eq:gxibestest`, including the initial
+pulse. Heat contractivity gives a uniform quadratic bound for this product's
+Duhamel contribution and for the full transformed source after time one.
+`ForcedColeHopfComparison` now proves the BUC Taylor estimates, the exact
+initial-pulse cancellation at time one, and the restarted comparison
+equation. Together with these integrable source bounds, they give
+`eq:Xfullest`, with a constant independent of the time horizon and datum.
+`ForcedPhaseComparison` inverts this estimate on the small Cole--Hopf range,
+giving `C*(M² + M/(1+t))` for the forced/unforced phase difference. The
+smallness threshold is also chosen before all paths and final times.
+
+`FrontPhaseComparison` specializes the result to the actual diffusivity,
+adjoint projection and delayed forcing, and identifies the unforced initial
+datum with the challenge's prescribed initial phase. `FrontVHJComparison`
+uses the actual bounded profile derivative to transfer phase control to
+physical coordinates. Its conditional final estimate has exactly the
+challenge's weight `C*M*(M + (1+t)⁻¹*log(2+t))` and the already constructed
+classical unforced phase. The hypotheses still include the tracking bound,
+the forced mild equation and the improved forcing estimate. These results
+do not assert that the coupled nonlinear tracking solution exists or that
+the bootstrap and global continuation have been completed.
+
+Spatial regularity and quantitative estimates beyond order two,
+classical uniqueness beyond the proved mild-transform class, and construction
+and closure of the coupled tracking system remain to be proved.
+
+Lemma 4.2 is now proved under the original hypotheses. Its analytic estimate
+is first established for a twice differentiable integrable weight with two
+integrable derivatives. `LongitudinalPairing`
 constructs the real adjoint pairing as a bounded map from joint spatial BUC
 to transverse BUC and proves one and two integrations by parts on the whole
 line. Integrability supplies the vanishing boundary terms; the perturbation
@@ -640,13 +1184,13 @@ perturbation, phase, and forcing fields. No derivative norm of `v` remains.
 
 `FrontProjectedNonlinearity` specializes that estimate to the actual front,
 the original `d_perp`, heat time `1/8`, and genuine first and second spatial
-derivative fields. Its remaining extra prerequisite is explicit: the supplied
-integrable adjoint must have an almost-everywhere equal representative with
-two integrable derivatives. This regularity has not yet been derived from
-the spectral assumptions. The pairing is proved invariant under replacing
-the weight almost everywhere; pointwise smoothness of an arbitrary measurable
-representative is neither required nor asserted. Thus Lemma 4.2 is not yet
-unconditionally discharged from the original challenge hypotheses.
+derivative fields. The adjoint regularity prerequisite is discharged by
+`FrontAdjointRegularity`, which constructs an almost-everywhere equal
+representative with two integrable classical derivatives. The pairing is
+proved invariant under replacing the weight almost everywhere; pointwise
+smoothness of an arbitrary measurable representative is neither required nor
+asserted. The final `exists_frontSmoothedNonlinearity_bound` therefore has no
+extra regularity or decay hypothesis.
 
 The weak adjoint equation and its classical regularizations are now derived
 from the original spectral assumptions. `FrontAdjointEquation` embeds real BUC
@@ -665,8 +1209,25 @@ original L1 mass. `FrontAdjointRegularization` applies this construction to the
 original adjoint and its reaction term. It proves the exact classical equation
 for each approximation, retaining the variable coefficient inside its
 convolution, and uniform L1 bounds on both the adjoint and the reaction source.
-Uniform derivative bounds and passage to a twice differentiable representative
-are still missing; smoothness of the approximations alone does not supply them.
+
+`L1DerivativeInterpolation` integrates the local Taylor estimate over translated
+intervals to prove `‖u'‖₁ ≤ (2/ε)‖u‖₁ + ε‖u''‖₁`. `L1EllipticEstimate` then absorbs
+the drift and bounds both derivatives by the solution and source masses.
+`FrontAdjointEstimates` applies this to the actual regularizations, with bounds
+independent of the smoothing index. `L1DerivativeBoundedness` uses the zero
+limit at infinity and the fundamental theorem of calculus to give supremum
+bounds. `LipschitzAELimit` upgrades almost-everywhere convergence to pointwise
+convergence to a bounded Lipschitz representative.
+
+`ClassicalODELimit` passes from this representative to a classical two-jet:
+compactness supplies a convergent subsequence of first derivatives at zero,
+and the integrated ODE determines convergence at every other point. Bounded
+convergence on finite intervals identifies both derivatives. Fatou transfers
+the uniform L1 bounds to the limiting derivatives. `FrontAdjointRegularity`
+checks the source convergence and all these hypotheses for the actual front,
+proving the adjoint ODE and the integrability needed in the paper's two
+integrations by parts. Exponential localization and higher adjoint smoothness
+are not asserted by these results.
 
 ## Milestones still needed for the challenge theorem
 
@@ -680,17 +1241,23 @@ nonlinear stages:
 * Extend the proved principal spatial derivative bounds and full linearized
   analytic generation to the high spatial derivative and tame smoothing estimates
   needed by the nonlinear Duhamel argument.
-* Construct an almost-everywhere equal adjoint representative with two integrable
-  derivatives from the proved weak ODE and classical regularizations, including
-  the required estimates uniform in the regularization index. This is the remaining prerequisite
-  for the proved integration-by-parts, heat-divergence, and smoothed nonlinear
-  estimate to discharge Lemma 4.2 for the challenge. Lemma 4.1 is already proved.
 * Construct local classical reaction--diffusion solutions from BUC perturbations, together with
-  a continuation criterion; derive the exact inverse-modulation and phase-forcing equations.
+  a continuation criterion. Combine the constructed C² classical forced Cole--Hopf solution
+  with the causal delayed forcing to construct the coupled tracking system, including the
+  uniform higher-derivative perturbation estimates needed for iteration.
+  The forcing's all-order spatial decay and the uniform all-order bounds
+  for both the Cole--Hopf variable and inverse phase, including C⁹, are now
+  proved from the source bootstrap. The full Step 1 phase estimate and
+  logarithmic tracking response hold for the same constructed phase.
+  The profile's all-order bounds and the cutoff modulation transfer in
+  Step 4 are also proved; the high-order bound for the cut off
+  reaction--diffusion solution itself remains to be established.
 * Close the nonlinear bootstrap using those linear estimates and Cole--Hopf bounds, keeping the
   constants uniform over `0 ≤ E_0 ≤ ε`, and use continuation to obtain a global solution.
-* Compare the forced modulation phase to the unforced solution constructed here, obtaining
-  `C * E_0 * (E_0 + (1+t)⁻¹ * log (2+t))`, then assemble the unchanged challenge statement.
+* Apply the proved forced/unforced phase comparison and physical-space error
+  estimate to that global tracking solution, then assemble the unchanged
+  challenge statement. The comparison itself, including the initial-pulse
+  cancellation and exact final error weight, no longer needs to be proved.
 
 Each milestone must be proved from the original hypotheses. No auxiliary regularity or decay
 assumption should be added to `vHJ_approximates_planar_front` to bypass these obligations.

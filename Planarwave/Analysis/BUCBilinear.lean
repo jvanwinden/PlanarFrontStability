@@ -7,6 +7,7 @@ module
 
 public import Planarwave.Analysis.BUC
 public import Mathlib.Analysis.Normed.Operator.Bilinear
+public import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 public import Mathlib.Analysis.Normed.Operator.NormedSpace
 
 @[expose] public section
@@ -134,6 +135,25 @@ def bilinearRightCLM (B : E →L[𝕜] F →L[𝕜] G) (f : BUC A E) :
 @[simp]
 theorem bilinearRightCLM_apply (B : E →L[𝕜] F →L[𝕜] G)
     (f : BUC A E) (g : BUC A F) : bilinearRightCLM B f g = bilinearBUC B f g := rfl
+
+/-- Lift a bounded bilinear map to a bounded bilinear map on BUC spaces. -/
+def bilinearBUCCLM (B : E →L[𝕜] F →L[𝕜] G) :
+    BUC A E →L[𝕜] BUC A F →L[𝕜] BUC A G :=
+  LinearMap.mkContinuous
+    { toFun := bilinearRightCLM B
+      map_add' := fun f g ↦ by ext h x; simp [bilinearRightCLM_apply]
+      map_smul' := fun c f ↦ by ext h x; simp [bilinearRightCLM_apply] }
+    ‖B‖ fun f ↦ ContinuousLinearMap.opNorm_le_bound _ (by positivity) fun g ↦
+      norm_bilinearBUC_le B f g
+
+@[simp]
+theorem bilinearBUCCLM_apply (B : E →L[𝕜] F →L[𝕜] G)
+    (f : BUC A E) (g : BUC A F) : bilinearBUCCLM B f g = bilinearBUC B f g := rfl
+
+/-- Pointwise bilinear operations are jointly continuous in supremum norm. -/
+theorem continuous_bilinearBUC (B : E →L[𝕜] F →L[𝕜] G) :
+    Continuous (fun p : BUC A E × BUC A F ↦ bilinearBUC B p.1 p.2) :=
+  (bilinearBUCCLM B).continuous₂
 
 /-- Pointwise application of a BUC family of continuous linear maps. -/
 def operatorApply (L : BUC A (F →L[𝕜] G)) (f : BUC A F) : BUC A G :=

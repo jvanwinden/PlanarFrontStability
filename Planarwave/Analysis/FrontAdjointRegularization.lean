@@ -16,10 +16,10 @@ smooth BUC approximations converging to it almost everywhere. These satisfy the
 exact regularized adjoint equation. Both the adjoint and reaction source have
 L1 bounds independent of the regularization index.
 
-This is a step toward the regular representative needed in Lemma 4.2, not yet
-that representative: uniform derivative estimates and passage to a classical
-limit remain to be proved. In particular the variable reaction coefficient
-cannot be pulled out of its convolution.
+This is a step toward the regular representative needed in Lemma 4.2.
+`FrontAdjointEstimates` supplies uniform derivative estimates, and
+`FrontAdjointRegularity` passes to a classical representative. The variable
+reaction coefficient cannot be pulled out of its convolution.
 -/
 
 open MeasureTheory Filter

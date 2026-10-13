@@ -7,19 +7,21 @@ module
 
 import all Planarwave.Analysis.FrontNonlinearity
 import Planarwave.Analysis.ProjectedNonlinearity
+import all Planarwave.Analysis.FrontAdjointRegularity
 
 /-!
-# The front's smoothed nonlinearity, conditional on adjoint regularity
+# The front's smoothed nonlinearity under the original hypotheses
 
 This is Lemma 4.2 for the actual front nonlinearity and the paper's heat time
 `1/8`. Perturbation derivatives are extracted from genuine spatial derivative
 fields, and the divergence of the phase gradient is identified with its
 Laplacian.
 
-The remaining adjoint obligation is explicit: an almost-everywhere equal
-representative with two integrable derivatives must still be constructed from
-the challenge's spectral hypotheses. Pointwise regularity of the supplied
-measurable adjoint is neither needed nor asserted.
+The regular adjoint representative is constructed from the challenge's
+spectral hypotheses in `FrontAdjointRegularity`. The final theorem below
+discharges this prerequisite and proves the smoothed nonlinear bound without
+extra assumptions. Pointwise regularity of the supplied measurable adjoint
+is neither needed nor asserted.
 -/
 
 open MeasureTheory
@@ -72,6 +74,27 @@ theorem exists_frontSmoothedNonlinearity_bound_of_adjointRepresentative
       (BUC.hasDerivAt_longitudinalSecondDerivativeField v₁ v₂ hv₂)
       (BUC.hasFDerivAt_transverseDerivativeField v v₁ hv₁)
       (BUC.hasFDerivAt_mixedDerivativeField v₁ v₂ hv₂) hs₁ hv
+
+/-- Lemma 4.2 for the actual front, with adjoint regularity discharged from
+the original parabolic, front, and spectral hypotheses. The constant is
+chosen uniformly before the perturbation, phase, and forcing fields. -/
+theorem exists_frontSmoothedNonlinearity_bound {R : ℝ} (hR : 0 ≤ R) :
+    ∃ C > 0, ∀ v : BUC (ℝ^m × ℝ) (ℝ^n),
+      ∀ v₁ : BUC (ℝ^m × ℝ) ((ℝ^m × ℝ) →L[ℝ] ℝ^n),
+      ∀ v₂ : BUC (ℝ^m × ℝ) ((ℝ^m × ℝ) →L[ℝ] (ℝ^m × ℝ) →L[ℝ] ℝ^n),
+      ∀ σ : ℝ^m → ℝ, ∀ s : BUC (ℝ^m) (ℝ^m),
+      ∀ s₁ : BUC (ℝ^m) (ℝ^m →L[ℝ] ℝ^m), ∀ l g : BUC (ℝ^m) ℝ,
+      (∀ x, HasFDerivAt v (v₁ x) x) → (∀ x, HasFDerivAt v₁ (v₂ x) x) →
+      (∀ y, s y = ∇ σ y) → (∀ y, HasFDerivAt s (s₁ y) y) → (∀ y, l y = Δ σ y) →
+      ‖v‖ ≤ R →
+      ‖heatFlowBUC (d_perp D φ ψ) (1 / 8)
+        (longitudinalPairing ψ h₃.integrable
+          (frontInverseModulationNonlinearity f D c φ ψ h₁ h₂ v v₁ v₂ s l g))‖ ≤
+        C * ‖v‖ * (‖v‖ + ‖l‖ + ‖s‖ + ‖s‖ ^ 2 + ‖g‖) := by
+  obtain ⟨χ, χ₁, χ₂, hrep, _, hi₁, hi₂, _, _, hd₁, hd₂, _⟩ :=
+    exists_frontAdjoint_regularRepresentative f D c φ ψ h₁ h₂ h₃
+  exact exists_frontSmoothedNonlinearity_bound_of_adjointRepresentative f D c φ ψ h₁ h₂ h₃
+    χ χ₁ χ₂ hrep hi₁ hi₂ hd₁ hd₂ hR
 
 end
 

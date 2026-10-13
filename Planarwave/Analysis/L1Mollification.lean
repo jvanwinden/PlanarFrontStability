@@ -139,6 +139,39 @@ theorem integral_norm_longitudinalMollification_le {u : ℝ → F} (hu : Integra
   simpa only [integral_norm_longitudinalMollifier, one_mul] using!
     integral_norm_l1Smoothing_le (longitudinalMollifier j) (integrable_longitudinalMollifier j) hu
 
+/-- Mollification depends only on the almost-everywhere class of the data. -/
+theorem longitudinalMollification_congr_ae {u v : ℝ → F}
+    (hu : Integrable u) (hv : Integrable v) (heq : u =ᵐ[volume] v) (j : ℕ) :
+    longitudinalMollification u hu j = longitudinalMollification v hv j := by
+  apply BUC.ext
+  intro x
+  apply integral_congr_ae
+  filter_upwards [heq] with z hz
+  rw [hz]
+
+/-- Normalized nonnegative mollifiers preserve an essential supremum bound. -/
+theorem norm_longitudinalMollification_le_of_ae_bound {u : ℝ → F} (hu : Integrable u)
+    {M : ℝ} (hb : ∀ᵐ z, ‖u z‖ ≤ M) (j : ℕ) (x : ℝ) :
+    ‖longitudinalMollification u hu j x‖ ≤ M := by
+  have hi := ((integrable_longitudinalMollifier j).norm.comp_sub_left x).mul_const M
+  calc
+    _ ≤ ∫ z, ‖longitudinalMollifier j (x - z)‖ * M := by
+      apply norm_integral_le_of_norm_le hi
+      filter_upwards [hb] with z hz
+      rw [norm_smul]
+      exact mul_le_mul_of_nonneg_left hz (norm_nonneg _)
+    _ = M := by
+      rw [integral_mul_const, integral_sub_left_eq_self (fun z ↦ ‖longitudinalMollifier j z‖),
+        integral_norm_longitudinalMollifier, one_mul]
+
+/-- For continuous integrable data convergence holds at every point. -/
+theorem tendsto_longitudinalMollification_of_continuous [CompleteSpace F]
+    {u : ℝ → F} (hu : Integrable u) (hc : Continuous u) (x : ℝ) :
+    Tendsto (fun j ↦ longitudinalMollification u hu j x) atTop (𝓝 (u x)) := by
+  simpa only [MeasureTheory.convolution_eq_swap, ContinuousLinearMap.lsmul_apply] using!
+    ContDiffBump.convolution_tendsto_right_of_continuous
+      longitudinalBump_rOut_tendsto (μ := volume) hc x
+
 /-- Lebesgue differentiation identifies the almost-everywhere limit with the
 original measurable data, not just with an unspecified distribution. -/
 theorem ae_tendsto_longitudinalMollification [CompleteSpace F] {u : ℝ → F} (hu : Integrable u) :
