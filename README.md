@@ -1,62 +1,24 @@
 # Stability of planar fronts in reaction-diffusion systems
 
-This project formalizes one of the main results from [1], following the paper's proof.
+This project formalizes Theorem 1.6 from [1], following the paper's proof.
 
-- [`Challenge.lean`](Challenge.lean) is the protected reference statement. Its original
-  `sorry` remains only in the reference environment.
-- [`Solution.lean`](Solution.lean) copies `Challenge.lean`, adding an import of
-  `Planarwave.Proof` and replacing `sorry` with the single theorem name
-  `Planarwave.vHJ_approximates_planar_front_solution`, without explicit arguments.
-- [`Planarwave.lean`](Planarwave.lean) is the proof library's root module, importing
-  the completed proof and its dependencies.
-- [`Definitions.lean`](Definitions.lean) mirrors the statement definitions
-  inside the `Planarwave` namespace for use by the analytic proof, avoiding collisions
-  with the public declarations copied into `Solution.lean`.
-- [`Planarwave/Proof.lean`](Planarwave/Proof.lean) assembles the analytic proof and transfers
-  it to the copied predicates through record conversions. The comparator-facing
-  theorem's default proof arguments perform these conversions in the context of
-  the copied challenge hypotheses; Lean checks the resulting proof as usual.
-- [`comparator.json`](comparator.json) configures the built-in
-  [Lean comparator](https://lean-lang.org/doc/reference/latest/Build-Tools-and-Distribution/Lake/) to compare that theorem in
-  `Challenge` and `Solution`, allowing only `propext`, `Quot.sound`, and `Classical.choice`.
+The most important files are the following:
+- [`Definitions.lean`](Definitions.lean) contains the definitions needed to formulate
+  the theorem statement.
+- [`Challenge.lean`](Challenge.lean) contains the main theorem `vHJ_approximates_planar_front_solution`,
+  without proof.
+- [`Solution.lean`](Solution.lean) contains the main theorem with proof, using the results in the `Planarwave`
+  folder.
 
-The reference and solution are alternative environments: **do not import both into one
-Lean module**, since each defines the same statement-level constants. The proof modules
-never import `Challenge`. Keep the copied declarations in `Solution.lean` and the
-namespaced mirrors in `Definitions.lean` synchronized with any authorized
-changes to `Challenge.lean`.
+To audit the statement, examine `Definitions.lean` and `Challenge.lean` (note that they only import Mathlib)
 
-The project pins Lean and mathlib to `v4.35.0`. Run `lake comparator` to use Lean's
-built-in comparator with `comparator.json`; its sandbox requires Linux with `bubblewrap`
-installed. It builds both targets and checks their theorem statements, referenced
-definitions, and proof axioms. There is no custom `Comparator.lean` module or Lake target.
-The Lake file declares exactly three library targets, each with its own single
-default module root and no `globs` overrides:
-
-- `lake build Planarwave` builds the analytic proof library and its root module.
-- `lake build Challenge` builds only `Challenge.lean` and its mathlib imports.
-- `lake build Solution` builds `Solution.lean`, including its dependencies from
-  the `Planarwave` library.
-
-`Solution` is the only default target, so `lake build` is equivalent to building it.
-Neither command runs the comparator. The `Planarwave` library never imports the
-root-level `Challenge` or `Solution` modules.
-
-Use `import Solution` to access the public theorem. The namespaced proof theorem
-`Planarwave.vHJ_approximates_planar_front_proved` is available from `Planarwave.Proof`
-and uses the internal predicates.
-
-To investigate a slow module, use Lean's built-in profiler after building its
-dependencies, for example:
-
-```powershell
-lake env lean Planarwave/Analysis/FrontEigenvalueBranch.lean '-Dprofiler=true' '-Dprofiler.threshold=100'
+To verify the proof, first run `lake exe cache get` (optional, to fetch the Mathlib cache) and then 
 ```
+lake comparator
+```
+which should output `Your solution is okay!`.
 
-For a nested trace, replace those flags with `'-Dtrace.profiler=true'` and
-`'-Dtrace.profiler.threshold=100'`. Profiling adds overhead; its categories can
-overlap and should not be summed into a total build time. Use Lake's own build
-timings for module-level comparisons, without custom timing scripts.
+The project is pinned to Lean and Mathlib version `v4.35.0`.
 
 [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
   nonlocalized perturbations.", arXiv.2601.05832.
