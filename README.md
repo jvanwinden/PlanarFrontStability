@@ -8,7 +8,7 @@ The most important files are the following:
 - [`Challenge.lean`](Challenge.lean) contains the main theorem `vHJ_approximates_planar_front_solution`,
   without proof.
 - [`Solution.lean`](Solution.lean) contains the main theorem with proof, using the results in the `Planarwave`
-  folder.
+  module.
 
 To audit the statement, examine `Definitions.lean` and `Challenge.lean` (note that they only import Mathlib)
 
@@ -16,7 +16,10 @@ To verify the proof, first run `lake exe cache get` (optional, to fetch the Math
 ```
 lake comparator
 ```
-which should output `Your solution is okay!`.
+which should output 
+```
+Your solution is okay!
+```
 
 The project is pinned to Lean and Mathlib version `v4.35.0`.
 
