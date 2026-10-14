@@ -364,10 +364,12 @@ public import Planarwave.Coordinates
 
 This module records the dependency order of the proof in de Rijk--van Winden.
 The complete theorem is proved in the top-level `Solution.lean` as
-`Planarwave.vHJ_approximates_planar_front_proved`. The protected
-`Challenge.lean` was moved to the top level without content changes. `Comparator.lean` checks that the new
-theorem has exactly the original theorem's type and reports only
-`propext`, `Classical.choice`, and `Quot.sound` as its axioms.
+the public theorem `vHJ_approximates_planar_front`. The protected
+`Challenge.lean` is the reference environment. The analytic library imports
+`Planarwave.Statement`, which copies its definitions without the admitted theorem.
+`comparator.json` configures the external comparator to compare the theorem and
+its statement dependencies, allowing only `propext`, `Classical.choice`, and
+`Quot.sound` as proof axioms.
 
 The formalization follows the paper in this order:
 
@@ -1492,14 +1494,15 @@ No decay estimate or existence assertion is included in that definition.
   initial phase and error weight. `Solution.lean` assembles the
   unchanged challenge statement, including `E_0 = 0` and `t = 0`.
 
-`Comparator.lean` checks definitional equality of the complete
-theorem types and prints the new proof's axioms. No auxiliary assumptions,
-admitted lemmas, or use of the original admitted theorem enter this proof.
-The original placeholder remains only because `Challenge.lean` is protected
-from modification. Import the completed theorem with
-`import all Solution`. The default `lake build` checks both the analytic
-library and the comparator; `lake build Comparator` checks the comparator
-and all of its dependencies.
+The external comparator uses `comparator.json` to check the matching theorem
+declarations, their statement dependencies, and the solution's proof axioms.
+No auxiliary assumptions, admitted lemmas, or use of the original admitted
+theorem enter this proof. The original placeholder remains in the protected
+`Challenge.lean`, which is not imported by the solution or its analytic library.
+Import the completed public theorem with `import Solution`. Do not import
+`Challenge` alongside it: these are alternative environments with the same
+statement-level names. The default `lake build` builds the analytic library
+and `Solution`; external comparator verification is a separate operation.
 -/
 
 namespace Planarwave

@@ -5,26 +5,28 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-import all Challenge
+public import Planarwave.Statement
 import all Planarwave.Analysis.FrontTrackingGlobal
 import all Planarwave.Analysis.FrontTrackingVHJComparison
+import Batteries.Tactic.Alias
 
 /-!
-# Proof of the unchanged planar-front challenge
+# Solution for the planar-front comparator challenge
 
-The original `Challenge.lean` is kept untouched. The theorem below has its
-exact hypotheses and conclusion, with an independent proof following the
-paper's spectral estimates, causal tracking construction, nonlinear
-bootstrap, maximal continuation, and forced/unforced phase comparison.
-Like the challenge's private definitions, this theorem is available to
-downstream modules using `import all Solution`. `Comparator.lean` checks
-the exact statement and the proof's transitive axiom dependencies.
+The public theorem `vHJ_approximates_planar_front` has the name and statement
+required by `comparator.json`. Its proof follows the paper's spectral
+estimates, causal tracking construction, nonlinear bootstrap, maximal
+continuation, and forced/unforced phase comparison.
+
+This module and its dependencies do not import `Challenge`: the solution-side
+definitions come from `Planarwave.Statement`. This keeps the reference's
+admitted theorem out of the solution environment. Compare the two modules
+using the external comparator and `comparator.json`, not by importing both.
 -/
 
-open Set MeasureTheory
-open scoped InnerProductSpace
-
-namespace Planarwave
+open scoped Gradient Laplacian EuclideanGeometry Topology InnerProductSpace ContDiff
+open Filter Function Set MeasureTheory
+open Planarwave
 
 noncomputable section
 
@@ -33,19 +35,17 @@ local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 variable {d n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n)
   (c : ℝ) (φ ψ : ℝ → ℝ^n)
 
-/-- The complete statement of `vHJ_approximates_planar_front`, proved
-without using the admitted theorem in the protected challenge file. -/
-theorem vHJ_approximates_planar_front_proved
-    (hn : 1 ≤ n) (hd : 2 ≤ d)
-    (h₁ : IsSmoothParabolic f D)
-    (h₂ : IsSmoothFront f D c φ)
-    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
-    ∃ C > 0, ∃ ε > 0, ∀ E_0 ∈ Icc 0 ε, ∀ u₀ : ℝ^d → ℝ^n,
-      IsBUC u₀ → IsCloseToFront φ u₀ E_0 →
-      ∃ u σ, IsRDESolution f D u ∧ IsVHJSolution c σ (d_perp D φ ψ) ∧
-        u 0 = u₀ ∧ (∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ) ∧
-        ∀ t ≥ 0, ∀ x, ‖u t x - φ (horizontal x - c * t - σ t (transverse x))‖ ≤
-          C * E_0 * (E_0 + (1 + t)⁻¹ * Real.log (2 + t)) := by
+/-- The complete challenge statement, proved without importing the reference theorem. -/
+public theorem vHJ_approximates_planar_front
+  (hn : 1 ≤ n) (hd : 2 ≤ d)
+  (h₁ : IsSmoothParabolic f D)
+  (h₂ : IsSmoothFront f D c φ)
+  (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
+  ∃ C > 0, ∃ ε > 0, ∀ E_0 ∈ Icc 0 ε, ∀ u₀ : ℝ^d → ℝ^n, IsBUC u₀ → IsCloseToFront φ u₀ E_0 →
+    ∃ u σ, IsRDESolution f D u ∧ IsVHJSolution c σ (d_perp D φ ψ) ∧
+      u 0 = u₀ ∧ (∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ) ∧
+      ∀ t ≥ 0, ∀ x, ‖u t x - φ (horizontal x - c * t - σ t (transverse x))‖ ≤
+        C * E_0 * (E_0 + (1 + t)⁻¹ * Real.log (2 + t)) := by
   let : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
   let : Nontrivial (ℝ^n) := inferInstance
   obtain ⟨_, _, εg, hεg, hglobal⟩ :=
@@ -79,5 +79,10 @@ theorem vHJ_approximates_planar_front_proved
       ⟨hM.1, hM.2.trans (min_le_right _ _)⟩ hcloseb t ⟨ht, le_rfl⟩ x
 
 end
+
+namespace Planarwave
+
+/-- Compatibility name for the previously namespaced solution theorem. -/
+alias vHJ_approximates_planar_front_proved := _root_.vHJ_approximates_planar_front
 
 end Planarwave

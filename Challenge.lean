@@ -7,6 +7,8 @@ module
 
 public import Mathlib
 
+@[expose] public section
+
 local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 
@@ -33,7 +35,7 @@ variable (c : ℝ) (φ : ℝ → ℝ^n) (ψ : ℝ → ℝ^n)
 -- Prospective solutions to the relevant PDEs.
 variable (u : ℝ → ℝ^d → ℝ^n) (σ : ℝ → ℝ^(d - 1) → ℝ)
 
-public section PDESetup
+section PDESetup
 
 def IsBUCOn {α β : Type*} [UniformSpace α] [UniformSpace β] [Norm β] (f : α → β) (s : Set α) :=
   UniformContinuousOn f s ∧ ∃ C, ∀ x ∈ s, ‖f x‖ ≤ C
@@ -69,7 +71,7 @@ structure IsSmoothFront : Prop where
   ode : ∀ z, D (Δ φ z) + c • deriv φ z + f (φ z) = 0
   endpoints : ∃ φ₁ φ₂, Tendsto φ atBot (𝓝 φ₁) ∧ Tendsto φ atTop (𝓝 φ₂)
 
-section SpectralStability
+public section SpectralStability
 
 /-- Complexify a map from ℝ^n → ℝ^n. -/
 noncomputable def ContinuousLinearMap.complexify (L : ℝ^n →L[ℝ] ℝ^n) :=
@@ -143,3 +145,5 @@ theorem vHJ_approximates_planar_front
   sorry
 
 end NonlinearStability
+
+end

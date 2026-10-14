@@ -2,21 +2,32 @@
 
 This project formalizes one of the main results from [1], following the paper's proof.
 
-- [`Challenge.lean`](Challenge.lean) contains the original statement, moved to the repository
-  root without changing its contents. Its original `sorry` remains as the comparison target.
-- [`Solution.lean`](Solution.lean) independently proves the full statement as
-  `Planarwave.vHJ_approximates_planar_front_proved`.
-- [`Comparator.lean`](Comparator.lean) verifies that the two theorem types are definitionally
-  equal and that the solution depends only on `propext`, `Classical.choice`, and `Quot.sound`.
-  It rejects `sorryAx` and any other unexpected axiom; it does not use the challenge's admitted proof.
+- [`Challenge.lean`](Challenge.lean) is the protected reference statement. Its original
+  `sorry` remains only in the reference environment.
+- [`Planarwave/Statement.lean`](Planarwave/Statement.lean) copies the reference's public
+  definitions, without its main theorem. The analytic library uses these solution-side
+  definitions instead of importing `Challenge`.
+- [`Solution.lean`](Solution.lean) proves the public, root-level theorem
+  `vHJ_approximates_planar_front`, with the same statement as the reference.
+- [`comparator.json`](comparator.json) configures the external
+  [Lean comparator](https://github.com/leanprover/comparator) to compare that theorem in
+  `Challenge` and `Solution`, allowing only `propext`, `Quot.sound`, and `Classical.choice`.
 
-Run `lake build` to check the analytic library and comparator, or `lake build Comparator`
-to check just the comparator and its dependencies. After building, `lake env lean Comparator.lean`
-reruns the comparison and prints the solution's axioms. The original challenge's `sorry`
-warning is expected; the completed solution has no such dependency.
+The reference and solution are alternative environments: **do not import both into one
+Lean module**, since each defines the same statement-level constants. The `Planarwave`
+library root uses only the solution-side environment. Keep the definitions in
+`Planarwave/Statement.lean` synchronized with any authorized changes to `Challenge.lean`.
 
-Use `import all Solution` to access the completed theorem, since the original challenge
-definitions are private Lean module declarations. The proof's dependency map is documented in
+When you want to run verification, install an external comparator and exporter compatible
+with the pinned Lean toolchain, then run `lake env comparator comparator.json` in its
+supported environment. The comparator builds both targets and checks their theorem
+statements, referenced definitions, and proof axioms. There is no custom `Comparator.lean`
+module or Lake target. An ordinary `lake build` builds the analytic library and `Solution`;
+it does not itself run the external comparator.
+
+Use `import Solution` to access the public theorem. The previous
+`Planarwave.vHJ_approximates_planar_front_proved` name remains a compatibility alias,
+accessible with `import all Solution`. The proof's dependency map is documented in
 [`Planarwave/Analysis/PaperOutline.lean`](Planarwave/Analysis/PaperOutline.lean).
 
 [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under

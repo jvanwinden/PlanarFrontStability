@@ -1,6 +1,6 @@
 name = "planarwave"
 version = "0.1.0"
-defaultTargets = ["Planarwave", "Comparator"]
+defaultTargets = ["Planarwave", "Solution"]
 
 [[require]]
 name = "mathlib"
@@ -14,6 +14,3 @@ name = "Challenge"
 
 [[lean_lib]]
 name = "Solution"
-
-[[lean_lib]]
-name = "Comparator"

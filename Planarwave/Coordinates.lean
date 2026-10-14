@@ -5,14 +5,13 @@ Authors: Joris van Winden
 -/
 module
 
-import all Challenge
+import all Planarwave.Statement
 
 /-!
 # Longitudinal and transverse coordinates
 
 Elementary facts about the coordinate maps used in `vHJ_approximates_planar_front`.
-The challenge module keeps its declarations private, so this internal support module imports its
-full scope.
+The solution-side statement definitions are imported without the challenge's admitted theorem.
 -/
 
 local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
