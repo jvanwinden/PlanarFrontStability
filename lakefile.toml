@@ -14,4 +14,7 @@ name = "Definitions"
 name = "Challenge"
 
 [[lean_lib]]
+name = "Planarwave"
+
+[[lean_lib]]
 name = "Solution"
