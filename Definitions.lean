@@ -5,22 +5,24 @@ Authors: Joris van Winden
 -/
 module
 
-import Mathlib
+public import Mathlib
+
+@[expose] public section
+
+namespace Planarwave
 
 local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 
 /-!
-# Stability of planar fronts in reaction diffusion systems.
+# Solution-side statement definitions
 
-This file contains a formalization of the statement that the dynamics near a spectrally stable
-planar front in a reaction-diffusion equation are described by a viscous Hamilton-Jacobi equation.
+These internal declarations mirror the protected `Challenge.lean`, without
+its admitted main theorem. They live in `Planarwave` so that `Solution.lean`
+can repeat the challenge's public declarations without name collisions.
 
-The main theorem is `vHJ_approximates_planar_front`, which corresponds to Theorem 1.6 in [1] (with the uniqueness of
-the solutions omitted).
-
-* [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
-  nonlocalized perturbations.", arXiv.2601.05832.
+The analytic library imports this module, never `Challenge`. `Planarwave.Proof`
+transfers the completed proof to the copied predicates in `Solution.lean`.
 -/
 
 open scoped Gradient Laplacian EuclideanGeometry Topology InnerProductSpace ContDiff
@@ -69,7 +71,7 @@ structure IsSmoothFront : Prop where
   ode : ∀ z, D (Δ φ z) + c • deriv φ z + f (φ z) = 0
   endpoints : ∃ φ₁ φ₂, Tendsto φ atBot (𝓝 φ₁) ∧ Tendsto φ atTop (𝓝 φ₂)
 
-section SpectralStability
+public section SpectralStability
 
 /-- Complexify a map from ℝ^n → ℝ^n. -/
 noncomputable def ContinuousLinearMap.complexify (L : ℝ^n →L[ℝ] ℝ^n) :=
@@ -85,8 +87,8 @@ structure IsTransverseResolventSolution (k : ℝ) (l : ℂ) (v w : ℝ → ℂ^n
   /-- The first two derivatives of v are bounded uniformly continuous. -/
   buc : ∀ i ≤ 2, IsBUC (iteratedDeriv i (v ·))
   /-- v satisfies the resolvent equation. -/
-  pde : ∀ z, (D.complexify) ((Δ v z) - (k ^ 2) • (v z)) +
-    c • (deriv v z) + (fderiv ℝ f (φ z)).complexify (v z) - l • v z = w z
+  pde : ∀ z, ((ContinuousLinearMap.complexify D)) ((Δ v z) - (k ^ 2) • (v z)) +
+    c • (deriv v z) + (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) (v z) - l • v z = w z
 
 def TransverseSpectrum (k : ℝ) : Set ℂ :=
   compl {l | ∀ w, IsBUC w → ∃! v, IsTransverseResolventSolution f D c φ k l v w}
@@ -115,31 +117,20 @@ end SpectralStability
 section NonlinearStability
 
 /-- Extract the horizontal coordinate from x. -/
-noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then x ⟨d - 1, by grind⟩ else 0
+noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then x ⟨d - 1, by omega⟩ else 0
 
 /-- Extract the transverse coordinates from x. -/
-def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x ⟨i, by grind⟩)
+def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x (Fin.castLE (by omega) i))
 
 /-- Assemble the full coordinate x from y and z. -/
 def full (y : ℝ^(d - 1)) (z : ℝ) : ℝ^d :=
-  .toLp 2 (fun i ↦ if h : i < d - 1 then y ⟨i, by grind⟩ else z)
+  .toLp 2 (fun i ↦ if h : i < d - 1 then y ⟨i, h⟩ else z)
 
 /-- Define closeness to the front. -/
 def IsCloseToFront (u : ℝ^d → ℝ^n) (ε : ℝ) : Prop := ∀ x, ‖u x - φ (horizontal x)‖ ≤ ε
 
-/-- A solution to the RDE which starts close to a planar front is well-approximated by the front
-shifted according to a viscous Hamilton-Jacobi equation.
--/
-theorem vHJ_approximates_planar_front
-  (hn : 1 ≤ n) (hd : 2 ≤ d)
-  (h₁ : IsSmoothParabolic f D)
-  (h₂ : IsSmoothFront f D c φ)
-  (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
-  ∃ C > 0, ∃ ε > 0, ∀ E_0 ∈ Icc 0 ε, ∀ u₀ : ℝ^d → ℝ^n, IsBUC u₀ → IsCloseToFront φ u₀ E_0 →
-    ∃ u σ, IsRDESolution f D u ∧ IsVHJSolution c σ (d_perp D φ ψ) ∧
-      u 0 = u₀ ∧ (∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ) ∧
-      ∀ t ≥ 0, ∀ x, ‖u t x - φ (horizontal x - c * t - σ t (transverse x))‖ ≤
-        C * E_0 * (E_0 + (1 + t)⁻¹ * Real.log (2 + t)) :=
-  sorry
-
 end NonlinearStability
+
+end Planarwave
+
+end

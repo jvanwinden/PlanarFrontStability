@@ -1,0 +1,120 @@
+/-
+Copyright (c) 2026 Joris van Winden. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joris van Winden, OpenAI
+-/
+module
+
+import all Planarwave.Analysis.SpatialDiffusionSemigroup
+import all Planarwave.Analysis.FrontCoefficient
+import all Planarwave.Coordinates
+import Planarwave.Analysis.SemigroupPerturbationGenerator
+import Planarwave.Analysis.SemigroupPerturbationBound
+
+/-!
+# The full spatial linearized front semigroup
+
+Construct the semigroup on the actual full spatial BUC space: first matrix
+diffusion with the longitudinal drift, then multiplication by `f'(φ(z))`.
+This construction does not assume a Fourier representation or a remainder
+decomposition. The Duhamel identity and the generator perturbation identity
+will be used to identify that representation.
+-/
+
+open Set
+
+namespace Planarwave
+
+noncomputable section
+
+local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
+local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
+
+/-- The challenge's longitudinal coordinate as a bounded linear functional. -/
+def horizontalCLM {d : ℕ} (hd : 2 ≤ d) : ℝ^d →L[ℝ] ℝ :=
+  (ContinuousLinearMap.snd ℝ (ℝ^(d - 1)) ℝ).comp (coordinateEquiv hd).toContinuousLinearMap
+
+@[simp]
+theorem horizontalCLM_apply {d : ℕ} (hd : 2 ≤ d) (x : ℝ^d) : horizontalCLM hd x = horizontal x := rfl
+
+/-- The physical drift vector has zero transverse part and longitudinal component `c`. -/
+def frontSpatialDrift {d : ℕ} (hd : 2 ≤ d) (c : ℝ) : ℝ^d :=
+  (coordinateEquiv hd).symm (0, c)
+
+@[simp]
+theorem frontSpatialDrift_coordinates {d : ℕ} (hd : 2 ≤ d) (c : ℝ) :
+    coordinateEquiv hd (frontSpatialDrift hd c) = (0, c) := (coordinateEquiv hd).apply_symm_apply _
+
+variable {d n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
+  (φ : ℝ → ℝ^n) (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ) (hd : 2 ≤ d)
+
+/-- The actual reaction coefficient extended constantly in the transverse coordinates. -/
+def frontSpatialReactionMultiplication : BUC (ℝ^d) (ℂ^n) →L[ℂ] BUC (ℝ^d) (ℂ^n) :=
+  BUC.operatorApplyCLM
+    ((complexFrontDerivativeCoefficient f D c φ h₁ h₂).comp (horizontalCLM hd) (horizontalCLM hd).uniformContinuous)
+
+/-- Pointwise identification with the linearized reaction term in the PDE. -/
+theorem frontSpatialReactionMultiplication_apply (v : BUC (ℝ^d) (ℂ^n)) (x : ℝ^d) :
+    frontSpatialReactionMultiplication f D c φ h₁ h₂ hd v x =
+      (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (v x) :=
+  complexFrontDerivativeCoefficient_apply f D c φ h₁ h₂ (horizontal x) (v x)
+
+variable [Nontrivial (ℝ^n)]
+
+/-- The full spatial linearized evolution, independently constructed by bounded perturbation. -/
+def frontSpatialC0Semigroup : C0Semigroup ℂ (BUC (ℝ^d) (ℂ^n)) :=
+  (spatialDiffusionC0Semigroup D h₁.positive (frontSpatialDrift hd c)).boundedPerturbation
+    (frontSpatialReactionMultiplication f D c φ h₁ h₂ hd)
+
+/-- The spatial generator on twice BUC differentiable diffusion-coordinate data. -/
+theorem frontSpatialC0Semigroup_hasGeneratorAt
+    (v : Fin n → BUC (ℝ^d) ℂ) (g : Fin n → BUC (ℝ^d) (ℝ^d →L[ℝ] ℂ))
+    (h : Fin n → BUC (ℝ^d) (ℝ^d →L[ℝ] ℝ^d →L[ℝ] ℂ))
+    (hg : ∀ i x, HasFDerivAt (v i) (g i x) x) (hh : ∀ i x, HasFDerivAt (g i) (h i x) x) :
+    (frontSpatialC0Semigroup f D c φ h₁ h₂ hd).HasGeneratorAt
+      (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v)
+      (spatialDiffusionBUCCoordinatesEquiv D h₁.positive
+        (fun i ↦ convectiveGeneratorBUC (diffusionEigenvalues D h₁.positive i)
+          (frontSpatialDrift hd c) (g i) (h i)) +
+        frontSpatialReactionMultiplication f D c φ h₁ h₂ hd (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v)) :=
+  (spatialDiffusionC0Semigroup_hasGeneratorAt D h₁.positive h₁.kernel (frontSpatialDrift hd c) v g h hg hh).boundedPerturbation _
+
+/-- The full spatial Duhamel identity used to recover the Fourier representation. -/
+theorem frontSpatialC0Semigroup_mild (v : BUC (ℝ^d) (ℂ^n)) {t : ℝ} (ht : 0 ≤ t) :
+    (frontSpatialC0Semigroup f D c φ h₁ h₂ hd).realOrbit v t =
+      (spatialDiffusionC0Semigroup D h₁.positive (frontSpatialDrift hd c)).realOrbit v t +
+        (spatialDiffusionC0Semigroup D h₁.positive (frontSpatialDrift hd c)).duhamel
+          (fun r ↦ frontSpatialReactionMultiplication f D c φ h₁ h₂ hd
+            ((frontSpatialC0Semigroup f D c φ h₁ h₂ hd).realOrbit v r)) t :=
+  C0Semigroup.perturbedOrbit_eq _ _ v ht
+
+/-- A global exponential norm bound for the independently constructed spatial semigroup. -/
+theorem exists_frontSpatialC0Semigroup_bound :
+    ∃ M > 0, ∃ ω > 0, ∀ t : NNReal,
+      ‖frontSpatialC0Semigroup f D c φ h₁ h₂ hd t‖ ≤ M * Real.exp (ω * t) := by
+  obtain ⟨M, hM, hbound⟩ := exists_uniform_spatialDiffusion_bound (E := ℝ^d) D h₁.positive
+  let B := frontSpatialReactionMultiplication f D c φ h₁ h₂ hd
+  refine ⟨M, hM, M * ‖B‖ + 1, by positivity, ?_⟩
+  intro t
+  have h := (spatialDiffusionC0Semigroup D h₁.positive (frontSpatialDrift hd c)).norm_boundedPerturbation_le B
+    (ω := 0) hM.le (by intro r; simpa using hbound (frontSpatialDrift hd c) r) t
+  apply h.trans
+  apply mul_le_mul_of_nonneg_left _ hM.le
+  apply Real.exp_le_exp.mpr
+  exact mul_le_mul_of_nonneg_right
+    (by simpa only [zero_add] using le_add_of_nonneg_right (show (0 : ℝ) ≤ 1 from zero_le_one)) t.2
+
+/-- The short-time uniform bound invoked in the last paragraph of Section 3. -/
+theorem exists_frontSpatialC0Semigroup_shortTime_bound :
+    ∃ C > 0, ∀ t : NNReal, t ≤ 1 → ‖frontSpatialC0Semigroup f D c φ h₁ h₂ hd t‖ ≤ C := by
+  obtain ⟨M, hM, ω, hω, hb⟩ := exists_frontSpatialC0Semigroup_bound f D c φ h₁ h₂ hd
+  refine ⟨M * Real.exp ω, by positivity, ?_⟩
+  intro t ht
+  apply (hb t).trans
+  apply mul_le_mul_of_nonneg_left _ hM.le
+  apply Real.exp_le_exp.mpr
+  exact (mul_le_mul_of_nonneg_left (show (t : ℝ) ≤ 1 from ht) hω.le).trans_eq (mul_one _)
+
+end
+
+end Planarwave

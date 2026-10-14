@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# Based on https://github.com/mathlib-initiative/formalization.yaml/blob/main/formalization.yaml
+# Entries marked "not recorded" can be completed by the maintainer.
+version: "v0.4"
+
+project:
+  name: "Stability of planar fronts in reaction-diffusion systems"
+  description: >-
+    A Lean formalization of effective dynamics near spectrally stable planar
+    fronts in reaction-diffusion systems under small, bounded uniformly
+    continuous perturbations. The main result constructs global solutions
+    and approximates the perturbed front by a phase evolving according to a
+    viscous Hamilton-Jacobi equation, with a uniform quantitative error bound.
+  authors:
+    - "Joris van Winden"
+  responsible_maintainers:
+    - "Joris van Winden"
+  license: "Apache-2.0"
+
+sources:
+  - title: >-
+      Stability and dynamics of planar fronts in reaction-diffusion systems
+      under nonlocalized perturbations
+    authors:
+      - "Björn de Rijk"
+      - "Joris van Winden"
+    id: "https://arxiv.org/abs/2601.05832v1"
+    type: "article"
+    location: "Theorem 1.6 (Effective front dynamics), Section 1.4"
+    relationship: "formalizes"
+    note: >-
+      Follows the paper's proof of Theorem 1.6, with uniqueness omitted from
+      the formalized conclusion.
+    license: "arXiv.org perpetual, non-exclusive license to distribute"
+    author_endorsement: "participated"
+
+related_formalizations: []
+
+classification:
+  arxiv: ["math.AP"]
+  msc2020: ["35B35", "35B40", "35C07", "35K57"]
+
+status:
+  scope: >-
+    Proves Theorem 1.6 (except the uniqueness statement) of the paper under 
+    the original hypothesis.
+  # Excludes the deliberate reference-theorem sorry in Challenge.lean.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext, Quot.sound, Classical.choice"]
+  # comparator.json permits propext, Quot.sound, and Classical.choice.
+  main_results:
+    - declaration: "vHJ_approximates_planar_front"
+      file: "Solution.lean"
+      sorry_count: 0
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+
+automation:
+  methods:
+    - method: "agent"
+      # TODO: Fill in the models used during the proof development.
+      models: ["GPT-6 Astra"]
+      framework: "OpenAI Codex"
+      tool_setup: >-
+        AI-assisted Lean proof development using mathlib and Lake.
+        Source headers and commit history credit OpenAI Codex; further
+        details of the development setup are not recorded here.
+      cost:
+        wall_time: "3 days"
+        spend_usd: "subscription: chatgpt for academic researchers"
+        hardware: ""
+      prompting_notes: ""
+  spend_usd: "subscription: chatgpt for academic researchers"
+  notes:
+
+fidelity:
+  divergences: >-
+    Theorem 1.6 of the paper additionally asserts uniqueness of the solutions
+    to the PDEs. This is omitted from the formalization.
+
+review:
+  status: "author-verified"
+  reviewers: ["Joris van Winden"]
+  notes:
+
+alignment:
+  namespace: "Planarwave"
+  statements:
+    - source: "arXiv:2601.05832v1, Theorem 1.6"
+      lean: "vHJ_approximates_planar_front"
+      module: "Solution"
+      status: "proved"
+      note:
+
+acknowledgements: >-
+  The Lean and mathlib communities for the proof assistant and mathematical
+  library; OpenAI Codex for assistance with the formalization.
