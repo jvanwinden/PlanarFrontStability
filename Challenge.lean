@@ -5,7 +5,7 @@ Authors: Joris van Winden
 -/
 module
 
-import Mathlib
+public import Mathlib
 
 local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
@@ -33,7 +33,7 @@ variable (c : ℝ) (φ : ℝ → ℝ^n) (ψ : ℝ → ℝ^n)
 -- Prospective solutions to the relevant PDEs.
 variable (u : ℝ → ℝ^d → ℝ^n) (σ : ℝ → ℝ^(d - 1) → ℝ)
 
-section PDESetup
+public section PDESetup
 
 def IsBUCOn {α β : Type*} [UniformSpace α] [UniformSpace β] [Norm β] (f : α → β) (s : Set α) :=
   UniformContinuousOn f s ∧ ∃ C, ∀ x ∈ s, ‖f x‖ ≤ C
