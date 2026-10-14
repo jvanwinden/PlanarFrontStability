@@ -5,7 +5,7 @@ Authors: Joris van Winden
 -/
 module
 
-import all Planarwave.Statement
+import all Definitions
 
 /-!
 # Longitudinal and transverse coordinates

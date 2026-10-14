@@ -12,7 +12,7 @@ import all Planarwave.Analysis.FrontTrackingVHJComparison
 /-!
 # Imported proof of the planar-front challenge
 
-The analytic proof uses the namespaced predicates from `Planarwave.Statement`.
+The analytic proof uses the namespaced predicates from `Definitions`.
 The final transfer theorem accepts equivalent resolvent predicates and maps the
 two solution records, allowing `Solution.lean` to copy the challenge verbatim
 apart from this import and the replacement for its `sorry`.

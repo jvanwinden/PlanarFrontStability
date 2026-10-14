@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-import all Planarwave.Statement
+import all Definitions
 import all Planarwave.Analysis.FrontCoefficient
 import all Planarwave.Analysis.DiffusionEigenbasis
 import Planarwave.Analysis.ConvectiveHeatGenerator

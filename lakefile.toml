@@ -1,6 +1,6 @@
 name = "planarwave"
 version = "0.1.0"
-defaultTargets = ["Planarwave", "Solution"]
+defaultTargets = ["Challenge", "Solution"]
 
 [[require]]
 name = "mathlib"

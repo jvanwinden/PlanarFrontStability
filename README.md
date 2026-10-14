@@ -9,7 +9,7 @@ This project formalizes one of the main results from [1], following the paper's 
   `Planarwave.vHJ_approximates_planar_front_solution`, without explicit arguments.
 - [`Planarwave.lean`](Planarwave.lean) is the proof library's root module, importing
   the completed proof and its dependencies.
-- [`Planarwave/Statement.lean`](Planarwave/Statement.lean) mirrors the statement definitions
+- [`Definitions.lean`](Definitions.lean) mirrors the statement definitions
   inside the `Planarwave` namespace for use by the analytic proof, avoiding collisions
   with the public declarations copied into `Solution.lean`.
 - [`Planarwave/Proof.lean`](Planarwave/Proof.lean) assembles the analytic proof and transfers
@@ -23,7 +23,7 @@ This project formalizes one of the main results from [1], following the paper's 
 The reference and solution are alternative environments: **do not import both into one
 Lean module**, since each defines the same statement-level constants. The proof modules
 never import `Challenge`. Keep the copied declarations in `Solution.lean` and the
-namespaced mirrors in `Planarwave/Statement.lean` synchronized with any authorized
+namespaced mirrors in `Definitions.lean` synchronized with any authorized
 changes to `Challenge.lean`.
 
 The project pins Lean and mathlib to `v4.35.0`. Run `lake comparator` to use Lean's
