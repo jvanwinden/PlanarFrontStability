@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-import all Planarwave.Challenge
+import all Challenge
 import all Planarwave.Analysis.PhaseFunctional
 import all Planarwave.Analysis.ProfileProjection
 import all Planarwave.Analysis.TranslationMode

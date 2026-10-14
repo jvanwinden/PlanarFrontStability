@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-import all Planarwave.Challenge
+import all Challenge
 import Planarwave.Analysis.TwoEndedBUC
 import Planarwave.Analysis.LongitudinalOperator
 import all Planarwave.Analysis.TransverseOperatorBridge

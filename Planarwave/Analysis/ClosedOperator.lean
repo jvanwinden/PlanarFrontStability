@@ -23,7 +23,7 @@ The graph is required to be closed in `X × X`.  The graph norm itself is not pr
 applications may use any equivalent Banach norm on `Dom` for which `inclusion` and `operator` are
 continuous.
 
-For the sign convention used in `Planarwave.Challenge`, the resolvent map at `λ` is
+For the sign convention used in `Challenge`, the resolvent map at `λ` is
 `operator - λ • inclusion`.  Membership in the resolvent set is defined algebraically by bijectivity.
 Because both the graph-norm domain and the ambient space are Banach, Mathlib's Banach inverse
 theorem upgrades a bijective resolvent map to a continuous linear equivalence and hence produces
@@ -84,7 +84,7 @@ theorem isClosed_range_graphMap (A : ClosedOperator 𝕜 X Dom) :
   A.isClosed_graph
 
 /-- The map `A - λ I` on the fixed domain.  This sign agrees with the resolvent equation in
-`Planarwave.Challenge`. -/
+`Challenge`. -/
 def resolventMap (A : ClosedOperator 𝕜 X Dom) (z : 𝕜) : Dom →L[𝕜] X :=
   A.operator - z • A.inclusion
 
@@ -117,7 +117,7 @@ theorem mem_spectrum (A : ClosedOperator 𝕜 X Dom) (z : 𝕜) :
   rfl
 
 /-- Bijectivity of the resolvent map is equivalent to unique solvability of every resolvent
-equation.  This is the form used by `TransverseSpectrum` in `Planarwave.Challenge`. -/
+equation.  This is the form used by `TransverseSpectrum` in `Challenge`. -/
 theorem isInResolvent_iff_existsUnique (A : ClosedOperator 𝕜 X Dom) (z : 𝕜) :
     A.IsInResolvent z ↔ ∀ y : X, ∃! x : Dom, A.resolventMap z x = y := by
   constructor

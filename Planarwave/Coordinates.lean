@@ -5,7 +5,7 @@ Authors: Joris van Winden
 -/
 module
 
-import all Planarwave.Challenge
+import all Challenge
 
 /-!
 # Longitudinal and transverse coordinates

@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI Codex
 -/
 module
 
-import all Planarwave.Challenge
+import all Challenge
 import all Planarwave.Analysis.FrontCoefficient
 public import Planarwave.Analysis.BUCEquiv
 public import Planarwave.Analysis.DiagonalDiffusionSemigroup

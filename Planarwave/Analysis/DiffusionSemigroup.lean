@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-import all Planarwave.Challenge
+import all Challenge
 import all Planarwave.Analysis.FrontCoefficient
 import all Planarwave.Analysis.DiffusionEigenbasis
 import Planarwave.Analysis.ConvectiveHeatGenerator

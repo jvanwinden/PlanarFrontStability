@@ -1,20 +1,23 @@
 # Stability of planar fronts in reaction-diffusion systems
 
-This project contains the statement of one of the main results from [1]. The statement is contained in 
-the file `Planarwave/Challenge.lean`. The proof is in progress; that theorem still contains a
-`sorry`.
+This project formalizes one of the main results from [1], following the paper's proof.
 
-The dependency plan and current milestones are documented in
+- [`Challenge.lean`](Challenge.lean) contains the original statement, moved to the repository
+  root without changing its contents. Its original `sorry` remains as the comparison target.
+- [`Solution.lean`](Solution.lean) independently proves the full statement as
+  `Planarwave.vHJ_approximates_planar_front_proved`.
+- [`Comparator.lean`](Comparator.lean) verifies that the two theorem types are definitionally
+  equal and that the solution depends only on `propext`, `Classical.choice`, and `Quot.sound`.
+  It rejects `sorryAx` and any other unexpected axiom; it does not use the challenge's admitted proof.
+
+Run `lake build` to check the analytic library and comparator, or `lake build Comparator`
+to check just the comparator and its dependencies. After building, `lake env lean Comparator.lean`
+reruns the comparison and prints the solution's axioms. The original challenge's `sorry`
+warning is expected; the completed solution has no such dependency.
+
+Use `import all Solution` to access the completed theorem, since the original challenge
+definitions are private Lean module declarations. The proof's dependency map is documented in
 [`Planarwave/Analysis/PaperOutline.lean`](Planarwave/Analysis/PaperOutline.lean).
-The unforced viscous Hamilton--Jacobi phase is now constructed in every ambient dimension
-`d ≥ 2`, with its prescribed initial value, full classical solution properties, and uniform
-smallness bound (`Planarwave.exists_challengePhaseSolution` in
-[`ChallengePhaseEvolution.lean`](Planarwave/Analysis/ChallengePhaseEvolution.lean)).
-The remaining major steps are the full linear semigroup estimates, nonlinear modulation and
-bootstrap, and global continuation and comparison for the reaction--diffusion solution.
-
-Run `lake build` to check the library, including the phase construction and multidimensional
-heat regularity results.
 
 [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
   nonlocalized perturbations.", arXiv.2601.05832.

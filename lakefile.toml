@@ -1,6 +1,6 @@
 name = "planarwave"
 version = "0.1.0"
-defaultTargets = ["Planarwave"]
+defaultTargets = ["Planarwave", "Comparator"]
 
 [[require]]
 name = "mathlib"
@@ -8,3 +8,12 @@ scope = "leanprover-community"
 
 [[lean_lib]]
 name = "Planarwave"
+
+[[lean_lib]]
+name = "Challenge"
+
+[[lean_lib]]
+name = "Solution"
+
+[[lean_lib]]
+name = "Comparator"
