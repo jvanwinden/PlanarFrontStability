@@ -34,7 +34,6 @@ local instance : NormedAddCommGroup
   BUC.instNormedAddCommGroup (α := ℝ^m × ℝ)
     (E := (ℝ^m × ℝ) →L[ℝ] (ℝ^m × ℝ) →L[ℝ] ℝ^n)
 
-set_option maxHeartbeats 800000 in
 /-- The constants are chosen before the solution, derivative fields, phase,
 and time. Derivative bounds are needed only after the initial zero-phase
 interval. In particular, no spatial smoothness of the initial datum is used. -/
@@ -98,7 +97,12 @@ theorem exists_front_cutoff_nonlinearity_decay {K H : ℝ} (hK : 0 ≤ K) (hH : 
     have hvb := hbv.norm_le
     have hv₁b := hb₁.norm_le
     have hv₂b := hb₂.norm_le
-    nlinarith
+    calc
+      _ ≤ H * M ^ ((3 : ℝ) / 4) * (1 + t) ^ (-(3 : ℝ) / 4) +
+          H * M ^ ((3 : ℝ) / 4) * (1 + t) ^ (-(3 : ℝ) / 4) +
+          H * M ^ ((3 : ℝ) / 4) * (1 + t) ^ (-(3 : ℝ) / 4) :=
+        add_le_add (add_le_add hvb hv₁b) hv₂b
+      _ = _ := by ring
 
 end
 

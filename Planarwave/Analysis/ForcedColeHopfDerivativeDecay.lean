@@ -52,7 +52,6 @@ local instance coleDecaySecondTensorNormedSpace : NormedSpace ℝ (E →L[ℝ] E
 local instance coleDecaySecondBUCNormedAddCommGroup : NormedAddCommGroup (BUC E (E →L[ℝ] E →L[ℝ] ℝ)) := inferInstance
 local instance coleDecaySecondBUCNormedSpace : NormedSpace ℝ (BUC E (E →L[ℝ] E →L[ℝ] ℝ)) := inferInstance
 
-set_option maxHeartbeats 800000 in
 /-- Actual first and second derivatives of the mild solution satisfy
 the paper's weighted decay, with constants independent of the horizon. -/
 theorem IsForcedColeHopfMild.exists_buc_second_fderivative_decay {a β T C M : ℝ}
@@ -102,12 +101,11 @@ theorem IsForcedColeHopfMild.exists_buc_second_fderivative_decay {a β T C M : �
       (hdg r x).add (((hdg r x).mul (hd r hr x).1).const_smul β)
   have hdF' : ∀ r ∈ Icc 0 T, ∀ x, HasFDerivAt (F' r) (F'' r x) x := by
     intro r hr x
-    convert! (hdg' r x).add ((((hdg r x).smul (hd r hr x).2).add
-      (((hd r hr x).1).smul (hdg' r x))).const_smul β) using 1
-    simp only [F'', BUC.add_apply, BUC.smul_apply, BUC.smulBUC_apply,
-      BUC.bilinearBUC_apply, ContinuousLinearMap.smulRightL_apply_apply]
-    congr 1
-    abel_nf
+    simpa only [F', F'', BUC.add_apply, BUC.smul_apply, BUC.smulBUC_apply,
+      BUC.bilinearBUC_apply, ContinuousLinearMap.smulRightL_apply_apply,
+      add_assoc, add_left_comm, add_comm] using!
+      (hdg' r x).add ((((hdg r x).smul (hd r hr x).2).add
+        (((hd r hr x).1).smul (hdg' r x))).const_smul β)
   have hsource : ∀ r ∈ Icc 0 T, max ‖F r‖ (max ‖F' r‖ ‖F'' r‖) ≤
       (coleHopfC2SourceConstant β C * M) * (1 + r) ^ (-(5 : ℝ) / 4) := by
     intro r hr

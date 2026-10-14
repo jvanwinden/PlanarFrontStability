@@ -78,7 +78,6 @@ theorem BUCSpatialRegularOn.contDiffOn_one_reactionDiffusion
   rw [hval t ht x]
   exact hpde t ht x
 
-set_option maxHeartbeats 1200000 in
 /-- The second joint derivative follows from four spatial BUC
 derivatives. Both mixed derivative identities are proved by time
 integration; neither is postulated as additional solution data. -/

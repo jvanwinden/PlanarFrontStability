@@ -27,8 +27,6 @@ namespace Planarwave
 
 noncomputable section
 
-set_option synthInstance.maxHeartbeats 200000
-
 local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 
@@ -44,6 +42,15 @@ local instance : NormedAddCommGroup (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) 
   ContinuousLinearMap.toNormedAddCommGroup
 local instance : NormedSpace ℝ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
   ContinuousLinearMap.toNormedSpace
+
+-- Pin the operator scalar action and its continuity instead of increasing synthesis limits.
+local instance : SMul ℝ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
+  ContinuousLinearMap.instSMul
+
+local instance : ContinuousSMul ℝ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) := by
+  let : IsBoundedSMul ℝ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
+    NormedSpace.toIsBoundedSMul
+  exact IsBoundedSMul.continuousSMul
 
 local instance : ContinuousENorm (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
   (SeminormedAddGroup.toESeminormedAddMonoid

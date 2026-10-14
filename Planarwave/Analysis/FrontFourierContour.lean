@@ -24,8 +24,6 @@ namespace Planarwave
 
 noncomputable section
 
-set_option synthInstance.maxHeartbeats 200000
-
 local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 

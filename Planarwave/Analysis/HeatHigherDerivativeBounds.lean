@@ -35,7 +35,6 @@ local instance heatHigherCLMNormedSpace : NormedSpace ℝ (E →L[ℝ] F) := inf
 local instance heatHigherCLMCompleteSpace : CompleteSpace (E →L[ℝ] F) := inferInstance
 local instance heatHigherBUCNormedAddCommGroup : NormedAddCommGroup (BUC E (E →L[ℝ] F)) := inferInstance
 
-set_option maxHeartbeats 800000 in
 /-- Distribute `k` derivatives over `k` heat intervals of length `ε`.
 The leftover heat interval is contractive. -/
 theorem norm_iteratedFDeriv_heatFlow_le_of_mul_le (k : ℕ) {a ε t : ℝ}

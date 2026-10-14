@@ -55,7 +55,6 @@ theorem FrontTrackingSystem.exists_gradient_derivative {T : ℝ}
   obtain ⟨_, s₁, hs₁, hds₁⟩ := hsreg
   exact ⟨s₁, hs₁, hds₁⟩
 
-set_option maxHeartbeats 1000000 in
 /-- A sufficiently small physical tracking solution satisfies exactly the
 challenge's error bound relative to its prescribed unforced phase. No source,
 phase, forcing, or perturbation estimate is assumed, and both zero amplitude

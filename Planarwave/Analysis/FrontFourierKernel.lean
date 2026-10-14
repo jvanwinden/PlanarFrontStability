@@ -25,8 +25,6 @@ namespace Planarwave
 
 noncomputable section
 
-set_option synthInstance.maxHeartbeats 200000
-
 local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 
@@ -39,6 +37,13 @@ theorem continuous_complexFrequencyShift_left {m : ℕ} (η : ℝ^m) :
 variable {m n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
   (φ : ℝ → ℝ^n) (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ)
   [Nontrivial (ℝ^n)] (ψ : ℝ → ℝ^n) (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
+
+-- Pin the operator scalar actions to avoid repeated expensive instance searches.
+local instance : SMul ℂ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
+  ContinuousLinearMap.instSMul
+
+local instance : MulAction ℂ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
+  ContinuousLinearMap.mulAction
 
 local instance : ContinuousENorm (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
   (SeminormedAddGroup.toESeminormedAddMonoid
@@ -118,8 +123,6 @@ theorem frontRemainderKernel_eq_integral (t : NNReal) (x : ℝ^m) :
   have hzero : (embed (0 : ℝ^m) : ℂ^m) = 0 := by ext i; simp [embed]
   simp [frontRemainderKernel, frontShiftedRemainderKernel, oscillatoryIntegral,
     complexFrequencyShift, hzero]
-  exact one_smul ℂ (∫ ξ : ℝ^m, Complex.exp (Complex.I * (⟪ξ, x⟫_ℝ : ℂ)) •
-    frontFourierRemainderSymbol f D c φ h₁ h₂ ψ h₃ t (embed ξ))
 
 /-- Applying the operator kernel to a longitudinal slice agrees with the paper's
 Banach-valued integral. No interchange of conditionally convergent integrals is used. -/

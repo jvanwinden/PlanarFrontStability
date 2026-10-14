@@ -140,7 +140,6 @@ theorem neg {s : Set ℝ} {k : ℕ} {f : ℝ → BUC E F}
     (hf : BUCSpatialRegularOn s k f) : BUCSpatialRegularOn s k (fun t ↦ -f t) := by
   simpa only [neg_one_smul] using hf.const_smul (-1)
 
-set_option maxHeartbeats 800000 in
 /-- The spatial product rule preserves the entire hierarchy of BUC derivatives. -/
 theorem bilinear {s : Set ℝ} {k : ℕ} {f : ℝ → BUC E F} {g : ℝ → BUC E G}
     (hf : BUCSpatialRegularOn s k f) (hg : BUCSpatialRegularOn s k g)

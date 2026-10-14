@@ -75,7 +75,6 @@ theorem IsFiniteHeatSystemMildOn.exists_continuous_extension
     simp only [v, projIcc_of_mem hT ht]
   exact ⟨v, hv, heq, hm.congr heq⟩
 
-set_option maxHeartbeats 1200000 in
 /-- A BUC-bounded solution on `[0,T)` for finite `T` extends beyond `T`.
 The argument uses uniform local existence, gluing, and uniqueness; it
 does not assume an endpoint value or endpoint limit. -/

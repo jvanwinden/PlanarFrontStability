@@ -160,7 +160,6 @@ public import Planarwave.Analysis.FrontAdjointRegularity
 public import Planarwave.Analysis.FrontNonlinearity
 public import Planarwave.Analysis.InverseModulationNonlinearityContinuity
 public import Planarwave.Analysis.FrontNonlinearityContinuity
-public import Planarwave.Analysis.FrontInterpolatedNonlinearity
 public import Planarwave.Analysis.FrontModulationPDE
 public import Planarwave.Analysis.FrontPhysicalModulationPDE
 public import Planarwave.Analysis.FrontPhysicalModulationDifferentiability
@@ -205,7 +204,6 @@ public import Planarwave.Analysis.FrontImprovedForcingDecay
 public import Planarwave.Analysis.FrontPhaseComparison
 public import Planarwave.Analysis.FrontVHJComparison
 public import Planarwave.Analysis.FrontDelayedForcing
-public import Planarwave.Analysis.FrontForcedPhase
 public import Planarwave.Analysis.FrontForcedPhaseFirstDerivativeBounds
 public import Planarwave.Analysis.FrontForcedPhaseSecondDerivativeBounds
 public import Planarwave.Analysis.FrontForcedPhaseDerivativeDecay
@@ -239,10 +237,7 @@ public import Planarwave.Analysis.FrontFourierIdentification
 public import Planarwave.Analysis.FrontSpatialDecay
 public import Planarwave.Analysis.FrontSpatialRemainderDuhamelDecay
 public import Planarwave.Analysis.FrontTrackingRemainderDecay
-public import Planarwave.Analysis.FrontPhaseRemainderEstimate
 public import Planarwave.Analysis.FrontTrackingCriticalDecomposition
-public import Planarwave.Analysis.FrontPhaseTrackingEstimate
-public import Planarwave.Analysis.FrontPhaseHigherTrackingEstimate
 public import Planarwave.Analysis.LogarithmicConvolution
 public import Planarwave.Analysis.FrontSpatialAnalytic
 public import Planarwave.Analysis.FrontSpatialSemigroup
@@ -810,11 +805,10 @@ complex spatial-semigroup space and proves exact preservation of its norm.
 `FrontTrackingRemainderDecay` then proves `eq:west` for this source, including
 the initial term and time zero, without assuming a separate full-source bound.
 It also specializes the exact spatial Duhamel decomposition to these paths.
-`FrontPhaseRemainderEstimate` constructs the classical phase and obtains its
-weighted derivatives, the full source bound, and the logarithmic remainder
-bound together, starting only from the supplied `5/4` nonlinear source bound
-and small initial data. This joins the low-order part of Step 1 to Step 3a
-for the same phase.
+`FrontExistingPhaseBounds` supplies the weighted phase derivatives for the
+actual coupled tracking trajectory. These estimates and the remainder bound
+are assembled in `FrontTrackingAPriori`, so Steps 1 and 3a concern the same
+physical solution.
 
 The critical contribution is now identified and estimated as well.
 `FrontNonlinearDispersion` proves Lemma `lem:ndispersion` from the original
@@ -832,15 +826,13 @@ evolution on real data with that real amplitude times the translation mode.
 Commuting the fixed profile map with the time integral gives the exact
 `ζ φ' + w` decomposition for the actual spatial-semigroup Duhamel solution.
 Combining the two estimates proves `eq:vkeyest` in the spatial supremum
-norm. `FrontPhaseTrackingEstimate` joins this with the constructed classical
-phase, with constants and smallness chosen before the paths and horizon.
-`FrontPhaseHigherTrackingEstimate` now retains the full uniform C⁹ phase
-bound, all time-continuous spatial BUC derivative paths, and the Cole--Hopf
-identity together with this same logarithmic spatial response estimate.
-Only continuous `N` and its `5/4` decay bound are supplied; the phase bounds
-and the full-source bound are proved. The later physical smoothing, tracking
+norm. `FrontForcedPhaseHigherBounds` constructs the phase with uniform C⁹
+bounds and time-continuous spatial BUC derivative paths.
+`FrontExistingPhaseBounds` transfers these bounds to the actual phase by
+uniqueness of its Cole--Hopf transform. `FrontTrackingAPriori` combines them
+with the logarithmic spatial response and physical smoothing; the tracking
 construction, bootstrap closure, and global comparison modules discharge
-these supplied-source hypotheses for the actual nonlinear solution.
+the supplied-source hypotheses for the actual nonlinear solution.
 
 The first nonlinear estimate, Lemma 4.1, is now proved.
 `BUCNonlinear` constructs continuous nonlinear composition on BUC by compactness
@@ -870,15 +862,15 @@ zero initial amplitude, without dividing by that amplitude.
 logarithm and proves `eq:vestC2`, in the actual BUC two-jet norm used by
 Lemma 4.1, wherever the uniform C⁹ bound is available. The constants and
 smallness threshold precede the datum and time. `NonlinearBootstrapPowers`
-then carries out Step 5's power counting. `FrontInterpolatedNonlinearity`
-substitutes these estimates into the original front nonlinearity and
+then carries out Step 5's power counting. `FrontCutoffNonlinearityDecay`
+substitutes the interpolated bounds into the original front nonlinearity,
+including the initial interval where the derivative coefficients vanish.
+`FrontTrackingAPriori` supplies these bounds using physical smoothing and
 obtains `C*M^(7/4)*(1+t)^(-5/4)`, with no small first- or second-derivative
-bound assumed. The uniform C⁹ bound is now transferred from bounded matrix
+bound assumed. The uniform C⁹ bound is transferred from bounded matrix
 mild solutions to their actual inverse-modulated perturbations below.
-The initial-time cutoff argument is supplied by
-`FrontCutoffNonlinearityDecay`; `FrontTrackingAPriori` and
-`FrontTrackingBootstrapClosure` combine it with physical smoothing and
-close the actual nonlinear source estimate by continuity.
+`FrontTrackingBootstrapClosure` closes the resulting nonlinear source
+estimate by continuity.
 
 The higher-regularity transfer in Step 4 is now proved as well.
 `BUCSpatialComposition` proves quantitative repeated chain rules for
@@ -1273,10 +1265,12 @@ endpoints. No derivative of the completed nonlinear source is assumed.
 transform to this actual classical solution. It proves spatial `C²`
 regularity and the forced viscous Hamilton--Jacobi time equation for
 the BUC phase, together with the existing uniform zero-order estimate.
-`FrontForcedPhase` specializes this existence result to the original
-`d_perp`, adjoint-projected delayed forcing, and `β = c/(2*d_perp)`;
-positivity and the coefficient cancellation follow from the original
-hypotheses. Both transformed solution and phase vanish through `1/4`.
+`FrontForcedPhaseFirstDerivativeBounds` and
+`FrontForcedPhaseSecondDerivativeBounds` specialize the strengthened
+existence results to the original `d_perp`, adjoint-projected delayed
+forcing, and `β = c/(2*d_perp)`. Positivity and the coefficient cancellation
+follow from the original hypotheses. Both transformed solution and phase
+vanish through `1/4`.
 The quantitative first-derivative step is now proved as well.
 `HeatDuhamelBilinearBounds` gives the heat-contractivity/Grönwall estimate
 in a Banach-valued BUC space, keeping the product-rule constant explicit.
@@ -1503,31 +1497,7 @@ theorem enter this proof. The original placeholder remains in the protected
 `Challenge.lean`, which is not imported by the solution or its analytic library.
 Import the completed public theorem with `import Solution`. Do not import
 `Challenge` alongside it: these are alternative environments with the same
-statement-level names. The Lake file has only `Challenge` and `Solution` targets.
-The default `lake build` builds `Solution`, including the analytic modules registered
-under that target; comparator verification is a separate operation.
+statement-level names. The Lake file has `Planarwave`, `Challenge`, and `Solution`
+targets. The default `lake build` builds `Solution` and its analytic dependencies
+from the `Planarwave` library; comparator verification is a separate operation.
 -/
-
-namespace Planarwave
-
-/-- Names of the paper-level obligations, in their mathematical dependency order.  This finite
-index is useful for documentation and does not assert any unproved mathematics. -/
-inductive PaperProofStage
-  | criticalSpectrum
-  | symbolSemigroupBounds
-  | fullSemigroupDecomposition
-  | inverseModulation
-  | nonlinearBootstrap
-  | globalContinuation
-  deriving DecidableEq, Repr
-
-/-- The next paper-level stage after a completed one, when there is one. -/
-def PaperProofStage.next : PaperProofStage → Option PaperProofStage
-  | .criticalSpectrum => some .symbolSemigroupBounds
-  | .symbolSemigroupBounds => some .fullSemigroupDecomposition
-  | .fullSemigroupDecomposition => some .inverseModulation
-  | .inverseModulation => some .nonlinearBootstrap
-  | .nonlinearBootstrap => some .globalContinuation
-  | .globalContinuation => none
-
-end Planarwave

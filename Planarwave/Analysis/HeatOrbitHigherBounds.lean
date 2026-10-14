@@ -31,7 +31,6 @@ variable {E : Type} {F : Type u}
   [MeasurableSpace E] [BorelSpace E]
   [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
 
-set_option maxHeartbeats 800000 in
 /-- A regular initial datum has norm-continuous heat-evolved derivatives. -/
 theorem BUCSpatialBound.heatOrbit_regular {k : ℕ} {u : BUC E F} {B : ℝ}
     (hu : BUCSpatialBound k u B) (a : ℝ) :
@@ -44,7 +43,6 @@ theorem BUCSpatialBound.heatOrbit_regular {k : ℕ} {u : BUC E F} {B : ℝ}
       fun t ↦ heatFlowBUC a t q, ih hq, ?_⟩
     exact fun t _ x ↦ hasFDerivAt_heatFlow_of_hasFDerivAt a t u q hd x
 
-set_option maxHeartbeats 800000 in
 /-- Uniform `C^k` smoothing after a fixed positive age. The constant is
 chosen before the datum and actual heat age. -/
 theorem exists_bucSpatialBound_heatFlow (k : ℕ) {a δ : ℝ} (ha : 0 < a) (hδ : 0 < δ) :

@@ -30,7 +30,6 @@ local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 variable {m n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
   (φ ψ : ℝ → ℝ^n) (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
 
-set_option maxHeartbeats 800000 in
 /-- Uniform `C^k` bounds for the actual front's Cole--Hopf variable.
 All constants are chosen before the horizon, data, source, and solution. -/
 theorem exists_front_forcedColeHopf_cn_bound (k : ℕ) :

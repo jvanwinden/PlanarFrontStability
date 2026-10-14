@@ -73,7 +73,6 @@ variable {E V ι : Type}
   [NormedAddCommGroup V] [NormedSpace ℝ V] [ProperSpace V] [CompleteSpace V]
   [Fintype ι]
 
-set_option maxHeartbeats 1200000 in
 /-- A compatible restarted local solution extends a mild solution. The
 coordinate Duhamel equation across the join follows from heat evolution
 and the translated-source restart formula. -/

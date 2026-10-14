@@ -41,7 +41,6 @@ local instance spacetimeBootstrapBUCDerivativeNormedAddCommGroup :
 local instance spacetimeBootstrapBUCDerivativeNormedSpace :
     NormedSpace ℝ (BUC E (E →L[ℝ] F)) := BUC.instNormedSpace
 
-set_option maxHeartbeats 1200000 in
 /-- Gain one joint derivative simultaneously for every spatial jet up to
 order `j`, using genuine time differentiation and spatial commutation. -/
 theorem BUCSpacetimeRegularOn.time_upgrade {a b : ℝ} {k j : ℕ}

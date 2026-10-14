@@ -132,7 +132,6 @@ theorem add {a b : ℝ} {k j : ℕ} {f g : ℝ → BUC E F}
     intro t ht x
     simpa only [BUC.add_apply] using! (hdf t ht x).add (hdg t ht x)
 
-set_option maxHeartbeats 800000 in
 /-- The spatial product rule also preserves joint regularity of every jet. -/
 theorem bilinear {a b : ℝ} {k j : ℕ} {f : ℝ → BUC E F} {g : ℝ → BUC E G}
     (hf : BUCSpacetimeRegularOn a b k j f) (hg : BUCSpacetimeRegularOn a b k j g)
@@ -157,7 +156,6 @@ theorem bilinear {a b : ℝ} {k j : ℕ} {f : ℝ → BUC E F} {g : ℝ → BUC 
     simpa only [BUC.add_apply, BUC.bilinearBUC_apply] using!
       B.hasFDerivAt_of_bilinear (hdf t ht x) (hdg t ht x)
 
-set_option maxHeartbeats 800000 in
 /-- Continuous linear postcomposition preserves every spatial and joint order. -/
 theorem postcompCLM {a b : ℝ} {k j : ℕ} {f : ℝ → BUC E F}
     (hf : BUCSpacetimeRegularOn a b k j f) (L : F →L[ℝ] G) :
@@ -177,7 +175,6 @@ theorem postcompCLM {a b : ℝ} {k j : ℕ} {f : ℝ → BUC E F}
 
 variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [ProperSpace V]
 
-set_option maxHeartbeats 800000 in
 /-- Smooth nonlinear substitution preserves the joint regularity of spatial jets. -/
 theorem postcomp_smooth {a b : ℝ} {k j : ℕ} {u : ℝ → BUC E V}
     (hu : BUCSpacetimeRegularOn a b k j u) (f : V → F) (hf : ContDiff ℝ ∞ f) :

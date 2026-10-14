@@ -34,7 +34,6 @@ variable {m n : ℕ} [Nontrivial (ℝ^n)]
   (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
 
 include h₁ h₃ in
-set_option maxHeartbeats 800000 in
 /-- All spatial derivatives of the actual split-coordinate front are
 bounded and uniformly continuous, derived from the original hypotheses. -/
 theorem exists_frontSplitProfile_cn_bound (k : ℕ) :

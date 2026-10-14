@@ -94,7 +94,6 @@ theorem heatDuhamel_add_on (a : ℝ) {t : ℝ} (ht : 0 ≤ t)
   · exact ((continuous_heatFlowBUC_joint a).comp_continuousOn
       ((continuousOn_const.sub continuousOn_id).prodMk hg)).intervalIntegrable_of_Icc ht
 
-set_option maxHeartbeats 800000 in
 /-- A scalar-coefficient heat integral equation preserves every finite order
 of BUC spatial regularity. No derivative of the solution is assumed. -/
 theorem bucSpatialRegularOn_scalar_heatVolterra (a : ℝ) {T : ℝ} (hT : 0 ≤ T)

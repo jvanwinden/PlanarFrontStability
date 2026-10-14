@@ -98,7 +98,6 @@ theorem isSemilinearHeatMildOn_of_mild {a T : ℝ} (ha : 0 ≤ a) (_hT : 0 ≤ T
   rw [heatDuhamel_restart_shift ha hs ht (hg.mono (Icc_subset_Icc le_rfl hst))]
   rw [add_comm t s, add_assoc]
 
-set_option maxHeartbeats 800000 in
 /-- A bounded mild solution is spatially `C^k` after any positive waiting
 time, with genuine BUC derivatives norm-continuous in time and a common
 bound uniform over all horizons and bounded solution trajectories. -/

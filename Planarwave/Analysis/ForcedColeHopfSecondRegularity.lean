@@ -50,7 +50,6 @@ local instance coleHopfSecondDerivativeNormedSpace :
     NormedSpace ℝ (BUC E (E →L[ℝ] E →L[ℝ] ℝ)) :=
   BUC.instNormedSpace (𝕜 := ℝ) (α := E) (E := E →L[ℝ] E →L[ℝ] ℝ)
 
-set_option maxHeartbeats 400000 in
 /-- Two BUC derivatives of the forcing give two genuine BUC spatial
 derivatives of the existing mild solution, both continuous in time. -/
 theorem IsForcedColeHopfMild.exists_buc_second_fderivative_duhamel {a β T : ℝ}
@@ -169,7 +168,10 @@ theorem IsForcedColeHopfMild.exists_buc_second_fderivative_duhamel {a β T : ℝ
   dsimp only [P', R]
   rw [hXeq r hrT, hQeq]
   ext x v w
-  simp [smul_smul, smul_add]
+  simp only [smul_add, neg_add_rev, neg_smul, BUC.add_apply, BUC.neg_apply, BUC.smul_apply,
+    BUC.bilinearBUC_apply, ContinuousLinearMap.smulRightL_apply_apply, BUC.smulBUC_apply,
+    smul_smul, smul_eq_mul, neg_mul, map_neg, map_smul, neg_apply, smul_apply, add_apply,
+    ContinuousLinearMap.smulRight_apply]
   ring
 
 /-- Two genuine BUC derivatives, as a projection of the differentiated

@@ -382,19 +382,17 @@ theorem contDiffAt_frontCriticalProjection :
   exact (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃).contDiffAt_criticalProjection
     (diffusionValue (frontComplexifiedDiffusion D))
 
-set_option maxRecDepth 4096 in
+set_option maxRecDepth 1024 in
 /-- Near zero, the critical spectral projection is idempotent. -/
 theorem eventually_frontCriticalProjection_idempotent :
     ∀ᶠ q in 𝓝 0, ∀ w : BUC ℝ (ℂ^n),
       frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q
           (frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q w) =
         frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q w := by
-  simpa only [frontCriticalProjection] using
-    (SimpleFredholmZeroMode.eventually_criticalProjection_idempotent
-      (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃)
-      (diffusionValue (frontComplexifiedDiffusion D)))
+  exact SimpleFredholmZeroMode.eventually_criticalProjection_idempotent
+    (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃)
+    (diffusionValue (frontComplexifiedDiffusion D))
 
-set_option maxRecDepth 4096 in
 /-- The projection has rank one and its kernel is precisely the range of the shifted front
 operator, which is the algebraic spectral splitting at the simple eigenvalue. -/
 theorem eventually_frontCriticalProjection_spectralSplitting :

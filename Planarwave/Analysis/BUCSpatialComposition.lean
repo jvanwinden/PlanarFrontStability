@@ -50,7 +50,6 @@ theorem const (k : ℕ) (a : F) : BUCSpatialBound k (BUC.const E a) ‖a‖ := b
     intro x
     exact hasFDerivAt_const a x
 
-set_option maxHeartbeats 800000 in
 /-- Linear postcomposition costs just the operator norm at every derivative order. -/
 theorem postcomp {k : ℕ} {f : BUC E F} {A : ℝ} (hf : BUCSpatialBound k f A)
     (L : F →L[ℝ] G) : BUCSpatialBound k (BUC.postcompCLM L f) (‖L‖ * A) := by
@@ -119,7 +118,6 @@ theorem one_le_bucSpatialCompositionConstant (B : ℝ) (k : ℕ) :
   | zero => exact le_rfl
   | succ k => exact le_max_left _ _
 
-set_option maxHeartbeats 800000 in
 /-- Quantitative chain rule. The inner coordinate map may be unbounded;
 its derivative is a genuine BUC field with bounds through order `k - 1`. -/
 theorem BUCSpatialBound.comp {k : ℕ} {f : BUC E F} {A B : ℝ}

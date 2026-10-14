@@ -104,7 +104,6 @@ theorem neg {k : ℕ} {f : BUC E F} {A : ℝ}
     (hf : BUCSpatialBound k f A) : BUCSpatialBound k (-f) A := by
   simpa only [neg_one_smul, abs_neg, abs_one, one_mul] using hf.smul (-1)
 
-set_option maxHeartbeats 800000 in
 /-- The repeated product rule, with one constant for all derivatives. -/
 theorem bilinear {k : ℕ} {f : BUC E F} {g : BUC E G} {A C : ℝ}
     (hf : BUCSpatialBound k f A) (hg : BUCSpatialBound k g C)

@@ -151,7 +151,6 @@ theorem norm_iteratedFDeriv_delayedHeatForcing_decay_le {a γ T M : ℝ}
         mul_le_mul_of_nonneg_right (trackingCutoff_le_norm τ) (by positivity)
       _ = _ := by ring
 
-set_option maxHeartbeats 800000 in
 /-- The forcing derivatives in the all-order decay estimate belong to BUC.
 Uniform continuity follows from the bound one order higher. -/
 theorem exists_buc_iteratedFDeriv_delayedHeatForcing {a γ T M : ℝ}
@@ -163,8 +162,10 @@ theorem exists_buc_iteratedFDeriv_delayedHeatForcing {a γ T M : ℝ}
       (∀ x, g x = iteratedFDeriv ℝ k (delayedHeatForcing a p N t : E → F) x) ∧
       ‖g‖ ≤ (‖trackingCutoff‖ * delayedForcingSpatialConstant a K * (3 : ℝ) ^ γ) *
         M * (1 + t) ^ (-γ) := by
-  have hf : ContDiff ℝ ∞ (delayedHeatForcing a p N t : E → F) :=
-    (contDiff_delayedHeatForcing ha p N).comp (contDiff_const.prodMk contDiff_id)
+  have hf : ContDiff ℝ ∞ (delayedHeatForcing a p N t : E → F) := by
+    simpa only [Function.comp_def] using!
+      (contDiff_delayedHeatForcing ha p N).comp (f := fun x : E ↦ (t, x))
+        (contDiff_const.prodMk contDiff_id)
   exact exists_buc_iteratedFDeriv_of_bounds
     (hf.of_le (WithTop.coe_le_coe.mpr (show (↑(k + 1) : ℕ∞) ≤ ⊤ from le_top)))
     (norm_iteratedFDeriv_delayedHeatForcing_decay_le ha hγ K k hk p N hM hp hN ht)

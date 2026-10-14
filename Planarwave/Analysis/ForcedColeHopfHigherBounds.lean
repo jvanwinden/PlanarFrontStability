@@ -31,7 +31,6 @@ variable {E : Type}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
 
-set_option maxHeartbeats 800000 in
 /-- The arbitrary-order, horizon-independent a priori bound of `lem:xiAP`.
 Spatial derivatives are supplied by the regularity theorem, not assumed for `ξ`. -/
 theorem IsForcedColeHopfMild.spatial_bound {a β T C M : ℝ}

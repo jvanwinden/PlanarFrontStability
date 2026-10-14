@@ -100,7 +100,6 @@ variable {E V : Type} {F : Type u}
   [NormedAddCommGroup V] [NormedSpace ℝ V] [ProperSpace V]
   [NormedAddCommGroup F] [NormedSpace ℝ F]
 
-set_option maxHeartbeats 800000 in
 /-- A smooth reaction preserves finite-order BUC bounds uniformly on a
 fixed `C^k` ball. The constant precedes the choice of the spatial field. -/
 theorem exists_bucSpatialBound_postcomp (k : ℕ) (f : V → F) (hf : ContDiff ℝ ∞ f)
@@ -132,7 +131,6 @@ theorem exists_bucSpatialBound_postcomp (k : ℕ) (f : V → F) (hf : ContDiff �
     intro x
     exact (hf.differentiable (by simp) (u x)).hasFDerivAt.comp x (hd x)
 
-set_option maxHeartbeats 800000 in
 /-- All source derivatives remain norm-continuous in time under smooth
 reaction composition. No compactness of the spatial domain is used. -/
 theorem BUCSpatialRegularOn.postcomp_smooth {s : Set ℝ} {k : ℕ} {u : ℝ → BUC E V}

@@ -86,7 +86,6 @@ theorem isFiniteHeatSystemMildOn_of_mild (a : ι → ℝ) (ha : ∀ i, 0 ≤ a i
   rw [add_comm t s, add_assoc]
 
 omit [CompleteSpace V] in
-set_option maxHeartbeats 1200000 in
 /-- Uniform higher regularity for coupled heat equations with distinct
 positive diffusion rates. The reconstruction maps need not be isometries. -/
 theorem exists_finiteHeatSystem_cn_bound (k : ℕ) (a : ι → ℝ) (ha : ∀ i, 0 < a i)

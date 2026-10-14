@@ -32,7 +32,6 @@ variable {E V ι : Type}
   [NormedAddCommGroup V] [NormedSpace ℝ V] [ProperSpace V] [CompleteSpace V]
   [Fintype ι]
 
-set_option maxHeartbeats 800000 in
 /-- Reconstruct the full mild equation from the coordinate mild equations.
 Only reconstruction of a vector from its coordinates is needed. -/
 theorem IsFiniteHeatSystemMildOn.operator_mild
@@ -83,7 +82,6 @@ theorem IsFiniteHeatSystemMildOn.operator_mild
     ⟨(BUC.postcompCLM (Q i)).integrable_comp (hci i).1,
       (BUC.postcompCLM (Q i)).integrable_comp (hci i).2⟩).symm
 
-set_option maxHeartbeats 800000 in
 /-- Continuous solutions of the same coupled finite heat system with the
 same initial datum agree throughout their common finite time interval. -/
 theorem IsFiniteHeatSystemMildOn.eqOn

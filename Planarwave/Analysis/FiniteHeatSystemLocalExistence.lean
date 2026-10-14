@@ -100,7 +100,6 @@ theorem postcomp_finiteHeatSystemOperator (a : ι → ℝ) (P : ι → V →L[�
   simp only [BUC.evalCLM_apply, BUC.postcompCLM_apply, hQP]
   simp
 
-set_option maxHeartbeats 800000 in
 /-- A single BUC-valued mild equation gives all scalar coordinate
 equations and therefore all restart equations. -/
 theorem isFiniteHeatSystemMildOn_of_operator_mild (a : ι → ℝ) (ha : ∀ i, 0 ≤ a i)
@@ -136,7 +135,6 @@ theorem isFiniteHeatSystemMildOn_of_operator_mild (a : ι → ℝ) (ha : ∀ i, 
         (BUC.postcompContinuous f hf.continuous (u r)) i
     _ = _ := congrArg (heatFlowBUC (a i) (t - r)) (BUC.ext fun _ ↦ rfl)
 
-set_option maxHeartbeats 800000 in
 /-- Uniform positive lifetime for the coupled nonlinear heat system,
 with the initial datum attained in BUC norm and exact restart formulas. -/
 theorem exists_local_finiteHeatSystem (a : ι → ℝ) (ha : ∀ i, 0 ≤ a i)

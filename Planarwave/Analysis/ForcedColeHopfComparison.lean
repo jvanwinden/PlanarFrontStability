@@ -70,15 +70,17 @@ theorem heatDuhamel_add_of_continuousOn (a : ℝ) {f g : ℝ → BUC E ℝ} {t :
   · exact ((continuous_heatFlowBUC_joint a).comp_continuousOn
       ((continuousOn_const.sub continuousOn_id).prodMk hg)).intervalIntegrable_of_Icc ht
 
-set_option maxHeartbeats 800000 in
 /-- Split the transformed forcing into its linear pulse and product part. -/
 theorem heatDuhamel_forcedColeHopfSource (a β : ℝ) {g ξ : ℝ → BUC E ℝ} {t : ℝ}
     (ht : 0 ≤ t) (hg : ContinuousOn g (Icc 0 t)) (hξ : ContinuousOn ξ (Icc 0 t)) :
     heatDuhamel a (fun r ↦ forcedColeHopfSource β (g r) (ξ r)) t =
       heatDuhamel a g t + β • heatDuhamel a (fun r ↦ BUC.smulBUC (g r) (ξ r)) t := by
-  have hp : ContinuousOn (fun r ↦ BUC.smulBUC (g r) (ξ r)) (Icc 0 t) :=
-    (BUC.continuous_bilinearBUC (ContinuousLinearMap.lsmul ℝ ℝ)).comp_continuousOn
-      (hg.prodMk hξ)
+  have hp : ContinuousOn (fun r ↦ BUC.smulBUC (g r) (ξ r)) (Icc 0 t) := by
+    change ContinuousOn (fun r ↦ BUC.bilinearBUC
+      (ContinuousLinearMap.lsmul ℝ ℝ : ℝ →L[ℝ] ℝ →L[ℝ] ℝ) (g r) (ξ r)) (Icc 0 t)
+    simpa only [BUC.bilinearBUCCLM_apply] using!
+      (((BUC.bilinearBUCCLM (A := E)
+        (ContinuousLinearMap.lsmul ℝ ℝ : ℝ →L[ℝ] ℝ →L[ℝ] ℝ)).continuous.comp_continuousOn hg).clm_apply hξ)
   simp only [forcedColeHopfSource]
   calc
     _ = heatDuhamel a g t + heatDuhamel a (fun r ↦ β • BUC.smulBUC (g r) (ξ r)) t := by

@@ -37,7 +37,6 @@ local instance frontHigherTensorNormedSpace (k : ℕ) :
 local instance frontHigherBUCNormedAddCommGroup (k : ℕ) :
     NormedAddCommGroup (BUC (ℝ^m) ((ℝ^m) [×k]→L[ℝ] ℝ)) := inferInstance
 
-set_option maxHeartbeats 800000 in
 /-- The paper's forcing decay in `C^K`, as actual BUC spatial derivatives.
 Taking `K = 9` and `γ = 5/4` gives the estimate needed in Step 1 of `lem:key`. -/
 theorem exists_frontDelayedForcing_cn_decay (K : ℕ) {γ : ℝ} (hγ : 0 ≤ γ) :

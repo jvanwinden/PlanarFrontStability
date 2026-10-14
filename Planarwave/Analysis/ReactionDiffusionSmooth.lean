@@ -47,7 +47,6 @@ local instance reactionSmoothBUCHessianNormedAddCommGroup :
 local instance reactionSmoothBUCHessianNormedSpace :
     NormedSpace ℝ (BUC E (E →L[ℝ] E →L[ℝ] V)) := BUC.instNormedSpace
 
-set_option maxHeartbeats 1200000 in
 /-- All spatial jets of a reaction--diffusion solution acquire every
 finite joint spacetime order, starting from spatial BUC smoothing. -/
 theorem bucSpacetimeRegularOn_reactionDiffusion

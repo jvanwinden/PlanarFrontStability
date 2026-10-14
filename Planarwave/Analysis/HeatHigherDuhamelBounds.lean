@@ -41,7 +41,6 @@ theorem norm_heatDuhamel_le_integral_on (a : ℝ) {T : ℝ}
     exact (norm_heatFlowBUC_le _ _ _).trans (hb r ⟨hr.1.le, hr.2.trans ht.2⟩)
   · exact (hA.mono (Icc_subset_Icc le_rfl ht.2)).intervalIntegrable_of_Icc ht.1
 
-set_option maxHeartbeats 800000 in
 /-- The same majorant controls every derivative through order `k`. -/
 theorem BUCSpatialRegularOn.heatDuhamel_bound (a : ℝ) {T : ℝ} (hT : 0 ≤ T)
     {k : ℕ} {f : ℝ → BUC E F} (hf : BUCSpatialRegularOn (Icc 0 T) k f)

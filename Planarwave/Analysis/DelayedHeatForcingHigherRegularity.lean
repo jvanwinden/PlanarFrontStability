@@ -36,7 +36,6 @@ local instance higherPulseCLMNormedAddCommGroup : NormedAddCommGroup (E →L[ℝ
 local instance higherPulseCLMNormedSpace : NormedSpace ℝ (E →L[ℝ] F) := inferInstance
 local instance higherPulseBUCNormedAddCommGroup : NormedAddCommGroup (BUC E (E →L[ℝ] F)) := inferInstance
 
-set_option maxHeartbeats 800000 in
 /-- Every cutoff heat pulse has BUC derivatives of all orders, continuously
 in time. The shift `s < 1/4` records the heat intervals already extracted. -/
 theorem bucSpatialRegularOn_trackingHeatPulse_shift (k : ℕ) {a : ℝ} (ha : 0 < a)

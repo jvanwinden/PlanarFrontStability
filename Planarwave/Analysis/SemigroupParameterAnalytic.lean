@@ -52,7 +52,6 @@ theorem perturbationOperator_smul_coefficient (S : C0Semigroup ℂ E)
   intro t
   exact S.duhamel_smul a (fun r ↦ B (extendTimePath u r)) t
 
-set_option maxHeartbeats 800000 in
 /-- Coefficient dependence of the path-space Volterra operator, as a bounded linear map. -/
 def perturbationCoefficientCLM (S : C0Semigroup ℂ E) (T : NNReal) :
     (E →L[ℂ] E) →L[ℂ] (TimePath (E := E) T →L[ℂ] TimePath (E := E) T) := by
@@ -91,7 +90,6 @@ theorem volterraInverse_eq_inverse (S : C0Semigroup ℂ E) (B : E →L[ℂ] E) (
   apply h.injective
   exact (S.volterraInverse_sub B T u).trans (h.self_apply_inverse u).symm
 
-set_option maxHeartbeats 800000 in
 /-- Holomorphy of the full path-space solution inverse in its coefficient. -/
 theorem contDiff_volterraInverse_coefficient (S : C0Semigroup ℂ E) (T : NNReal) :
     ContDiff ℂ ω (fun B : E →L[ℂ] E ↦ S.volterraInverse B T) := by
