@@ -101,7 +101,7 @@ theorem exists_frontSpatial_generator_eq_pde
       ∀ x, w x =
         frontComplexifiedDiffusion D (Δ (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v : ℝ^d → ℂ^n) x) +
           fderiv ℝ (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v) x (frontSpatialDrift hd c) +
-          (fderiv ℝ f (φ (horizontal x))).complexify (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v x) := by
+          (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v x) := by
   refine ⟨_, frontSpatialC0Semigroup_hasGeneratorAt f D c φ h₁ h₂ hd v g h hg hh, ?_⟩
   intro x
   rw [BUC.add_apply, spatialDiffusionGenerator_coordinates D h₁.positive _ v g h hg hh,
@@ -115,7 +115,7 @@ theorem dense_frontSpatial_classicalGenerator :
       (frontSpatialC0Semigroup f D c φ h₁ h₂ hd).HasGeneratorAt v w ∧
       ∀ x, w x = frontComplexifiedDiffusion D (Δ (v : ℝ^d → ℂ^n) x) +
         fderiv ℝ v x (frontSpatialDrift hd c) +
-        (fderiv ℝ f (φ (horizontal x))).complexify (v x)} := by
+        (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (v x)} := by
   intro v
   let J := spatialDiffusionBUCCoordinatesEquiv (E := ℝ^d) D h₁.positive
   let u : ℝ → BUC (ℝ^d) (ℂ^n) := fun t ↦ J (fun i ↦ heatFlowBUC 1 t (J.symm v i))

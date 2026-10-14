@@ -9,19 +9,20 @@ public import Mathlib
 
 @[expose] public section
 
+namespace Planarwave
+
 local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 
 /-!
 # Solution-side statement definitions
 
-These declarations are copied from the public definitions in the protected
-`Challenge.lean`, without its admitted main theorem. Keep their names, types,
-and bodies synchronized with the challenge: the external comparator checks
-the statement's dependencies as well as the theorem type.
+These internal declarations mirror the protected `Challenge.lean`, without
+its admitted main theorem. They live in `Planarwave` so that `Solution.lean`
+can repeat the challenge's public declarations without name collisions.
 
-The analytic library imports this module, never `Challenge`. The reference
-and solution are separate comparison environments; do not import both.
+The analytic library imports this module, never `Challenge`. `Planarwave.Proof`
+transfers the completed proof to the copied predicates in `Solution.lean`.
 -/
 
 open scoped Gradient Laplacian EuclideanGeometry Topology InnerProductSpace ContDiff
@@ -86,8 +87,8 @@ structure IsTransverseResolventSolution (k : ℝ) (l : ℂ) (v w : ℝ → ℂ^n
   /-- The first two derivatives of v are bounded uniformly continuous. -/
   buc : ∀ i ≤ 2, IsBUC (iteratedDeriv i (v ·))
   /-- v satisfies the resolvent equation. -/
-  pde : ∀ z, (D.complexify) ((Δ v z) - (k ^ 2) • (v z)) +
-    c • (deriv v z) + (fderiv ℝ f (φ z)).complexify (v z) - l • v z = w z
+  pde : ∀ z, ((ContinuousLinearMap.complexify D)) ((Δ v z) - (k ^ 2) • (v z)) +
+    c • (deriv v z) + (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) (v z) - l • v z = w z
 
 def TransverseSpectrum (k : ℝ) : Set ℂ :=
   compl {l | ∀ w, IsBUC w → ∃! v, IsTransverseResolventSolution f D c φ k l v w}
@@ -129,5 +130,7 @@ def full (y : ℝ^(d - 1)) (z : ℝ) : ℝ^d :=
 def IsCloseToFront (u : ℝ^d → ℝ^n) (ε : ℝ) : Prop := ∀ x, ‖u x - φ (horizontal x)‖ ≤ ε
 
 end NonlinearStability
+
+end Planarwave
 
 end

@@ -81,7 +81,7 @@ theorem frontSpatial_expression_embedSplitSpatial
     (x : ℝ^d) :
     frontComplexifiedDiffusion D (Δ (embedSplitSpatial hd v : ℝ^d → ℂ^n) x) +
       fderiv ℝ (embedSplitSpatial hd v) x (frontSpatialDrift hd c) +
-      (fderiv ℝ f (φ (horizontal x))).complexify (embedSplitSpatial hd v x) =
+      (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (embedSplitSpatial hd v x) =
     embed (D (splitLaplacian v (transverse x, horizontal x)) +
       c • fderiv ℝ v (transverse x, horizontal x) (0, 1) +
       fderiv ℝ f (φ (horizontal x)) (v (transverse x, horizontal x))) := by

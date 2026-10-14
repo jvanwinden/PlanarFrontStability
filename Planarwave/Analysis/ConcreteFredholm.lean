@@ -35,7 +35,7 @@ variable {n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n)
   (c : ℝ) (φ ψ : ℝ → ℝ^n)
   (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
   (A : BUC ℝ (ℂ^n →L[ℂ] ℂ^n))
-  (hA : ∀ z v, A z v = (fderiv ℝ f (φ z)).complexify v)
+  (hA : ∀ z v, A z v = (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) v)
 
 include hA
 

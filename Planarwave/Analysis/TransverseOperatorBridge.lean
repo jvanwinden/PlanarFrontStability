@@ -34,11 +34,11 @@ variable {n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n)
 /-- The continuous complex-linear diffusion matrix associated with the challenge's algebraic
 complexification. -/
 def complexifiedDiffusion : ℂ^n →L[ℂ] ℂ^n :=
-  LinearMap.toContinuousLinearMap D.complexify
+  LinearMap.toContinuousLinearMap (ContinuousLinearMap.complexify D)
 
 @[simp]
 theorem complexifiedDiffusion_apply (v : ℂ^n) :
-    complexifiedDiffusion D v = D.complexify v :=
+    complexifiedDiffusion D v = (ContinuousLinearMap.complexify D) v :=
   rfl
 
 /-- The common-domain Fourier operator corresponding to the challenge data and a supplied
@@ -53,8 +53,8 @@ theorem challengeTransverseOperator_apply
     (A : BUC ℝ (ℂ^n →L[ℂ] ℂ^n)) (k : ℝ)
     (v : ComplexBUC2 (ℂ^n)) (z : ℝ) :
     challengeTransverseOperator D c A k v z =
-      D.complexify (ComplexBUC2.deriv2 (ℂ^n) v z) -
-          (k ^ 2 : ℂ) • D.complexify (v z) +
+      (ContinuousLinearMap.complexify D) (ComplexBUC2.deriv2 (ℂ^n) v z) -
+          (k ^ 2 : ℂ) • (ContinuousLinearMap.complexify D) (v z) +
         (c : ℂ) • ComplexBUC2.deriv (ℂ^n) v z + A z (v z) := by
   rfl
 
@@ -76,15 +76,15 @@ theorem challengeResolventMap_apply
     (A : BUC ℝ (ℂ^n →L[ℂ] ℂ^n)) (k : ℝ) (l : ℂ)
     (v : ComplexBUC2 (ℂ^n)) (z : ℝ) :
     challengeResolventMap D c A k l v z =
-      D.complexify (ComplexBUC2.deriv2 (ℂ^n) v z) -
-          (k ^ 2 : ℂ) • D.complexify (v z) +
+      (ContinuousLinearMap.complexify D) (ComplexBUC2.deriv2 (ℂ^n) v z) -
+          (k ^ 2 : ℂ) • (ContinuousLinearMap.complexify D) (v z) +
         (c : ℂ) • ComplexBUC2.deriv (ℂ^n) v z + A z (v z) - l • v z := by
   rfl
 
 section PointwiseCoefficient
 
 variable (A : BUC ℝ (ℂ^n →L[ℂ] ℂ^n))
-variable (hA : ∀ z v, A z v = (fderiv ℝ f (φ z)).complexify v)
+variable (hA : ∀ z v, A z v = (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) v)
 
 include hA
 
@@ -116,18 +116,18 @@ theorem isTransverseResolventSolution_of_operatorEquation
       RCLike.real_smul_eq_coe_smul (K := ℂ) c (ComplexBUC2.deriv (ℂ^n) v z)]
     rw [map_sub, LinearMap.map_smul_of_tower]
     have hk_smul :
-        ((k ^ 2 : ℝ) : ℂ) • D.complexify (v z) =
-          (k : ℂ) ^ 2 • D.complexify (v z) := by
-      exact congrArg (fun a : ℂ ↦ a • D.complexify (v z)) (Complex.ofReal_pow k 2)
+        ((k ^ 2 : ℝ) : ℂ) • (ContinuousLinearMap.complexify D) (v z) =
+          (k : ℂ) ^ 2 • (ContinuousLinearMap.complexify D) (v z) := by
+      exact congrArg (fun a : ℂ ↦ a • (ContinuousLinearMap.complexify D) (v z)) (Complex.ofReal_pow k 2)
     calc
-      D.complexify (ComplexBUC2.deriv2 (ℂ^n) v z) -
-            ((k ^ 2 : ℝ) : ℂ) • D.complexify (v z) +
+      (ContinuousLinearMap.complexify D) (ComplexBUC2.deriv2 (ℂ^n) v z) -
+            ((k ^ 2 : ℝ) : ℂ) • (ContinuousLinearMap.complexify D) (v z) +
           (c : ℂ) • ComplexBUC2.deriv (ℂ^n) v z +
-            (fderiv ℝ f (φ z)).complexify (v z) - l • v z =
-          D.complexify (ComplexBUC2.deriv2 (ℂ^n) v z) -
-              (k : ℂ) ^ 2 • D.complexify (v z) +
+            (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) (v z) - l • v z =
+          (ContinuousLinearMap.complexify D) (ComplexBUC2.deriv2 (ℂ^n) v z) -
+              (k : ℂ) ^ 2 • (ContinuousLinearMap.complexify D) (v z) +
             (c : ℂ) • ComplexBUC2.deriv (ℂ^n) v z +
-              (fderiv ℝ f (φ z)).complexify (v z) - l • v z := by rw [hk_smul]
+              (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) (v z) - l • v z := by rw [hk_smul]
       _ = w z := hz
 
 omit hA
@@ -179,9 +179,9 @@ theorem operatorEquation_of_isTransverseResolventSolution
     RCLike.real_smul_eq_coe_smul (K := ℂ) c (ComplexBUC2.deriv (ℂ^n) v z)] at hz
   rw [map_sub, LinearMap.map_smul_of_tower] at hz
   have hk_smul :
-      ((k ^ 2 : ℝ) : ℂ) • D.complexify (v z) =
-        (k : ℂ) ^ 2 • D.complexify (v z) := by
-    exact congrArg (fun a : ℂ ↦ a • D.complexify (v z)) (Complex.ofReal_pow k 2)
+      ((k ^ 2 : ℝ) : ℂ) • (ContinuousLinearMap.complexify D) (v z) =
+        (k : ℂ) ^ 2 • (ContinuousLinearMap.complexify D) (v z) := by
+    exact congrArg (fun a : ℂ ↦ a • (ContinuousLinearMap.complexify D) (v z)) (Complex.ofReal_pow k 2)
   rw [← hk_smul]
   exact hz
 

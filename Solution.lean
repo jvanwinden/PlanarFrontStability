@@ -1,42 +1,139 @@
 /-
 Copyright (c) 2026 Joris van Winden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Joris van Winden, OpenAI
+Authors: Joris van Winden
 -/
 module
 
-public import Planarwave.Statement
-import all Planarwave.Analysis.FrontTrackingGlobal
-import all Planarwave.Analysis.FrontTrackingVHJComparison
-import Batteries.Tactic.Alias
+public import Mathlib
+import Planarwave.Proof
+
+@[expose] public section
+
+local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
+local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 
 /-!
-# Solution for the planar-front comparator challenge
+# Stability of planar fronts in reaction diffusion systems.
 
-The public theorem `vHJ_approximates_planar_front` has the name and statement
-required by `comparator.json`. Its proof follows the paper's spectral
-estimates, causal tracking construction, nonlinear bootstrap, maximal
-continuation, and forced/unforced phase comparison.
+This file contains a formalization of the statement that the dynamics near a spectrally stable
+planar front in a reaction-diffusion equation are described by a viscous Hamilton-Jacobi equation.
 
-This module and its dependencies do not import `Challenge`: the solution-side
-definitions come from `Planarwave.Statement`. This keeps the reference's
-admitted theorem out of the solution environment. Compare the two modules
-using `lake comparator` and `comparator.json`, not by importing both.
+The main theorem is `vHJ_approximates_planar_front`, which corresponds to Theorem 1.6 in [1] (with the uniqueness of
+the solutions omitted).
+
+* [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
+  nonlocalized perturbations.", arXiv.2601.05832.
 -/
 
 open scoped Gradient Laplacian EuclideanGeometry Topology InnerProductSpace ContDiff
 open Filter Function Set MeasureTheory
-open Planarwave
 
-noncomputable section
-
-local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
-
+-- PDE data: dimension, nonlinearity, diffusion matrix.
 variable {d n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n)
-  (c : ℝ) (φ ψ : ℝ → ℝ^n)
+-- Front data: speed, profile, transverse diffusion coefficient
+variable (c : ℝ) (φ : ℝ → ℝ^n) (ψ : ℝ → ℝ^n)
+-- Prospective solutions to the relevant PDEs.
+variable (u : ℝ → ℝ^d → ℝ^n) (σ : ℝ → ℝ^(d - 1) → ℝ)
 
-/-- The complete challenge statement, proved without importing the reference theorem. -/
-public theorem vHJ_approximates_planar_front
+section PDESetup
+
+def IsBUCOn {α β : Type*} [UniformSpace α] [UniformSpace β] [Norm β] (f : α → β) (s : Set α) :=
+  UniformContinuousOn f s ∧ ∃ C, ∀ x ∈ s, ‖f x‖ ≤ C
+
+def IsBUC {α β : Type*} [UniformSpace α] [UniformSpace β] [Norm β] (f : α → β) := IsBUCOn f univ
+
+/-- The PDE is uniformly parabolic and the nonlinearity is smooth. -/
+structure IsSmoothParabolic : Prop where
+  smooth : ContDiff ℝ ∞ f
+  positive : D.IsPositive
+  kernel : Injective D
+
+/-- Define our notion of (global) solution for the reaction-diffusion equation. -/
+structure IsRDESolution : Prop where
+  cont : ∀ t > 0, IsBUCOn (uncurry u) (Icc 0 t ×ˢ univ)
+  smooth : ContDiffOn ℝ ∞ (uncurry u) (Ioi 0 ×ˢ univ)
+  pde : ∀ t > 0, ∀ x, deriv (u · x) t = D (Δ (u t ·) x) + f (u t x)
+
+noncomputable def d_perp : ℝ := ∫ x, ⟪ψ x, D (deriv φ x)⟫_ℝ
+
+/-- Define our notion of (global) solution for the viscous Hamilton-Jacobi equation. -/
+structure IsVHJSolution (d_perp : ℝ) : Prop where
+  cont : ∀ t > 0, IsBUCOn (uncurry σ) (Icc 0 t ×ˢ univ)
+  smooth : ContDiffOn ℝ ∞ (uncurry σ) (Ioi 0 ×ˢ univ)
+  pde : ∀ t > 0, ∀ y, deriv (σ · y) t = d_perp * (Δ (σ t ·) y) + (c / 2) * ‖∇ (σ t ·) y‖^2
+
+end PDESetup
+
+/-- The front is twice continuously differentiable, has left and right limits, and satisfies the
+traveling wave ODE. -/
+structure IsSmoothFront : Prop where
+  smooth : ContDiff ℝ ∞ φ
+  ode : ∀ z, D (Δ φ z) + c • deriv φ z + f (φ z) = 0
+  endpoints : ∃ φ₁ φ₂, Tendsto φ atBot (𝓝 φ₁) ∧ Tendsto φ atTop (𝓝 φ₂)
+
+public section SpectralStability
+
+/-- Complexify a map from ℝ^n → ℝ^n. -/
+noncomputable def ContinuousLinearMap.complexify (L : ℝ^n →L[ℝ] ℝ^n) :=
+  Matrix.toEuclideanLin.symm L.toLinearMap|>.map (fun x ↦ (x : ℂ))|>.toEuclideanLin
+
+/-- Embed ℝ^n into ℂ^n in the natural way. -/
+noncomputable def embed (x : ℝ^n) : ℂ^n := .toLp 2 fun i ↦ ↑(x i)
+
+/-- Define our notion of solution to the resolvent equation at transverse wavenumber k. -/
+structure IsTransverseResolventSolution (k : ℝ) (l : ℂ) (v w : ℝ → ℂ^n) : Prop where
+  /-- v is twice continuously differentiable. -/
+  smooth : ContDiff ℝ 2 v
+  /-- The first two derivatives of v are bounded uniformly continuous. -/
+  buc : ∀ i ≤ 2, IsBUC (iteratedDeriv i (v ·))
+  /-- v satisfies the resolvent equation. -/
+  pde : ∀ z, (D.complexify) ((Δ v z) - (k ^ 2) • (v z)) +
+    c • (deriv v z) + (fderiv ℝ f (φ z)).complexify (v z) - l • v z = w z
+
+def TransverseSpectrum (k : ℝ) : Set ℂ :=
+  compl {l | ∀ w, IsBUC w → ∃! v, IsTransverseResolventSolution f D c φ k l v w}
+
+structure IsSpectrallyStableWithAdjoint : Prop where
+  /-- Integrability of the adjoint eigenfunction. -/
+  integrable : Integrable ψ
+  /-- Normalization of the adjoint eigenfunction. -/
+  normalized : ∫ x, ⟪ψ x, deriv φ x⟫_ℝ = 1
+  /-- L₀ has a spectral gap. -/
+  horizontal_spectral_gap : ∃ θ > 0, ∀ l ∈ TransverseSpectrum f D c φ 0, l = 0 ∨ l.re ≤ -θ
+  /-- L₀ v = 0 iff v is a multiple of φ'. -/
+  horizontal_kernel : ∀ v, IsTransverseResolventSolution f D c φ 0 0 v 0 ↔
+    ∃ c : ℂ, ∀ x, v x = c • embed (deriv φ x)
+  /-- L₀ v = w has a solution iff w is orthogonal to ψ. -/
+  horizontal_solvability : ∀ w, IsBUC w →
+    (∫ z, ⟪embed (ψ z), w z⟫_ℂ = 0 ↔ ∃ v, IsTransverseResolventSolution f D c φ 0 0 v w)
+  /-- Transverse spectral stability for small wavenumbers. -/
+  transverse_low_wavenumber : d_perp D φ ψ > 0
+  /-- Transverse spectral stability for medium-high wavenumbers. -/
+  transverse_high_wavenumber : ∀ k₀ > 0, ∃ θ₁ > 0,
+    ∀ k ≥ k₀, ∀ l ∈ TransverseSpectrum f D c φ k, l.re ≤ -θ₁
+
+end SpectralStability
+
+section NonlinearStability
+
+/-- Extract the horizontal coordinate from x. -/
+noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then x ⟨d - 1, by grind⟩ else 0
+
+/-- Extract the transverse coordinates from x. -/
+def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x ⟨i, by grind⟩)
+
+/-- Assemble the full coordinate x from y and z. -/
+def full (y : ℝ^(d - 1)) (z : ℝ) : ℝ^d :=
+  .toLp 2 (fun i ↦ if h : i < d - 1 then y ⟨i, by grind⟩ else z)
+
+/-- Define closeness to the front. -/
+def IsCloseToFront (u : ℝ^d → ℝ^n) (ε : ℝ) : Prop := ∀ x, ‖u x - φ (horizontal x)‖ ≤ ε
+
+/-- A solution to the RDE which starts close to a planar front is well-approximated by the front
+shifted according to a viscous Hamilton-Jacobi equation.
+-/
+theorem vHJ_approximates_planar_front
   (hn : 1 ≤ n) (hd : 2 ≤ d)
   (h₁ : IsSmoothParabolic f D)
   (h₂ : IsSmoothFront f D c φ)
@@ -45,44 +142,20 @@ public theorem vHJ_approximates_planar_front
     ∃ u σ, IsRDESolution f D u ∧ IsVHJSolution c σ (d_perp D φ ψ) ∧
       u 0 = u₀ ∧ (∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ) ∧
       ∀ t ≥ 0, ∀ x, ‖u t x - φ (horizontal x - c * t - σ t (transverse x))‖ ≤
-        C * E_0 * (E_0 + (1 + t)⁻¹ * Real.log (2 + t)) := by
-  let : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
-  let : Nontrivial (ℝ^n) := inferInstance
-  obtain ⟨_, _, εg, hεg, hglobal⟩ :=
-    exists_front_global_solution_with_tracking f D c φ ψ h₁ h₂ h₃ hd
-  obtain ⟨C, hC, εv, hεv, hcompare⟩ :=
-    exists_front_tracking_vHJ_error_bound f D c φ ψ h₁ h₂ h₃ hd
-  refine ⟨C, hC, min εg εv, lt_min hεg hεv, ?_⟩
-  intro M hM u₀ hu₀ hclose
-  let u₀b := BUC.ofIsBUC hu₀
-  let v₀ := frontInverseModulatedPerturbation f D c φ h₂ hd u₀b 0 0
-  have hcloseb : IsCloseToFront φ (u₀b : ℝ^d → ℝ^n) M := hclose
-  have hv₀ : ‖v₀‖ ≤ M :=
-    (norm_frontInverseModulatedPerturbation_zero_le_iff f D c φ h₂ hd u₀b hM.1).mpr hcloseb
-  obtain ⟨u, hinit, hu, _, htracking⟩ :=
-    hglobal u₀b v₀ M hM.1 (hM.2.trans (min_le_left _ _)) hv₀
-      (by simp only [mul_zero]; rfl)
-  refine ⟨(fun t x ↦ u t x),
-    challengePhaseEvolution f D c φ ψ hd h₂ h₃ (isBUC_coe u₀b), hu,
-    isVHJSolution_challengePhaseEvolution f D c φ ψ hd h₂ h₃ (isBUC_coe u₀b), ?_, ?_, ?_⟩
-  · funext x
-    change u 0 x = u₀ x
-    rw [hinit]
-    rfl
-  · intro y
-    simpa only [hinit] using
-      challengePhaseEvolution_zero f D c φ ψ hd h₂ h₃ (isBUC_coe u₀b) y
-  · intro t ht x
-    obtain ⟨X, hXu, _, _⟩ := htracking t ht
-    have hXinit : X.u 0 = u₀b := by rw [hXu, hinit]
-    simpa only [hXu] using hcompare X u₀b hXinit
-      ⟨hM.1, hM.2.trans (min_le_right _ _)⟩ hcloseb t ⟨ht, le_rfl⟩ x
+        C * E_0 * (E_0 + (1 + t)⁻¹ * Real.log (2 + t)) :=
+  Planarwave.vHJ_approximates_planar_front_of_equivalent_predicates f D c φ ψ hn hd
+    (P := IsTransverseResolventSolution f D c φ)
+    (R := IsRDESolution f D)
+    (V := fun σ ↦ IsVHJSolution c σ (d_perp D φ ψ))
+    (fun _ _ _ _ ↦ ⟨fun h ↦ ⟨h.smooth, h.buc, h.pde⟩,
+      fun h ↦ ⟨h.smooth, h.buc, h.pde⟩⟩)
+    (fun _ h ↦ ⟨h.cont, h.smooth, h.pde⟩)
+    (fun _ h ↦ ⟨h.cont, h.smooth, h.pde⟩)
+    ⟨h₁.smooth, h₁.positive, h₁.kernel⟩
+    ⟨h₂.smooth, h₂.ode, h₂.endpoints⟩
+    h₃.integrable h₃.normalized h₃.horizontal_spectral_gap h₃.horizontal_kernel
+    h₃.horizontal_solvability h₃.transverse_low_wavenumber h₃.transverse_high_wavenumber
+
+end NonlinearStability
 
 end
-
-namespace Planarwave
-
-/-- Compatibility name for the previously namespaced solution theorem. -/
-alias vHJ_approximates_planar_front_proved := _root_.vHJ_approximates_planar_front
-
-end Planarwave

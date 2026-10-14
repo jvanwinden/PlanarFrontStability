@@ -52,7 +52,7 @@ theorem exists_continuous_frontSpatial_generator
       ∀ t ∈ s, ∀ x, a t x =
         frontComplexifiedDiffusion D (Δ (u t : ℝ^d → ℂ^n) x) +
           fderiv ℝ (u t) x (frontSpatialDrift hd c) +
-          (fderiv ℝ f (φ (horizontal x))).complexify (u t x) := by
+          (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (u t x) := by
   let J := spatialDiffusionBUCCoordinatesEquiv (E := ℝ^d) D h₁.positive
   let P (i : Fin n) : ℂ^n →L[ℝ] ℂ :=
     ((ContinuousLinearMap.proj i : (Fin n → ℂ) →L[ℂ] ℂ).comp
@@ -107,7 +107,7 @@ theorem frontSpatial_eq_realOrbit_add_duhamel_of_classical
     (hpde : ∀ t ∈ Ioo 0 T, ∀ x, HasDerivAt (fun r ↦ u r x)
       (frontComplexifiedDiffusion D (Δ (u t : ℝ^d → ℂ^n) x) +
         fderiv ℝ (u t) x (frontSpatialDrift hd c) +
-        (fderiv ℝ f (φ (horizontal x))).complexify (u t x) + F t x) t)
+        (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (u t x) + F t x) t)
     {t : ℝ} (ht : t ∈ Icc 0 T) :
     u t = (frontSpatialC0Semigroup f D c φ h₁ h₂ hd).realOrbit (u 0) t +
       (frontSpatialC0Semigroup f D c φ h₁ h₂ hd).duhamel F t := by

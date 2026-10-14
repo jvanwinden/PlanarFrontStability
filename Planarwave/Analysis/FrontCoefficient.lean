@@ -40,11 +40,11 @@ variable {n : ℕ}
 
 /-- The challenge's algebraic complexification, bundled as a continuous complex-linear map. -/
 def challengeComplexifyCLM (L : ℝ^n →L[ℝ] ℝ^n) : ℂ^n →L[ℂ] ℂ^n :=
-  LinearMap.toContinuousLinearMap L.complexify
+  LinearMap.toContinuousLinearMap (ContinuousLinearMap.complexify L)
 
 @[simp]
 theorem challengeComplexifyCLM_apply (L : ℝ^n →L[ℝ] ℝ^n) (v : ℂ^n) :
-    challengeComplexifyCLM L v = L.complexify v :=
+    challengeComplexifyCLM L v = (ContinuousLinearMap.complexify L) v :=
   rfl
 
 /-- Complexification agrees with the original real map on the canonical real subspace. -/
@@ -137,7 +137,7 @@ def complexFrontDerivativeCoefficient
 theorem complexFrontDerivativeCoefficient_apply
     (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ) (z : ℝ) (v : ℂ^n) :
     complexFrontDerivativeCoefficient f D c φ h₁ h₂ z v =
-      (fderiv ℝ f (φ z)).complexify v :=
+      (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) v :=
   by simp [complexFrontDerivativeCoefficient]
 
 /-- The diffusion matrix on the complexified state space. -/
@@ -146,7 +146,7 @@ def frontComplexifiedDiffusion : ℂ^n →L[ℂ] ℂ^n :=
 
 @[simp]
 theorem frontComplexifiedDiffusion_apply (v : ℂ^n) :
-    frontComplexifiedDiffusion D v = D.complexify v :=
+    frontComplexifiedDiffusion D v = (ContinuousLinearMap.complexify D) v :=
   rfl
 
 /-- The analytic common-domain pencil `L(q)` from Section 2, specialized to the challenge data. -/
@@ -161,9 +161,9 @@ theorem frontLongitudinalPencil_apply
     (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ) (q : ℂ)
     (v : ComplexBUC2 (ℂ^n)) (z : ℝ) :
     frontLongitudinalPencil f D c φ h₁ h₂ q v z =
-      D.complexify (ComplexBUC2.deriv2 (ℂ^n) v z) - q • D.complexify (v z) +
+      (ContinuousLinearMap.complexify D) (ComplexBUC2.deriv2 (ℂ^n) v z) - q • (ContinuousLinearMap.complexify D) (v z) +
         (c : ℂ) • ComplexBUC2.deriv (ℂ^n) v z +
-          (fderiv ℝ f (φ z)).complexify (v z) :=
+          (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) (v z) :=
   by simp [frontLongitudinalPencil]
 
 /-- The transverse real-wavenumber member `L(k²)` of the common-domain pencil. -/
@@ -177,10 +177,10 @@ theorem frontTransverseOperator_apply
     (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ) (k : ℝ)
     (v : ComplexBUC2 (ℂ^n)) (z : ℝ) :
     frontTransverseOperator f D c φ h₁ h₂ k v z =
-      D.complexify (ComplexBUC2.deriv2 (ℂ^n) v z) -
-          (k ^ 2 : ℂ) • D.complexify (v z) +
+      (ContinuousLinearMap.complexify D) (ComplexBUC2.deriv2 (ℂ^n) v z) -
+          (k ^ 2 : ℂ) • (ContinuousLinearMap.complexify D) (v z) +
         (c : ℂ) • ComplexBUC2.deriv (ℂ^n) v z +
-          (fderiv ℝ f (φ z)).complexify (v z) :=
+          (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) (v z) :=
   by simp [frontTransverseOperator]
 
 /-- Exact affine dependence of the concrete pencil on `q`. -/
@@ -223,10 +223,10 @@ theorem frontChallengeResolventMap_apply
     (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ)
     (k : ℝ) (l : ℂ) (v : ComplexBUC2 (ℂ^n)) (z : ℝ) :
     frontChallengeResolventMap f D c φ h₁ h₂ k l v z =
-      D.complexify (ComplexBUC2.deriv2 (ℂ^n) v z) -
-          (k ^ 2 : ℂ) • D.complexify (v z) +
+      (ContinuousLinearMap.complexify D) (ComplexBUC2.deriv2 (ℂ^n) v z) -
+          (k ^ 2 : ℂ) • (ContinuousLinearMap.complexify D) (v z) +
         (c : ℂ) • ComplexBUC2.deriv (ℂ^n) v z +
-          (fderiv ℝ f (φ z)).complexify (v z) - l • v z := by
+          (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) (v z) - l • v z := by
   exact challengeResolventMap_apply D c
     (complexFrontDerivativeCoefficient f D c φ h₁ h₂) k l v z
 

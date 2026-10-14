@@ -366,7 +366,9 @@ This module records the dependency order of the proof in de Rijk--van Winden.
 The complete theorem is proved in the top-level `Solution.lean` as
 the public theorem `vHJ_approximates_planar_front`. The protected
 `Challenge.lean` is the reference environment. The analytic library imports
-`Planarwave.Statement`, which copies its definitions without the admitted theorem.
+`Planarwave.Statement`, which mirrors its definitions in the `Planarwave` namespace
+without the admitted theorem. `Planarwave.Proof` assembles the proof and transfers
+it to the public predicates copied into `Solution.lean`.
 `comparator.json` configures the external comparator to compare the theorem and
 its statement dependencies, allowing only `propext`, `Classical.choice`, and
 `Quot.sound` as proof axioms.
@@ -1491,7 +1493,7 @@ No decay estimate or existence assertion is included in that definition.
   and yields the original global `IsRDESolution` predicate.
 * `FrontTrackingVHJComparison` derives the improved quadratic forcing bound
   and applies the forced/unforced comparison, with exactly the prescribed
-  initial phase and error weight. `Solution.lean` assembles the
+  initial phase and error weight. `Planarwave.Proof` assembles the
   unchanged challenge statement, including `E_0 = 0` and `t = 0`.
 
 The external comparator uses `comparator.json` to check the matching theorem
@@ -1501,8 +1503,9 @@ theorem enter this proof. The original placeholder remains in the protected
 `Challenge.lean`, which is not imported by the solution or its analytic library.
 Import the completed public theorem with `import Solution`. Do not import
 `Challenge` alongside it: these are alternative environments with the same
-statement-level names. The default `lake build` builds the analytic library
-and `Solution`; external comparator verification is a separate operation.
+statement-level names. The Lake file has only `Challenge` and `Solution` targets.
+The default `lake build` builds `Solution`, including the analytic modules registered
+under that target; comparator verification is a separate operation.
 -/
 
 namespace Planarwave

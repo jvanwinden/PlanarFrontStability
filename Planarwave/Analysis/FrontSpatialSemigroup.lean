@@ -58,7 +58,7 @@ def frontSpatialReactionMultiplication : BUC (ℝ^d) (ℂ^n) →L[ℂ] BUC (ℝ^
 /-- Pointwise identification with the linearized reaction term in the PDE. -/
 theorem frontSpatialReactionMultiplication_apply (v : BUC (ℝ^d) (ℂ^n)) (x : ℝ^d) :
     frontSpatialReactionMultiplication f D c φ h₁ h₂ hd v x =
-      (fderiv ℝ f (φ (horizontal x))).complexify (v x) :=
+      (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (v x) :=
   complexFrontDerivativeCoefficient_apply f D c φ h₁ h₂ (horizontal x) (v x)
 
 /-- The bounded perturbation costs no extra spatial dependence in its norm bound. -/

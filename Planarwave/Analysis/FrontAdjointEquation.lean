@@ -73,8 +73,8 @@ theorem horizontalOperator_embeddedRealBUC2 (v v₁ v₂ : BUC ℝ (ℝ^n))
   apply BUC.ext
   intro z
   rw [challengeTransverseOperator_apply, complexFrontDerivativeCoefficient_apply]
-  change D.complexify (embed (v₂ z)) - (0 : ℂ) ^ 2 • D.complexify (embed (v z)) +
-    (c : ℂ) • embed (v₁ z) + (fderiv ℝ f (φ z)).complexify (embed (v z)) =
+  change (ContinuousLinearMap.complexify D) (embed (v₂ z)) - (0 : ℂ) ^ 2 • (ContinuousLinearMap.complexify D) (embed (v z)) +
+    (c : ℂ) • embed (v₁ z) + (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) (embed (v z)) =
       embed (D (v₂ z) + c • v₁ z + fderiv ℝ f (φ z) (v z))
   simp only [← challengeComplexifyCLM_apply, challengeComplexifyCLM_embed]
   ext i
