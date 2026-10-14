@@ -117,6 +117,50 @@ theorem vHJ_approximates_planar_front_of_equivalent_predicates
   obtain ⟨u, σ, hu, hσ, hrest⟩ := hmain M hM u₀ hu₀ hclose
   exact ⟨u, σ, hR u hu, hV σ hσ, hrest⟩
 
+/-- Comparator-facing form of the proof. The default proof arguments are elaborated
+in the calling context: `h₁`, `h₂`, and `h₃` are the hypotheses in the copied
+challenge statement. They perform the record conversions without requiring any
+arguments at the use site. The spectral gap determines the copied resolvent
+predicate before its equivalence is synthesized. -/
+theorem vHJ_approximates_planar_front_solution
+    {f : ℝ^n → ℝ^n} {D : ℝ^n →L[ℝ] ℝ^n} {c : ℝ} {φ ψ : ℝ → ℝ^n}
+    {P : ℝ → ℂ → (ℝ → ℂ^n) → (ℝ → ℂ^n) → Prop}
+    {R : (ℝ → ℝ^d → ℝ^n) → Prop}
+    {V : (ℝ → ℝ^(d - 1) → ℝ) → Prop}
+    (hn : 1 ≤ n := by assumption) (hd : 2 ≤ d := by assumption)
+    (hpar : IsSmoothParabolic f D := by exact ⟨h₁.smooth, h₁.positive, h₁.kernel⟩)
+    (hfront : IsSmoothFront f D c φ := by exact ⟨h₂.smooth, h₂.ode, h₂.endpoints⟩)
+    (hintegrable : Integrable ψ := by exact h₃.integrable)
+    (hnormalized : ∫ x, ⟪ψ x, deriv φ x⟫_ℝ = 1 := by exact h₃.normalized)
+    (hgap : ∃ θ > 0, ∀ l ∈ compl {l | ∀ w, IsBUC w → ∃! v, P 0 l v w},
+      l = 0 ∨ l.re ≤ -θ := by exact h₃.horizontal_spectral_gap)
+    (hkernel : ∀ v, P 0 0 v 0 ↔ ∃ a : ℂ, ∀ x, v x = a • embed (deriv φ x) :=
+      by exact h₃.horizontal_kernel)
+    (hsolvability : ∀ w, IsBUC w →
+      (∫ z, ⟪embed (ψ z), w z⟫_ℂ = 0 ↔ ∃ v, P 0 0 v w) :=
+      by exact h₃.horizontal_solvability)
+    (hlow : d_perp D φ ψ > 0 := by exact h₃.transverse_low_wavenumber)
+    (hhigh : ∀ k₀ > 0, ∃ θ₁ > 0, ∀ k ≥ k₀,
+      ∀ l ∈ compl {l | ∀ w, IsBUC w → ∃! v, P k l v w}, l.re ≤ -θ₁ :=
+      by exact h₃.transverse_high_wavenumber)
+    (hP : ∀ k l v w, P k l v w ↔ IsTransverseResolventSolution f D c φ k l v w := by
+      intro k l v w
+      exact ⟨fun h ↦ ⟨h.smooth, h.buc, h.pde⟩, fun h ↦ ⟨h.smooth, h.buc, h.pde⟩⟩)
+    (hR : ∀ u, IsRDESolution f D u → R u := by
+      intro u h
+      exact ⟨h.cont, h.smooth, h.pde⟩)
+    (hV : ∀ σ, IsVHJSolution c σ (d_perp D φ ψ) → V σ := by
+      intro σ h
+      exact ⟨h.cont, h.smooth, h.pde⟩) :
+    ∃ C > 0, ∃ ε > 0, ∀ E_0 ∈ Icc 0 ε, ∀ u₀ : ℝ^d → ℝ^n,
+      IsBUC u₀ → IsCloseToFront φ u₀ E_0 →
+      ∃ u σ, R u ∧ V σ ∧
+        u 0 = u₀ ∧ (∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ) ∧
+        ∀ t ≥ 0, ∀ x, ‖u t x - φ (horizontal x - c * t - σ t (transverse x))‖ ≤
+          C * E_0 * (E_0 + (1 + t)⁻¹ * Real.log (2 + t)) :=
+  vHJ_approximates_planar_front_of_equivalent_predicates f D c φ ψ hn hd hP hR hV
+    hpar hfront hintegrable hnormalized hgap hkernel hsolvability hlow hhigh
+
 end
 
 end Planarwave

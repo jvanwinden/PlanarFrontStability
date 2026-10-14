@@ -8,9 +8,10 @@ scope = "leanprover-community"
 rev = "v4.35.0"
 
 [[lean_lib]]
+name = "Planarwave"
+
+[[lean_lib]]
 name = "Challenge"
-globs = ["Challenge"]
 
 [[lean_lib]]
 name = "Solution"
-globs = ["Solution", "Planarwave.+"]

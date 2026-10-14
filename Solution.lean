@@ -143,18 +143,7 @@ theorem vHJ_approximates_planar_front
       u 0 = u₀ ∧ (∀ y, σ 0 y = ∫ z, ⟪ψ z, φ z - u 0 (full y z)⟫_ℝ) ∧
       ∀ t ≥ 0, ∀ x, ‖u t x - φ (horizontal x - c * t - σ t (transverse x))‖ ≤
         C * E_0 * (E_0 + (1 + t)⁻¹ * Real.log (2 + t)) :=
-  Planarwave.vHJ_approximates_planar_front_of_equivalent_predicates f D c φ ψ hn hd
-    (P := IsTransverseResolventSolution f D c φ)
-    (R := IsRDESolution f D)
-    (V := fun σ ↦ IsVHJSolution c σ (d_perp D φ ψ))
-    (fun _ _ _ _ ↦ ⟨fun h ↦ ⟨h.smooth, h.buc, h.pde⟩,
-      fun h ↦ ⟨h.smooth, h.buc, h.pde⟩⟩)
-    (fun _ h ↦ ⟨h.cont, h.smooth, h.pde⟩)
-    (fun _ h ↦ ⟨h.cont, h.smooth, h.pde⟩)
-    ⟨h₁.smooth, h₁.positive, h₁.kernel⟩
-    ⟨h₂.smooth, h₂.ode, h₂.endpoints⟩
-    h₃.integrable h₃.normalized h₃.horizontal_spectral_gap h₃.horizontal_kernel
-    h₃.horizontal_solvability h₃.transverse_low_wavenumber h₃.transverse_high_wavenumber
+  Planarwave.vHJ_approximates_planar_front_solution
 
 end NonlinearStability
 
