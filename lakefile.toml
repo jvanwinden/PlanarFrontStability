@@ -15,4 +15,3 @@ name = "Challenge"
 
 [[lean_lib]]
 name = "Solution"
-roots = ["Solution", "Planarwave"]
