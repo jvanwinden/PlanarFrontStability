@@ -116,46 +116,6 @@ theorem exists_frontComplexFrequency_highFrequency_bound :
     exists_frontComplexFrequency_decay_of_real_bound f D c φ h₁ h₂ hM hμ hreal
   exact ⟨k₁, hk₁, M, hM, μ / 2, half_pos hμ, κ, hκ, hcomplex⟩
 
-/-- The full estimate of Lemma 2.4 above the high-frequency threshold, including the scalar
-heat multiplier. The intermediate-frequency interval is handled in `FrontMidFrequencySemigroup`. -/
-theorem exists_front_highFrequency_bound (ψ : ℝ → ℝ^n)
-    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
-    ∃ k₁ : ℝ, 1 ≤ k₁ ∧ ∃ M > 0, ∃ μ > 0, ∃ κ > 0,
-      ∀ (ξ₀ ξ₁ : ℝ^m) (t : NNReal), k₁ ≤ ‖ξ₀‖ →
-        ‖frontComplexFrequencyC0Semigroup f D c φ h₁ h₂ ξ₀ ξ₁ t‖ +
-          ‖Complex.exp (-(t * d_perp D φ ψ : ℂ) *
-            complexFrequencyQuadratic (complexFrequencyShift ξ₀ ξ₁))‖ ≤
-          M * Real.exp (-μ * t - μ * ‖ξ₀‖ ^ 2 * t + κ * ‖ξ₁‖ ^ 2 * t) := by
-  obtain ⟨k₁, hk₁, M, hM, μ₁, hμ₁, κ₁, hκ₁, hS⟩ :=
-    exists_frontComplexFrequency_highFrequency_bound (m := m) f D c φ h₁ h₂
-  let d := d_perp D φ ψ
-  have hd : 0 < d := frontTransverseDiffusion_pos f D c φ ψ h₃
-  let μ := min μ₁ (d / 2)
-  let κ := max κ₁ d
-  have hμ : 0 < μ := lt_min hμ₁ (half_pos hd)
-  have hκ : 0 < κ := hκ₁.trans_le (le_max_left _ _)
-  refine ⟨k₁, hk₁, M + 1, by positivity, μ, hμ, κ, hκ, ?_⟩
-  intro ξ₀ ξ₁ t hξ₀
-  have hq : 1 ≤ ‖ξ₀‖ ^ 2 := by nlinarith [hk₁.trans hξ₀]
-  have hrate {a b : ℝ} (ha : μ ≤ a) (hb : b ≤ κ) :
-      -a * (t : ℝ) - a * ‖ξ₀‖ ^ 2 * t + b * ‖ξ₁‖ ^ 2 * t ≤
-        -μ * t - μ * ‖ξ₀‖ ^ 2 * t + κ * ‖ξ₁‖ ^ 2 * t := by
-    gcongr
-  have hS' := (hS ξ₀ ξ₁ t hξ₀).trans
-    (mul_le_mul_of_nonneg_left
-      (Real.exp_le_exp.mpr (hrate (min_le_left _ _) (le_max_left _ _))) hM.le)
-  have hheat : ‖Complex.exp (-(t * d_perp D φ ψ : ℂ) *
-      complexFrequencyQuadratic (complexFrequencyShift ξ₀ ξ₁))‖ ≤
-        Real.exp (-(d / 2) * t - (d / 2) * ‖ξ₀‖ ^ 2 * t + d * ‖ξ₁‖ ^ 2 * t) := by
-    rw [norm_exp_neg_mul_complexFrequencyQuadratic_shift]
-    apply Real.exp_le_exp.mpr
-    change -(t : ℝ) * d * (‖ξ₀‖ ^ 2 - ‖ξ₁‖ ^ 2) ≤ _
-    have hpos : 0 ≤ d * (t : ℝ) * (‖ξ₀‖ ^ 2 - 1) :=
-      mul_nonneg (mul_nonneg hd.le t.2) (sub_nonneg.mpr hq)
-    nlinarith only [hpos]
-  have hH' := hheat.trans (Real.exp_le_exp.mpr (hrate (min_le_right _ _) (le_max_right _ _)))
-  simpa only [add_mul, one_mul] using add_le_add hS' hH'
-
 end
 
 end Planarwave

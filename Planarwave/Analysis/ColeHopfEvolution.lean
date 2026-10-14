@@ -162,17 +162,6 @@ theorem coleHopfBUC_coleHopfEvolution (a β t : ℝ) (u : BUC E ℝ) :
   exact coleHopf_coleHopfInv (Icc_coleHopf_subset_domain β ‖u‖
     (heatFlowBUC_coleHopf_mem_Icc a β t u x))
 
-/-- The nonlinear evolution inherits the heat semigroup law through the transform. -/
-theorem coleHopfEvolution_add_time {a s t : ℝ} (ha : 0 ≤ a) (hs : 0 ≤ s) (ht : 0 ≤ t)
-    (β : ℝ) (u : BUC E ℝ) :
-    coleHopfEvolution a β s (coleHopfEvolution a β t u) =
-      coleHopfEvolution a β (s + t) u := by
-  ext x
-  simp only [coleHopfEvolution_apply, coleHopfBUC_coleHopfEvolution]
-  have h := congrFun (heatFlow_add_time ha hs ht (coleHopfBUC β u).uniformContinuous
-    (coleHopfBUC β u).norm_apply_le) x
-  exact congrArg (coleHopfInv β) h
-
 /-- Continuity of the candidate evolution in the BUC norm, including the initial time. -/
 theorem continuous_coleHopfEvolution_time (a β : ℝ) (u : BUC E ℝ) :
     Continuous (fun t : ℝ => coleHopfEvolution a β t u) := by

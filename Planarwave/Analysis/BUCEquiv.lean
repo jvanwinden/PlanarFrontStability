@@ -42,23 +42,6 @@ theorem postcompCLE_apply (e : E ≃L[𝕜] F) (f : BUC α E) (x : α) :
 theorem postcompCLE_symm_apply (e : E ≃L[𝕜] F) (f : BUC α F) (x : α) :
     (postcompCLE e).symm f x = e.symm (f x) := rfl
 
-/-- Postcomposition on `BUC` has operator norm at most that of the target-space map. -/
-theorem norm_postcompCLE_le (e : E ≃L[𝕜] F) :
-    ‖(postcompCLE (α := α) e).toContinuousLinearMap‖ ≤ ‖e.toContinuousLinearMap‖ := by
-  change ‖postcompCLM e.toContinuousLinearMap‖ ≤ ‖e.toContinuousLinearMap‖
-  refine (postcompCLM e.toContinuousLinearMap).opNorm_le_bound (norm_nonneg _) ?_
-  intro f
-  exact norm_postcompCLM_apply_le e.toContinuousLinearMap f
-
-/-- The inverse pointwise change of coordinates satisfies the analogous norm bound. -/
-theorem norm_postcompCLE_symm_le (e : E ≃L[𝕜] F) :
-    ‖(postcompCLE (α := α) e).symm.toContinuousLinearMap‖ ≤
-      ‖e.symm.toContinuousLinearMap‖ := by
-  change ‖postcompCLM e.symm.toContinuousLinearMap‖ ≤ ‖e.symm.toContinuousLinearMap‖
-  refine (postcompCLM e.symm.toContinuousLinearMap).opNorm_le_bound (norm_nonneg _) ?_
-  intro f
-  exact norm_postcompCLM_apply_le e.symm.toContinuousLinearMap f
-
 section Pi
 
 variable {ι : Type*} [Fintype ι]
@@ -131,20 +114,6 @@ theorem piCLE_apply (f : BUC α (∀ i, X i)) (i : ι) (x : α) :
 @[simp]
 theorem piCLE_symm_apply (f : ∀ i, BUC α (X i)) (x : α) (i : ι) :
     (piCLE (α := α) (𝕜 := 𝕜) (X := X)).symm f x i = f i x := rfl
-
-/-- The forward product/`BUC` identification has operator norm at most one. -/
-theorem norm_piCLE_le :
-    ‖(piCLE (α := α) (𝕜 := 𝕜) (X := X)).toContinuousLinearMap‖ ≤ 1 := by
-  change ‖toPiCLM (α := α) (𝕜 := 𝕜) (X := X)‖ ≤ 1
-  apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
-  intro f
-  simpa using norm_toPiCLM_apply_le (𝕜 := 𝕜) f
-
-/-- The inverse product/`BUC` identification also has operator norm at most one. -/
-theorem norm_piCLE_symm_le :
-    ‖(piCLE (α := α) (𝕜 := 𝕜) (X := X)).symm.toContinuousLinearMap‖ ≤ 1 := by
-  change ‖ofPiCLM (α := α) (𝕜 := 𝕜) (X := X)‖ ≤ 1
-  exact LinearMap.mkContinuous_norm_le _ zero_le_one _
 
 end Pi
 

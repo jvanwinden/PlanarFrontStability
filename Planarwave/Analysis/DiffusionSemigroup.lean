@@ -75,17 +75,6 @@ theorem exists_uniform_frontDiffusion_bound
       (mul_le_mul_of_nonneg_right (le_max_left K 1) (Real.exp_pos _).le)
 
 omit [Nontrivial (ℝ^n)] in
-/-- Strong time continuity of the real-time expression used for the generator limit. -/
-theorem continuous_frontDiffusionFlowBUC (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive)
-    (c q : ℝ) (v : BUC ℝ (ℂ^n)) : Continuous fun t ↦ frontDiffusionFlowBUC D hD c q t v := by
-  apply (diffusionBUCCoordinatesEquiv D hD).continuous.comp
-  apply continuous_pi
-  intro i
-  exact (by fun_prop : Continuous fun t : ℝ ↦
-    (Real.exp ((-q * diffusionEigenvalues D hD i) * t) : ℂ)).smul
-      (continuous_convectiveHeatFlowBUC_time _ c _)
-
-omit [Nontrivial (ℝ^n)] in
 /-- The constant eigenbasis preserves spatial derivative identities. -/
 theorem hasDerivAt_diffusionBUCCoordinatesEquiv
     (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (v w : Fin n → BUC ℝ ℂ)
@@ -256,20 +245,6 @@ theorem frontDiffusionFlowBUC_commute_generator
   have h₂ := frontDiffusionC0Semigroup_hasGeneratorAt D hD hDinj c q
     (frontDiffusionFlowBUC2 D hD c q t v)
   exact h₁.unique h₂
-
-/-- The principal equation holds in the BUC norm at every positive time for common-domain data. -/
-theorem hasDerivAt_frontDiffusionFlowBUC
-    (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (hDinj : Function.Injective D)
-    (c q : ℝ) {t : ℝ} (ht : 0 < t) (v : ComplexBUC2 (ℂ^n)) :
-    HasDerivAt (fun r ↦ frontDiffusionFlowBUC D hD c q r (ComplexBUC2.value (ℂ^n) v))
-      (longitudinalOperator (frontComplexifiedDiffusion D) (c : ℂ) (q : ℂ) 0
-        (frontDiffusionFlowBUC2 D hD c q t v)) t := by
-  have h := (frontDiffusionC0Semigroup_hasGeneratorAt D hD hDinj c q v).hasDerivAt ht
-  rw [frontDiffusionC0Semigroup_realOrbit D hD c q ht.le,
-    frontDiffusionFlowBUC_commute_generator D hD hDinj c q ht.le] at h
-  apply h.congr_of_eventuallyEq
-  filter_upwards [Ioi_mem_nhds ht] with r hr
-  exact (frontDiffusionC0Semigroup_realOrbit D hD c q hr.le _).symm
 
 /-- The `BUC²` principal differential operator is a core for the constructed semigroup:
 its graph closure is exactly the full generator graph. No converse domain inclusion is

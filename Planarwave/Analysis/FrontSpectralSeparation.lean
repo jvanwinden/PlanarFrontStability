@@ -82,39 +82,6 @@ theorem exists_eventually_frontPencil_mem_spectrum_iff_branch_on_gap :
     have hzR : ‖z‖ ≤ R := by rw [heq]; exact hbranchNorm.le.trans hR
     exact (hlocal' hzR).mpr heq
 
-/-- Proposition 2.1(1) for every small multidimensional complex frequency:
-all noncritical spectrum lies strictly to the left of a fixed spectral gap. -/
-theorem exists_eventually_frontComplexFrequency_spectral_gap :
-    ∃ θ > 0, ∀ᶠ ξ : ℂ^m in 𝓝 0, ∀ z : ℂ,
-      z ∈ (frontPencilClosedOperator f D c φ h₁ h₂ (complexFrequencyQuadratic ξ)).spectrum →
-      z ≠ frontCriticalEigenvalueAtComplexFrequency f D c φ ψ h₁ h₂ h₃ ξ →
-      z.re < -(θ / 2) := by
-  obtain ⟨θ, hθ, hgap⟩ :=
-    exists_eventually_frontPencil_mem_spectrum_iff_branch_on_gap f D c φ ψ h₁ h₂ h₃
-  refine ⟨θ, hθ, ?_⟩
-  filter_upwards [(tendsto_complexFrequencyQuadratic_zero (m := m)).eventually hgap] with ξ hξ
-  intro z hz hne
-  by_contra! hright
-  exact hne ((hξ z hright).mp hz)
-
-/-- The unbounded-window spectral separation in the exact semantic spectrum
-used by the challenge statement. -/
-theorem exists_eventually_mem_transverseSpectrum_iff_frontCriticalEigenvalue_on_gap :
-    ∃ θ > 0, ∀ᶠ k : ℝ in 𝓝 0, ∀ z : ℂ, -(θ / 2) ≤ z.re →
-      (z ∈ TransverseSpectrum f D c φ k ↔
-        z = frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃ (k ^ 2)) := by
-  obtain ⟨θ, hθ, hgap⟩ :=
-    exists_eventually_frontPencil_mem_spectrum_iff_branch_on_gap f D c φ ψ h₁ h₂ h₃
-  have hk0 : Tendsto (fun k : ℝ ↦ (k ^ 2 : ℂ)) (𝓝 0) (𝓝 0) := by
-    simpa using! ((Complex.continuous_ofReal.pow 2).continuousAt (x := 0)).tendsto
-  refine ⟨θ, hθ, ?_⟩
-  filter_upwards [hk0.eventually hgap] with k hk
-  intro z hz
-  rw [mem_transverseSpectrum_iff_frontChallengeResolventMap_not_bijective f D c φ h₁ h₂,
-    ← frontPencilClosedOperator_resolventMap_eq f D c φ h₁ h₂]
-  simpa only [Complex.ofReal_pow, ClosedOperator.mem_spectrum, ClosedOperator.IsInResolvent]
-    using! hk z hz
-
 end
 
 end Planarwave

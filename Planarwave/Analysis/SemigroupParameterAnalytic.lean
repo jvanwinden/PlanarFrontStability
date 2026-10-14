@@ -116,12 +116,6 @@ theorem contDiff_boundedPerturbation_coefficient (S : C0Semigroup ℂ E) (t : NN
       ((S.volterraInverse B t).comp (S.freePathOperator t)))
   exact contDiff_const.clm_comp ((S.contDiff_volterraInverse_coefficient t).clm_comp contDiff_const)
 
-/-- Analytic formulation used when composing with the complex Fourier parameter. -/
-theorem analyticAt_boundedPerturbation_coefficient (S : C0Semigroup ℂ E)
-    (t : NNReal) (B : E →L[ℂ] E) :
-    AnalyticAt ℂ (fun C : E →L[ℂ] E ↦ S.boundedPerturbation C t) B :=
-  (S.contDiff_boundedPerturbation_coefficient t).contDiffAt.analyticAt
-
 end
 
 end C0Semigroup

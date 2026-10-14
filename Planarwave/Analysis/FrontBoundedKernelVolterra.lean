@@ -47,31 +47,6 @@ def frontBoundedKernelIntegrand (s r : NNReal) (v : BUC (ℝ^m) (BUC ℝ (ℂ^n)
 
 variable (ψ : ℝ → ℝ^n) (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
 
-include h₃ in
-/-- Joint spatial integrability in the iterated BUC norm, at positive split times. -/
-theorem integrable_frontBoundedKernelIntegrand (s r : NNReal) (hs : 0 < s) (hr : 0 < r)
-    (v : BUC (ℝ^m) (BUC ℝ (ℂ^n))) :
-    Integrable (frontBoundedKernelIntegrand f D c φ h₁ h₂ s r v) (volume.prod volume) :=
-  integrable_orderedConvolutionIntegrand
-    (continuous_frontDiffusionKernel D h₁.positive c s)
-    (integrable_frontDiffusionKernel D h₁.positive c h₁.kernel s hs)
-    (continuous_frontFourierKernel f D c φ h₁ h₂ ψ h₃ r hr)
-    (integrable_frontFourierKernel f D c φ h₁ h₂ ψ h₃ r hr) _ v
-
-/-- Spatial Fubini gives the Volterra forcing as composition of actual convolution
-operators on the complete iterated BUC space. -/
-theorem integral_frontBoundedKernelIntegrand (s r : NNReal) (hs : 0 < s) (hr : 0 < r)
-    (v : BUC (ℝ^m) (BUC ℝ (ℂ^n))) :
-    (∫ x : ℝ^m, ∫ y : ℝ^m, frontBoundedKernelIntegrand f D c φ h₁ h₂ s r v (x, y)) =
-      operatorConvolution (μ := volume) (frontDiffusionKernel D h₁.positive c s)
-        (BUC.postcompCLM (frontReactionMultiplication f D c φ h₁ h₂)
-          (frontFourierConvolutionCLM f D c φ h₁ h₂ ψ h₃ r hr v)) :=
-  integral_orderedConvolutionIntegrand
-    (continuous_frontDiffusionKernel D h₁.positive c s)
-    (integrable_frontDiffusionKernel D h₁.positive c h₁.kernel s hs)
-    (continuous_frontFourierKernel f D c φ h₁ h₂ ψ h₃ r hr)
-    (integrable_frontFourierKernel f D c φ h₁ h₂ ψ h₃ r hr) _ v
-
 /-- The double spatial integral in the kernel equation, evaluated on general
 bounded data, is exactly the expected convolution forcing. -/
 theorem frontKernel_forcing_on_bounded_data (s r : NNReal) (hs : 0 < s) (hr : 0 < r)

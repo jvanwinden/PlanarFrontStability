@@ -73,14 +73,6 @@ theorem trackingCutoff_eq_zero_of_ge {t : ℝ} (ht : 3 / 4 ≤ t) : trackingCuto
 theorem trackingCutoff_le_norm (t : ℝ) : trackingCutoff t ≤ ‖trackingCutoff‖ :=
   (le_abs_self _).trans (trackingCutoff.norm_apply_le t)
 
-/-- A completed unit pulse has exactly unit mass, as used in the cancellation
-of the critical source in Section 5. -/
-theorem integral_trackingCutoff_unit : (∫ t in (0 : ℝ)..1, trackingCutoff t) = 1 := by
-  rw [intervalIntegral.integral_eq_integral_of_support_subset, integral_trackingCutoff]
-  intro t ht
-  have h := trackingCutoff_ne_zero_mem ht
-  constructor <;> linarith [h.1, h.2]
-
 /-- Any interval containing the support captures the full unit mass. -/
 theorem integral_trackingCutoff_of_bounds {a b : ℝ} (ha : a ≤ 1 / 4) (hb : 3 / 4 ≤ b) :
     (∫ t in a..b, trackingCutoff t) = 1 := by

@@ -5,7 +5,9 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-public import Planarwave.Analysis.BUCFDerivCoordinates
+public import Planarwave.Analysis.BUCEquiv
+public import Mathlib.Analysis.Calculus.FDeriv.Pi
+public import Mathlib.Analysis.Calculus.FDeriv.CompCLM
 public import Mathlib.Analysis.Calculus.Deriv.Prod
 public import Mathlib.Analysis.Calculus.Deriv.Comp
 
@@ -73,16 +75,6 @@ def transverseDerivativeField (g : BUC (Y × ℝ) ((Y × ℝ) →L[ℝ] F)) :
 @[simp]
 theorem transverseDerivativeField_apply (g : BUC (Y × ℝ) ((Y × ℝ) →L[ℝ] F))
     (x : Y × ℝ) (y : Y) : transverseDerivativeField g x y = g x (y, 0) := rfl
-
-theorem norm_transverseDerivativeField_le (g : BUC (Y × ℝ) ((Y × ℝ) →L[ℝ] F)) :
-    ‖transverseDerivativeField g‖ ≤ ‖g‖ := by
-  apply (BUC.norm_le (norm_nonneg g)).mpr
-  intro x
-  apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg g)
-  intro y
-  calc
-    ‖g x (y, 0)‖ ≤ ‖g x‖ * ‖(y, (0 : ℝ))‖ := (g x).le_opNorm _
-    _ ≤ ‖g‖ * ‖y‖ := by simpa using mul_le_mul_of_nonneg_right (g.norm_apply_le x) (norm_nonneg y)
 
 /-- The extracted transverse field is the actual derivative on a transverse slice. -/
 theorem hasFDerivAt_transverseDerivativeField (v : BUC (Y × ℝ) F)

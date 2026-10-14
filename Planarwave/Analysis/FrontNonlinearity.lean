@@ -74,35 +74,6 @@ theorem frontInverseModulationNonlinearity_apply (v : BUC (ℝ^m × ℝ) (ℝ^n)
     frontSplitProfileBUC_apply, BUC.longitudinalDerivativeField_apply,
     BUC.longitudinalSecondDerivativeField_apply, BUC.mixedDerivativeField_apply]
 
-/-- With actual derivative data and the phase gradient/Laplacian, the bundled
-nonlinearity is precisely the classical expression in `eq:defN` of the paper. -/
-theorem frontInverseModulationNonlinearity_eq_classical
-    (v : BUC (ℝ^m × ℝ) (ℝ^n))
-    (v₁ : BUC (ℝ^m × ℝ) ((ℝ^m × ℝ) →L[ℝ] ℝ^n))
-    (v₂ : BUC (ℝ^m × ℝ) ((ℝ^m × ℝ) →L[ℝ] (ℝ^m × ℝ) →L[ℝ] ℝ^n))
-    (hv₁ : ∀ x, HasFDerivAt v (v₁ x) x) (hv₂ : ∀ x, HasFDerivAt v₁ (v₂ x) x)
-    (σ : ℝ^m → ℝ) (s : BUC (ℝ^m) (ℝ^m)) (l g : BUC (ℝ^m) ℝ)
-    (hs : ∀ y, s y = ∇ σ y) (hl : ∀ y, l y = Δ σ y) (y : ℝ^m) (z : ℝ) :
-    frontInverseModulationNonlinearity f D c φ ψ h₁ h₂ v v₁ v₂ s l g (y, z) =
-      f (φ z + v (y, z)) - f (φ z) - fderiv ℝ f (φ z) (v (y, z)) +
-        Δ σ y • (d_perp D φ ψ • deriv (fun r ↦ v (y, r)) z - D (deriv (fun r ↦ v (y, r)) z)) +
-        ‖∇ σ y‖ ^ 2 • (D (deriv (fun r ↦ deriv (fun q ↦ v (y, q)) r) z) +
-          (c / 2) • deriv (fun r ↦ v (y, r)) z) -
-        (2 : ℝ) • D (fderiv ℝ (fun w ↦ deriv (fun r ↦ v (w, r)) z) y (∇ σ y)) -
-        g y • deriv (fun r ↦ v (y, r)) z := by
-  have hZ (y : ℝ^m) (z : ℝ) : deriv (fun r ↦ v (y, r)) z =
-      BUC.longitudinalDerivativeField v₁ (y, z) :=
-    (BUC.hasDerivAt_longitudinalDerivativeField v v₁ hv₁ y z).deriv
-  have hZZ : deriv (fun r ↦ deriv (fun q ↦ v (y, q)) r) z =
-      BUC.longitudinalSecondDerivativeField v₂ (y, z) := by
-    simpa only [hZ] using (BUC.hasDerivAt_longitudinalSecondDerivativeField v₁ v₂ hv₂ y z).deriv
-  have hYZ : fderiv ℝ (fun w ↦ deriv (fun r ↦ v (w, r)) z) y =
-      BUC.mixedDerivativeField v₂ (y, z) := by
-    simpa only [hZ] using (BUC.hasFDerivAt_mixedDerivativeField v₁ v₂ hv₂ y z).fderiv
-  rw [hZZ, hYZ, hZ, frontInverseModulationNonlinearity_apply]
-  simp only [BUC.longitudinalDerivativeField_apply, BUC.longitudinalSecondDerivativeField_apply,
-    BUC.mixedDerivativeField_apply, hs, hl]
-
 /-- Lemma 4.1 for the original front, with the sum norm on two spatial BUC derivatives.
 The constant is uniform over the entire fixed-size perturbation ball and all phase/forcing data. -/
 theorem exists_frontInverseModulationNonlinearity_bound {R : ℝ} (hR : 0 ≤ R) :

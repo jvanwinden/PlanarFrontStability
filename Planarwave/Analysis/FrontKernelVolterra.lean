@@ -9,13 +9,13 @@ import all Planarwave.Analysis.FrontDiffusionKernel
 import all Planarwave.Analysis.FrontFourierDuhamel
 
 /-!
-# The spatial convolution equation for the full Fourier kernel
+# Inverse Fourier transformation of the Duhamel product
 
 The inverse transform of the longitudinal Duhamel product is a spatial
 convolution of the principal kernel, the reaction coefficient, and the full
-kernel, in that order. This yields the kernel's Volterra identity. Passing the
-identity to general bounded spatial data still requires spatial-time Fubini and
-initial-value continuity; neither is inferred just from the kernel identity.
+kernel, in that order. This file proves the spatial identity for each positive
+time split. The subsequent Volterra argument supplies time-space Fubini and
+initial-value continuity for general bounded spatial data.
 -/
 
 open MeasureTheory Set
@@ -122,41 +122,6 @@ theorem frontFourierDuhamel_inverse_eq_kernel_convolution (t : NNReal) {r : ℝ}
     frontFourierSemigroupSymbol_embed, C0Semigroup.realOrbit] using!
     frontFourier_product_eq_kernel_convolution f D c φ h₁ h₂ ψ h₃
       ((t : ℝ) - r).toNNReal r.toNNReal hs hrr x v
-
-include h₃ in
-/-- Spatial Volterra identity for the full Fourier kernel, with the actual
-principal diffusion kernel and actual front reaction multiplication. -/
-theorem frontFourierKernel_volterra (t : NNReal) (ht : 0 < t)
-    (x : ℝ^m) (v : BUC ℝ (ℂ^n)) :
-    frontFourierKernel f D c φ h₁ h₂ t x v = frontDiffusionKernel D h₁.positive c t x v +
-      ∫ r in 0..(t : ℝ), ∫ y : ℝ^m,
-        frontDiffusionKernel D h₁.positive c ((t : ℝ) - r).toNNReal y
-          (frontReactionMultiplication f D c φ h₁ h₂
-            (frontFourierKernel f D c φ h₁ h₂ r.toNNReal (x - y) v)) := by
-  rw [frontFourierKernel_duhamel f D c φ h₁ h₂ ψ h₃ t ht x v]
-  have hfree := frontDiffusionKernel_eq_fourierIntegral D h₁.positive c h₁.kernel t ht x v
-  simp only [oscillatoryIntegral] at hfree
-  rw [← hfree]
-  congr 1
-  apply intervalIntegral.integral_congr_Ioo_of_le (show 0 ≤ (t : ℝ) from t.2)
-  intro r hr
-  exact frontFourierDuhamel_inverse_eq_kernel_convolution f D c φ h₁ h₂ ψ h₃ t hr x v
-
-include h₃ in
-/-- The spatial convolution in the kernel Volterra equation is integrable in
-time after spatial integration. This is not yet joint space-time integrability. -/
-theorem intervalIntegrable_frontFourierKernel_convolution (t : NNReal) (ht : 0 < t)
-    (x : ℝ^m) (v : BUC ℝ (ℂ^n)) :
-    IntervalIntegrable (fun r : ℝ ↦ ∫ y : ℝ^m,
-      frontDiffusionKernel D h₁.positive c ((t : ℝ) - r).toNNReal y
-        (frontReactionMultiplication f D c φ h₁ h₂
-          (frontFourierKernel f D c φ h₁ h₂ r.toNNReal (x - y) v))) volume 0 t := by
-  have hi := (intervalIntegrable_frontFourierDuhamel_inverse f D c φ h₁ h₂ t ht x v).smul
-    (((2 * Real.pi) ^ m)⁻¹ : ℝ)
-  apply hi.congr_uIoo
-  intro r hr
-  have hr' : r ∈ Ioo 0 (t : ℝ) := uIoo_of_le (show 0 ≤ (t : ℝ) from t.2) ▸ hr
-  exact frontFourierDuhamel_inverse_eq_kernel_convolution f D c φ h₁ h₂ ψ h₃ t hr' x v
 
 end
 

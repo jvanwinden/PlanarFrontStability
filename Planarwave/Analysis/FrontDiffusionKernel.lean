@@ -46,13 +46,6 @@ def frontDiffusionKernel (t : NNReal) (x : ℝ^m) : BUC ℝ (ℂ^n) →L[ℂ] BU
   diagonalGaussianKernel (fun i ↦ diffusionEigenvalues D hD i * t)
     (frontDiffusionCoordinateHeat D hD c t) (diffusionBUCCoordinatesEquiv D hD).toContinuousLinearMap x
 
-/-- The principal kernel in the explicit diffusion eigenbasis. -/
-theorem frontDiffusionKernel_apply (t : NNReal) (x : ℝ^m) (v : BUC ℝ (ℂ^n)) :
-    frontDiffusionKernel D hD c t x v = diffusionBUCCoordinatesEquiv D hD (fun i ↦
-      gaussianDensity (4 * (diffusionEigenvalues D hD i * t))⁻¹ x •
-        convectiveHeatFlowBUC (diffusionEigenvalues D hD i) t c
-          ((diffusionBUCCoordinatesEquiv D hD).symm v i)) := rfl
-
 /-- Spatial continuity in operator norm. -/
 theorem continuous_frontDiffusionKernel (t : NNReal) :
     Continuous (frontDiffusionKernel (m := m) D hD c t) :=

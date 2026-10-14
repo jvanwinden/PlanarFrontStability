@@ -54,17 +54,6 @@ theorem exists_bucSpatialBound_observable_of_ode (u : BUC ℝ V)
       (ContinuousLinearMap.toSpanSingleton ℝ (fderiv ℝ G (u z) (R (u z)))) z
     exact ((hG.differentiable (by simp) (u z)).hasFDerivAt.comp_hasDerivAt z (hd z)).hasFDerivAt
 
-/-- In particular, every spatial derivative of the trajectory itself is BUC. -/
-theorem exists_bucSpatialBound_of_ode (u : BUC ℝ V)
-    (R : V → V) (hR : ContDiff ℝ ∞ R)
-    (hd : ∀ z, HasDerivAt u (R (u z)) z) (k : ℕ) :
-    ∃ A > 0, BUCSpatialBound k u A := by
-  obtain ⟨A, _, hA⟩ := exists_bucSpatialBound_observable_of_ode u R hR hd k id contDiff_id
-  have heq : BUC.postcompContinuous id (continuous_id : Continuous (id : V → V)) u = u :=
-    BUC.ext fun _ ↦ rfl
-  rw [heq] at hA
-  exact ⟨max A 1, lt_of_lt_of_le zero_lt_one (le_max_right _ _), hA.mono (le_max_left _ _)⟩
-
 end
 
 end Planarwave

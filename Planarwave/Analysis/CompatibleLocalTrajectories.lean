@@ -132,14 +132,6 @@ theorem continuous : ContinuousOn (localMaximalTrajectory P x₀)
     mem_nhdsWithin_of_mem_nhds (Iio_mem_nhds htT)] with r hr hrT
   exact ⟨hr.1, hrT.le⟩
 
-/-- A finite maximal lifetime gives the usual half-open solution interval. -/
-theorem continuous_Ico {T : ℝ} (hT : 0 < T)
-    (hmax : localMaximalTime P x₀ = ENNReal.ofReal T) :
-    ContinuousOn (localMaximalTrajectory P x₀) (Ico 0 T) := by
-  apply sys.continuous.mono
-  intro t ht
-  exact ⟨ht.1, by rw [hmax]; exact (ENNReal.ofReal_lt_ofReal_iff hT).2 ht.2⟩
-
 end LocalTrajectorySystem
 
 end

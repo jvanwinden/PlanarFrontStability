@@ -73,37 +73,6 @@ theorem frontAdjointRegularization_equation (j : ℕ) (z : ℝ) :
     (longitudinalMollifier j) (longitudinalMollifierFirst j) (longitudinalMollifierSecond j)
     (hasDerivAt_longitudinalMollifier j) (hasDerivAt_longitudinalMollifierFirst j) z
 
-/-- Smooth classical adjoint approximations, with the correct almost-everywhere
-limit and index-independent L1 bounds. The derivative integrability assertions
-are for each index separately; no uniform derivative bound is asserted here. -/
-theorem exists_frontAdjoint_classicalRegularizations :
-    ∃ u q : ℕ → BUC ℝ (ℝ^n),
-      (∀ j, ContDiff ℝ ∞ (u j : ℝ → ℝ^n) ∧ ContDiff ℝ ∞ (q j : ℝ → ℝ^n)) ∧
-      (∀ j, Integrable (u j : ℝ → ℝ^n) ∧ Integrable (deriv (u j)) ∧
-        Integrable (deriv (deriv (u j))) ∧ Integrable (q j : ℝ → ℝ^n)) ∧
-      (∀ j z, D (deriv (deriv (u j)) z) - c • deriv (u j) z + q j z = 0) ∧
-      (∀ j, (∫ z, ‖u j z‖) ≤ ∫ z, ‖ψ z‖) ∧
-      (∀ j, (∫ z, ‖q j z‖) ≤
-        ‖realFrontDerivativeCoefficient f D c φ h₁ h₂‖ * ∫ z, ‖ψ z‖) ∧
-      (∀ᵐ z, Tendsto (fun j ↦ u j z) atTop (𝓝 (ψ z)) ∧
-        Tendsto (fun j ↦ q j z) atTop (𝓝 ((fderiv ℝ f (φ z)).adjoint (ψ z)))) := by
-  let hq := integrable_frontAdjointReaction f D c φ ψ h₁ h₂ h₃
-  refine ⟨frontAdjointRegularization f D c φ ψ h₃,
-    frontAdjointReactionRegularization f D c φ ψ h₁ h₂ h₃,
-    (fun j ↦ ⟨contDiff_longitudinalMollification h₃.integrable j,
-      contDiff_longitudinalMollification hq j⟩),
-    (fun j ↦ ⟨integrable_longitudinalMollification h₃.integrable j,
-      integrable_deriv_longitudinalMollification h₃.integrable j,
-      integrable_deriv_deriv_longitudinalMollification h₃.integrable j,
-      integrable_longitudinalMollification hq j⟩),
-    frontAdjointRegularization_equation f D c φ ψ h₁ h₂ h₃,
-    integral_norm_longitudinalMollification_le h₃.integrable, ?_, ?_⟩
-  · intro j
-    exact (integral_norm_longitudinalMollification_le hq j).trans
-      (integral_norm_frontAdjointReaction_le f D c φ ψ h₁ h₂ h₃)
-  · exact (ae_tendsto_longitudinalMollification h₃.integrable).and
-      (ae_tendsto_longitudinalMollification hq)
-
 end
 
 end Planarwave

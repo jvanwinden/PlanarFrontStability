@@ -96,36 +96,6 @@ theorem exists_pos_mul_sq_norm_le_inner_of_positive_injective
       mul_le_mul_of_nonneg_right hscaled (sq_nonneg ‖x‖)
     _ = q x := by field_simp [ne_of_gt hxnorm]
 
-/-- Coercivity implies the corresponding lower operator-norm bound, with the same constant. -/
-theorem exists_pos_mul_norm_le_norm_of_positive_injective
-    [FiniteDimensional ℝ E] [Nontrivial E]
-    (D : E →L[ℝ] E) (hD : D.IsPositive) (hDinj : Function.Injective D) :
-    ∃ μ > 0, ∀ x : E, μ * ‖x‖ ≤ ‖D x‖ := by
-  obtain ⟨μ, hμ, hcoercive⟩ :=
-    exists_pos_mul_sq_norm_le_inner_of_positive_injective D hD hDinj
-  refine ⟨μ, hμ, fun x ↦ ?_⟩
-  by_cases hx : x = 0
-  · simp [hx]
-  have hxnorm : 0 < ‖x‖ := norm_pos_iff.mpr hx
-  have hchain : μ * ‖x‖ ^ 2 ≤ ‖D x‖ * ‖x‖ :=
-    (hcoercive x).trans (real_inner_le_norm (D x) x)
-  nlinarith
-
-/-- A positive injective finite-dimensional diffusion operator is quantitatively
-antilipschitz. -/
-theorem exists_antilipschitz_of_positive_injective
-    [FiniteDimensional ℝ E] [Nontrivial E]
-    (D : E →L[ℝ] E) (hD : D.IsPositive) (hDinj : Function.Injective D) :
-    ∃ c : ℝ≥0, 0 < c ∧ AntilipschitzWith c⁻¹ D := by
-  obtain ⟨μ, hμ, hcoercive⟩ :=
-    exists_pos_mul_sq_norm_le_inner_of_positive_injective D hD hDinj
-  let c : ℝ≥0 := ⟨μ, hμ.le⟩
-  have hc : 0 < c := by exact_mod_cast hμ
-  refine ⟨c, hc, ContinuousLinearMap.antilipschitz_of_forall_le_inner_map D hc ?_⟩
-  intro x
-  change ‖x‖ ^ 2 * μ ≤ ‖⟪D x, x⟫_ℝ‖
-  simpa [mul_comm, Real.norm_eq_abs, abs_of_nonneg (hD.inner_nonneg_left x)] using hcoercive x
-
 /-- In particular, a positive injective finite-dimensional diffusion operator is invertible in
 the ring of continuous linear endomorphisms. -/
 theorem isUnit_of_positive_injective

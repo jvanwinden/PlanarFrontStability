@@ -109,20 +109,6 @@ theorem exists_frontRemainderKernel_onDiagonal_bound {R : ℝ} (hR : 0 < R) :
   rw [mul_add, mul_add]
   exact (add_le_add (add_le_add h₁term h₂term) h₃term).trans_eq (by ring)
 
-/-- The pointwise version of the on-diagonal estimate for longitudinal slices. -/
-theorem exists_frontRemainderKernel_onDiagonal_pointwise_bound {R : ℝ} (hR : 0 < R) :
-    ∃ C > 0, ∃ ν > 0, ∀ (t : NNReal), 1 ≤ t → ∀ x : ℝ^m,
-      ‖x‖ / t ≤ R → ∀ (v : BUC ℝ (ℂ^n)) (z : ℝ),
-      ‖frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t x v z‖ ≤
-        C * (t : ℝ) ^ (-(m / 2 + 1 : ℝ)) * Real.exp (-ν * ‖x‖ ^ 2 / t) * ‖v‖ := by
-  obtain ⟨C, hC, ν, hν, hb⟩ :=
-    exists_frontRemainderKernel_onDiagonal_bound (m := m) f D c φ h₁ h₂ ψ h₃ hR
-  refine ⟨C, hC, ν, hν, ?_⟩
-  intro t ht x hx v z
-  exact (BUC.norm_apply_le _ z).trans
-    (((frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t x).le_opNorm v).trans
-      (mul_le_mul_of_nonneg_right (hb t ht x hx) (norm_nonneg v)))
-
 end
 
 end Planarwave

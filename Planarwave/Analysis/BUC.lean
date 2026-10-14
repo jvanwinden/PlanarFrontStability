@@ -211,10 +211,6 @@ theorem dist_apply_le (f g : BUC α E) (x : α) : dist (f x) (g x) ≤ dist f g 
 theorem lipschitz_eval (x : α) : LipschitzWith 1 fun f : BUC α E ↦ f x :=
   LipschitzWith.mk_one fun f g ↦ dist_apply_le f g x
 
-/-- Evaluation at a fixed point is uniformly continuous. -/
-theorem uniformContinuous_eval (x : α) : UniformContinuous fun f : BUC α E ↦ f x :=
-  (lipschitz_eval x).uniformContinuous
-
 /-- Convergence in `BUC` is uniform convergence. -/
 theorem tendsto_iff_tendstoUniformly {ι : Type*} {F : ι → BUC α E} {f : BUC α E}
     {l : Filter ι} : Tendsto F l (𝓝 f) ↔ TendstoUniformly (fun i ↦ (F i : α → E)) f l := by

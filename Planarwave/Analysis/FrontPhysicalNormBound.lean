@@ -56,17 +56,6 @@ theorem norm_le_frontInverseModulatedPerturbation_add_profile {d : ℕ} (hd : 2 
     ‖u‖ = ‖(w - p) + p‖ := by rw [sub_add_cancel, hw]
     _ ≤ ‖w - p‖ + ‖p‖ := norm_add_le _ _
 
-/-- The reverse triangle estimate is also independent of the phase. -/
-theorem norm_frontInverseModulatedPerturbation_le_add_profile {d : ℕ} (hd : 2 ≤ d)
-    (u : BUC (ℝ^d) (ℝ^n)) (a : ℝ) (σ : BUC (ℝ^(d - 1)) ℝ) :
-    ‖frontInverseModulatedPerturbation f D c φ h₂ hd u a σ‖ ≤
-      ‖u‖ + ‖frontSplitProfileBUC (m := d - 1) f D c φ h₂‖ := by
-  unfold frontInverseModulatedPerturbation
-  have h := norm_sub_le (modulationShift a σ (u.comp (coordinateEquiv hd).symm
-    (coordinateEquiv hd).symm.toContinuousLinearMap.uniformContinuous))
-    (frontSplitProfileBUC (m := d - 1) f D c φ h₂)
-  simpa only [norm_modulationShift, norm_frontCoordinatePullback] using h
-
 end
 
 end Planarwave

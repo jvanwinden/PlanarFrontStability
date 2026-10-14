@@ -132,18 +132,6 @@ theorem source_eq_of_physical_fields_eq
       (X.first_derivative t ⟨ht0, ht.2⟩) (X.second_derivative t ⟨ht0, ht.2⟩)
       (hv₁ ht0) (hv₂ ht0) (X.gradient_eq t ht) hs (X.laplacian_eq t ht) hl
 
-/-- Two tracking bundles with the same physical data, phase and forcing at a
-shared time have the same source, including at the rough initial time. -/
-theorem source_eq_of_fields_eq (Y : FrontTrackingSystem f D c φ ψ h₁ h₂ h₃ hd S)
-    (ht : t ∈ Icc 0 T) (hs : t ∈ Icc 0 S)
-    (hu : X.u t = Y.u t) (hσ : X.σ t = Y.σ t) (hg : X.forcing t = Y.forcing t) :
-    X.N t = Y.N t := by
-  rw [Y.source_eq t hs]
-  exact X.source_eq_of_physical_fields_eq ht hu hσ hg
-    (fun hp ↦ Y.first_derivative t ⟨hp, hs.2⟩)
-    (fun hp ↦ Y.second_derivative t ⟨hp, hs.2⟩)
-    (Y.gradient_eq t hs) (Y.laplacian_eq t hs)
-
 end FrontTrackingSystem
 
 end

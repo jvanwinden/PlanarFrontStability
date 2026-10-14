@@ -12,7 +12,5 @@ public import Planarwave.Proof
 
 The analytic library and its completed proof, independent of the root-level
 `Challenge` and `Solution` modules. `Solution` imports `Planarwave.Proof` directly
-to instantiate the proof with its copied challenge declarations. The optional
-`Planarwave.Analysis.PaperOutline` collects additional APIs and documents the proof,
-but is not required to build the main theorem.
+to instantiate the proof with its copied challenge declarations.
 -/

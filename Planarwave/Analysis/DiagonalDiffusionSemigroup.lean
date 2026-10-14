@@ -145,39 +145,6 @@ theorem diffusionEigenvalues_nonneg
     0 ≤ diffusionEigenvalues D hD i := by
   exact hD.toLinearMap.nonneg_eigenvalues finrank_euclideanSpace_fin i
 
-/-- The diagonalized diffusion semigroup therefore has a strictly positive Gaussian damping
-rate.  This is the estimate immediately preceding (2.3) in the paper, before conjugation by the
-eigenvector matrix. -/
-theorem exists_pos_norm_diffusionEigenvalueSemigroup_le
-    (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (hDinj : Function.Injective D)
-    (c q : ℝ) (hq : 0 ≤ q) (t : NNReal) :
-    ∃ μ > 0,
-      ‖diagonalDiffusionC0Semigroup (diffusionEigenvalues D hD)
-          (diffusionEigenvalues_nonneg D hD) c q t‖ ≤
-        Real.exp (-μ * q * (t : ℝ)) := by
-  obtain ⟨μ, hμ, hμle⟩ := exists_pos_le_diffusionEigenvalues D hD hDinj
-  exact ⟨μ, hμ,
-    norm_diagonalDiffusionC0Semigroup_le (diffusionEigenvalues D hD)
-      (diffusionEigenvalues_nonneg D hD) c q μ hμle hq t⟩
-
-/-- After an arbitrary fixed eigenvector-coordinate equivalence, the concrete diffusion
-semigroup retains its strictly positive Gaussian rate and acquires only the expected fixed
-condition-number prefactor. -/
-theorem exists_pos_norm_conjugatedDiffusionEigenvalueSemigroup_le
-    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V] [CompleteSpace V]
-    (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (hDinj : Function.Injective D)
-    (c q : ℝ) (hq : 0 ≤ q)
-    (J : (∀ _ : Fin n, BUC ℝ ℂ) ≃L[ℂ] BUC ℝ V) (t : NNReal) :
-    ∃ μ > 0,
-      ‖conjugatedDiagonalDiffusionC0Semigroup (diffusionEigenvalues D hD)
-          (diffusionEigenvalues_nonneg D hD) c q J t‖ ≤
-        (‖J.toContinuousLinearMap‖ * ‖J.symm.toContinuousLinearMap‖) *
-          Real.exp (-μ * q * (t : ℝ)) := by
-  obtain ⟨μ, hμ, hμle⟩ := exists_pos_le_diffusionEigenvalues D hD hDinj
-  exact ⟨μ, hμ,
-    norm_conjugatedDiagonalDiffusionC0Semigroup_le (diffusionEigenvalues D hD)
-      (diffusionEigenvalues_nonneg D hD) c q μ hμle hq J t⟩
-
 end PositiveDiffusionRates
 
 end

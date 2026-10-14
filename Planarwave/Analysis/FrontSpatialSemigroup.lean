@@ -6,7 +6,7 @@ Authors: Joris van Winden, OpenAI
 module
 
 import all Planarwave.Analysis.SpatialDiffusionSemigroup
-import all Planarwave.Analysis.FrontLinearizedMild
+import all Planarwave.Analysis.FrontCoefficient
 import all Planarwave.Coordinates
 import Planarwave.Analysis.SemigroupPerturbationGenerator
 import Planarwave.Analysis.SemigroupPerturbationBound
@@ -59,32 +59,12 @@ theorem frontSpatialReactionMultiplication_apply (v : BUC (ℝ^d) (ℂ^n)) (x : 
       (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (v x) :=
   complexFrontDerivativeCoefficient_apply f D c φ h₁ h₂ (horizontal x) (v x)
 
-/-- The bounded perturbation costs no extra spatial dependence in its norm bound. -/
-theorem norm_frontSpatialReactionMultiplication_le :
-    ‖frontSpatialReactionMultiplication f D c φ h₁ h₂ hd‖ ≤
-      ‖complexFrontDerivativeCoefficient f D c φ h₁ h₂‖ := by
-  let A := complexFrontDerivativeCoefficient f D c φ h₁ h₂
-  apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg A)
-  intro v
-  apply (BUC.norm_le (by positivity)).mpr
-  intro x
-  change ‖A (horizontal x) (v x)‖ ≤ _
-  exact ((A (horizontal x)).le_opNorm (v x)).trans
-    (mul_le_mul (A.norm_apply_le _) (v.norm_apply_le _) (norm_nonneg _) (norm_nonneg _))
-
 variable [Nontrivial (ℝ^n)]
 
 /-- The full spatial linearized evolution, independently constructed by bounded perturbation. -/
 def frontSpatialC0Semigroup : C0Semigroup ℂ (BUC (ℝ^d) (ℂ^n)) :=
   (spatialDiffusionC0Semigroup D h₁.positive (frontSpatialDrift hd c)).boundedPerturbation
     (frontSpatialReactionMultiplication f D c φ h₁ h₂ hd)
-
-/-- Exact full-domain perturbation identity for the spatial generator. -/
-theorem frontSpatialC0Semigroup_hasGeneratorAt_iff (v w : BUC (ℝ^d) (ℂ^n)) :
-    (frontSpatialC0Semigroup f D c φ h₁ h₂ hd).HasGeneratorAt v w ↔
-      (spatialDiffusionC0Semigroup D h₁.positive (frontSpatialDrift hd c)).HasGeneratorAt v
-        (w - frontSpatialReactionMultiplication f D c φ h₁ h₂ hd v) :=
-  C0Semigroup.boundedPerturbation_hasGeneratorAt_iff _ _ v w
 
 /-- The spatial generator on twice BUC differentiable diffusion-coordinate data. -/
 theorem frontSpatialC0Semigroup_hasGeneratorAt
@@ -121,7 +101,8 @@ theorem exists_frontSpatialC0Semigroup_bound :
   apply h.trans
   apply mul_le_mul_of_nonneg_left _ hM.le
   apply Real.exp_le_exp.mpr
-  nlinarith [t.2]
+  exact mul_le_mul_of_nonneg_right
+    (by simpa only [zero_add] using le_add_of_nonneg_right (show (0 : ℝ) ≤ 1 from zero_le_one)) t.2
 
 /-- The short-time uniform bound invoked in the last paragraph of Section 3. -/
 theorem exists_frontSpatialC0Semigroup_shortTime_bound :

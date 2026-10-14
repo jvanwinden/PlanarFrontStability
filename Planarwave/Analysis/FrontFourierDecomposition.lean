@@ -11,13 +11,13 @@ import Planarwave.Analysis.GaussianHeatKernel
 /-!
 # Decomposition of the full Fourier convolution
 
-The second Fourier representation in Section 3 is proved here for the actual
-transverse heat evolution on the translation mode. Integrating the symbol
-decomposition then identifies the full Fourier convolution with this heat term
-plus the previously constructed remainder convolution.
+Define the transverse heat evolution on the translation mode and integrate
+the symbol decomposition to identify the full Fourier convolution with this
+heat term plus the remainder convolution. The full convolution also receives
+its Fourier integral representation and quantitative heat-difference bound.
 
-This does not yet identify the full Fourier convolution with the independently
-constructed spatial semigroup; that is a separate remaining obligation.
+Identification with the independently constructed spatial semigroup is proved
+separately in `FrontFourierIdentification`.
 -/
 
 open MeasureTheory
@@ -65,20 +65,6 @@ def frontCriticalHeatEvolution (t : NNReal) (v : BUC (ℝ^m) (BUC ℝ (ℂ^n))) 
   heatFlowBUC (d_perp D φ ψ) t
     (BUC.postcompCLM (profileProjection ψ h₃.integrable
       (translationModeBUC f D c φ ψ h₃)) v)
-
-omit [Nontrivial (ℝ^n)] in
-/-- The second Fourier formula in Section 3, as an equality of longitudinal BUC values. -/
-theorem frontCriticalHeatEvolution_eq_fourierIntegral (t : NNReal) (ht : 0 < t)
-    (v : BUC (ℝ^m) (BUC ℝ (ℂ^n))) (y : ℝ^m) :
-    frontCriticalHeatEvolution f D c φ ψ h₃ t v y = ((2 * Real.pi) ^ m)⁻¹ •
-      ∫ y' : ℝ^m, ∫ ξ : ℝ^m, Complex.exp (Complex.I * (⟪ξ, y - y'⟫ : ℂ)) •
-        (Complex.exp (-((d_perp D φ ψ * t : ℝ) : ℂ) * ‖ξ‖ ^ 2) •
-          (profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃) (v y'))) := by
-  simpa only [frontCriticalHeatEvolution, finrank_euclideanSpace_fin,
-    BUC.postcompCLM_apply] using!
-      (heatFlowBUC_eq_fourierIntegral h₃.transverse_low_wavenumber ht
-        (BUC.postcompCLM (profileProjection ψ h₃.integrable
-          (translationModeBUC f D c φ ψ h₃)) v) y)
 
 /-- The normalized full Fourier kernel, defined from the full longitudinal symbol. -/
 def frontFourierKernel (t : NNReal) (x : ℝ^m) : BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n) :=

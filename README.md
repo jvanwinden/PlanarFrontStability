@@ -8,8 +8,7 @@ This project formalizes one of the main results from [1], following the paper's 
   `Planarwave.Proof` and replacing `sorry` with the single theorem name
   `Planarwave.vHJ_approximates_planar_front_solution`, without explicit arguments.
 - [`Planarwave.lean`](Planarwave.lean) is the proof library's root module, importing
-  the completed proof and its dependencies. The paper outline is optional, so
-  building this root does not also build unrelated auxiliary APIs.
+  the completed proof and its dependencies.
 - [`Planarwave/Statement.lean`](Planarwave/Statement.lean) mirrors the statement definitions
   inside the `Planarwave` namespace for use by the analytic proof, avoiding collisions
   with the public declarations copied into `Solution.lean`.
@@ -45,10 +44,19 @@ root-level `Challenge` or `Solution` modules.
 
 Use `import Solution` to access the public theorem. The namespaced proof theorem
 `Planarwave.vHJ_approximates_planar_front_proved` is available from `Planarwave.Proof`
-and uses the internal predicates. The proof's dependency map is documented in
-[`Planarwave/Analysis/PaperOutline.lean`](Planarwave/Analysis/PaperOutline.lean).
-Build that optional overview and its additional APIs explicitly with
-`lake build Planarwave.Analysis.PaperOutline`.
+and uses the internal predicates.
+
+To investigate a slow module, use Lean's built-in profiler after building its
+dependencies, for example:
+
+```powershell
+lake env lean Planarwave/Analysis/FrontEigenvalueBranch.lean '-Dprofiler=true' '-Dprofiler.threshold=100'
+```
+
+For a nested trace, replace those flags with `'-Dtrace.profiler=true'` and
+`'-Dtrace.profiler.threshold=100'`. Profiling adds overhead; its categories can
+overlap and should not be summed into a total build time. Use Lake's own build
+timings for module-level comparisons, without custom timing scripts.
 
 [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
   nonlocalized perturbations.", arXiv.2601.05832.

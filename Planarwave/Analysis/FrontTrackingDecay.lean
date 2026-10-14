@@ -114,39 +114,6 @@ theorem norm_frontTrackingCriticalResidual_decay_le {γ T M t : ℝ} (hγ : 0 �
         ((longitudinalPairing ψ h₃.integrable).continuous.comp_continuousOn hNc) hproj ht
     _ = _ := by ring
 
-/-- The source hypothesis at the start of `lem:key` now suffices for the
-constructed C² classical phase: the forcing decay is proved, not assumed. -/
-theorem exists_front_forced_phase_c2_of_source_decay :
-    ∃ C₀ > 0, ∃ M₀ > 0,
-      ∀ (T M : ℝ) (v₀ : BUC (ℝ^m × ℝ) (ℝ^n)) (N : ℝ → BUC (ℝ^m × ℝ) (ℝ^n)),
-      0 ≤ T → 0 ≤ M → M ≤ M₀ → ‖v₀‖ ≤ M →
-      (∀ t ∈ Icc 0 T, ‖N t‖ ≤ M * (1 + t) ^ (-(5 : ℝ) / 4)) →
-      ∃ (ξ σ : ℝ → BUC (ℝ^m) ℝ) (q : ℝ → BUC (ℝ^m) (ℝ^m →L[ℝ] ℝ))
-        (h : ℝ → BUC (ℝ^m) (ℝ^m →L[ℝ] ℝ^m →L[ℝ] ℝ))
-        (s : ℝ → BUC (ℝ^m) (ℝ^m)) (L : ℝ → BUC (ℝ^m) ℝ),
-        IsForcedColeHopfMild (d_perp D φ ψ) (c / (2 * d_perp D φ ψ))
-          (frontDelayedForcing f D c φ ψ h₃ v₀ N) ξ T ∧
-        ContinuousOn σ (Icc 0 T) ∧ Continuous q ∧ Continuous h ∧
-        ContinuousOn s (Icc 0 T) ∧ ContinuousOn L (Icc 0 T) ∧ σ 0 = 0 ∧
-        (∀ t ∈ Icc 0 T, ContDiff ℝ 2 (σ t : ℝ^m → ℝ) ∧
-          (∀ y, HasFDerivAt (ξ t) (q t y) y ∧ HasFDerivAt (q t) (h t y) y) ∧
-          (∀ y, s t y = ∇ (σ t : ℝ^m → ℝ) y) ∧ (∀ y, L t y = Δ (σ t : ℝ^m → ℝ) y) ∧
-          max ‖ξ t‖ (max ‖q t‖ ‖h t‖) ≤ C₀ * M ∧ max ‖σ t‖ ‖s t‖ ≤ (2 * C₀) * M ∧
-          ‖L t‖ ≤ (‖laplacianTraceCLM (E := ℝ^m) (F := ℝ)‖ *
-            (2 * C₀ + 4 * |c / (2 * d_perp D φ ψ)| * C₀ ^ 2)) * M ∧
-          coleHopfBUC (c / (2 * d_perp D φ ψ)) (σ t) = ξ t) ∧
-        ∀ t ∈ Ioo 0 T, ∀ y, HasDerivAt (fun r ↦ σ r y)
-          (d_perp D φ ψ * L t y + (c / 2) * ‖s t y‖ ^ 2 -
-            frontDelayedForcing f D c φ ψ h₃ v₀ N t y) t := by
-  obtain ⟨C₀, hC₀, M₀, hM₀, hex⟩ := exists_front_forced_phase_classical_c2 (m := m) f D c φ ψ h₃
-    (frontForcingC2DecayConstant_pos D φ ψ (5 / 4))
-  refine ⟨C₀, hC₀, M₀, hM₀, ?_⟩
-  intro T M v₀ N hT hM hMM hv₀ hN
-  apply hex T M v₀ N hT hM hMM
-  intro t ht
-  simpa only [neg_div] using norm_frontDelayedForcing_c2_decay_le f D c φ ψ h₃
-    (by norm_num : (0 : ℝ) ≤ 5 / 4) v₀ N hM hv₀ (by simpa only [neg_div] using hN) ht
-
 end
 
 end Planarwave

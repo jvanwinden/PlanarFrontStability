@@ -135,13 +135,6 @@ theorem laplacian_coleHopf_comp_apply (β : ℝ) (σ : E → ℝ)
   congr 1
   rw [Finset.sum_add_distrib, ← Finset.mul_sum, hgrad]
 
-/-- Spatial Cole--Hopf chain rule as an equality of scalar fields. -/
-theorem laplacian_coleHopf_comp (β : ℝ) (σ : E → ℝ) (hσ : ContDiff ℝ 2 σ) :
-    Δ (coleHopf β ∘ σ) =
-      fun x => Real.exp (β * σ x) * (Δ σ x + β * ‖∇ σ x‖ ^ 2) := by
-  funext x
-  exact laplacian_coleHopf_comp_apply β σ hσ x
-
 end Laplacian
 
 end Planarwave

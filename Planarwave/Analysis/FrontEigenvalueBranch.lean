@@ -66,54 +66,6 @@ theorem frontCriticalEigenvector_zero :
   simp [frontCriticalEigenvector, frontHorizontalSimpleFredholmZeroMode,
     horizontalSimpleFredholmZeroMode]
 
-/-- The paper's adjoint normalization is retained exactly along the branch. -/
-theorem frontCriticalEigenvector_normalized (q : ℂ) :
-    phaseFunctional ψ h₃.integrable
-        (ComplexBUC2.valueCLM (ℂ^n)
-          (frontCriticalEigenvector f D c φ ψ h₁ h₂ h₃ q)) = 1 := by
-  exact (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃).eigenvectorBranch_normalized
-    (diffusionValue (frontComplexifiedDiffusion D)) q
-
-/-- The adjoint-normalized rank-one projection onto the constructed critical eigenline.
-It is not yet identified here with the Riesz projection of the perturbed operator. -/
-def frontCriticalEigenlineProjection (q : ℂ) :
-    BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n) :=
-  (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃).eigenlineProjection
-    (diffusionValue (frontComplexifiedDiffusion D)) q
-
-@[simp]
-theorem frontCriticalEigenlineProjection_zero :
-    frontCriticalEigenlineProjection f D c φ ψ h₁ h₂ h₃ 0 =
-      profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃) := by
-  rw [frontCriticalEigenlineProjection,
-    (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃).eigenlineProjection_zero]
-  rfl
-
-/-- The normalized eigenline map is genuinely a projection at every parameter. -/
-theorem frontCriticalEigenlineProjection_idempotent (q : ℂ) (w : BUC ℝ (ℂ^n)) :
-    frontCriticalEigenlineProjection f D c φ ψ h₁ h₂ h₃ q
-        (frontCriticalEigenlineProjection f D c φ ψ h₁ h₂ h₃ q w) =
-      frontCriticalEigenlineProjection f D c φ ψ h₁ h₂ h₃ q w := by
-  exact (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃).eigenlineProjection_idempotent
-    (diffusionValue (frontComplexifiedDiffusion D)) q w
-
-/-- In the analytic parameter, the normalized critical-eigenline projection varies by `O(q)`. -/
-theorem frontCriticalEigenlineProjection_sub_isBigO :
-    (fun q => frontCriticalEigenlineProjection f D c φ ψ h₁ h₂ h₃ q -
-        profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃))
-      =O[𝓝 0] fun q : ℂ => q := by
-  let S := frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃
-  let B := diffusionValue (frontComplexifiedDiffusion D)
-  have hP : S.projection =
-      profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃) := by
-    ext w
-    rfl
-  change (fun q => S.eigenlineProjection B q -
-    profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃))
-      =O[𝓝 0] fun q : ℂ => q
-  rw [← hP]
-  exact S.eigenlineProjection_sub_projection_isBigO B
-
 /-! ## Local critical spectrum and its spectral projection -/
 
 /-- The concrete common-domain pencil `L(q) - z` is exactly the abstract affine pencil used in
@@ -148,35 +100,6 @@ theorem eventually_frontLongitudinalPencil_not_bijective_iff :
   filter_upwards [S.eventually_not_bijective_affinePencil_iff_eq_eigenvalueBranch B]
     with p hp
   rw [frontLongitudinalResolvent_eq_affinePencil f D c φ ψ h₁ h₂ h₃]
-  simpa [frontCriticalEigenvalue, S, B] using hp
-
-/-- Proposition 2.1's local spectral-graph statement, expressed in the semantic spectrum from
-`Challenge.lean`: near `(k,z)=(0,0)`, membership is equivalent to
-`z = λ_c(k²)`. -/
-theorem eventually_mem_transverseSpectrum_iff_eq_frontCriticalEigenvalue :
-    ∀ᶠ p : ℝ × ℂ in 𝓝 (0, 0),
-      p.2 ∈ TransverseSpectrum f D c φ p.1 ↔
-        p.2 = frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃ (p.1 ^ 2) := by
-  let S := frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃
-  let B := diffusionValue (frontComplexifiedDiffusion D)
-  have hmap :
-      Tendsto (fun p : ℝ × ℂ ↦ ((p.1 ^ 2 : ℂ), p.2)) (𝓝 (0, 0)) (𝓝 (0, 0)) := by
-    have hcontinuous :
-        ContinuousAt (fun p : ℝ × ℂ ↦ ((p.1 ^ 2 : ℂ), p.2)) (0, 0) := by
-      fun_prop
-    change Tendsto (fun p : ℝ × ℂ ↦ ((p.1 ^ 2 : ℂ), p.2))
-      (𝓝 (0, 0))
-      (𝓝 ((fun p : ℝ × ℂ ↦ ((p.1 ^ 2 : ℂ), p.2)) (0, 0))) at hcontinuous
-    have hzero :
-        (fun p : ℝ × ℂ ↦ ((p.1 ^ 2 : ℂ), p.2)) (0, 0) = (0, 0) := by
-      norm_num
-    rw [hzero] at hcontinuous
-    exact hcontinuous
-  filter_upwards [hmap.eventually
-      (S.eventually_not_bijective_affinePencil_iff_eq_eigenvalueBranch B)] with p hp
-  rw [mem_transverseSpectrum_iff_frontChallengeResolventMap_not_bijective
-    f D c φ h₁ h₂]
-  rw [frontChallengeResolventMap_eq_affinePencil f D c φ ψ h₁ h₂ h₃]
   simpa [frontCriticalEigenvalue, S, B] using hp
 
 include ψ h₃
@@ -318,33 +241,6 @@ theorem exists_eventually_frontLongitudinalPencil_not_bijective_iff_branch_on_bo
       rw [hzeq]
       simpa [Metric.mem_ball] using hlambda
 
-/-- Semantic real-wavenumber form of the bounded low-frequency spectral separation.  Within any
-fixed spectral disk and the right half-plane `Re z ≥ -θ/2`, the challenge spectrum consists
-exactly of `λ_c(k²)` for all sufficiently small real `k`. -/
-theorem exists_eventually_mem_transverseSpectrum_iff_frontCriticalEigenvalue_on_bounded_gap :
-    ∃ θ > 0, ∀ R : ℝ,
-      ∀ᶠ k : ℝ in 𝓝 0, ∀ z : ℂ,
-        ‖z‖ ≤ R → -(θ / 2) ≤ z.re →
-          (z ∈ TransverseSpectrum f D c φ k ↔
-            z = frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃ (k ^ 2)) := by
-  obtain ⟨θ, hθ, hwindow⟩ :=
-    exists_eventually_frontLongitudinalPencil_not_bijective_iff_branch_on_bounded_gap
-      f D c φ ψ h₁ h₂ h₃
-  have hk0 : Tendsto (fun k : ℝ ↦ (k ^ 2 : ℂ)) (𝓝 0) (𝓝 0) := by
-    have hk0' : ContinuousAt (fun k : ℝ ↦ (k : ℂ) ^ 2) 0 :=
-      (Complex.continuous_ofReal.pow 2).continuousAt
-    rw [show (0 : ℂ) = ((0 : ℝ) : ℂ) ^ 2 by norm_num]
-    exact hk0'
-  refine ⟨θ, hθ, ?_⟩
-  intro R
-  filter_upwards [hk0.eventually (hwindow R)] with k hk
-  intro z hRz hRez
-  rw [mem_transverseSpectrum_iff_frontChallengeResolventMap_not_bijective
-    f D c φ h₁ h₂]
-  rw [frontChallengeResolventMap_eq_affinePencil f D c φ ψ h₁ h₂ h₃]
-  rw [← frontLongitudinalResolvent_eq_affinePencil f D c φ ψ h₁ h₂ h₃]
-  exact hk z hRz hRez
-
 /-- The shifted concrete pencil along the critical eigenvalue branch. -/
 def frontCriticalShiftedPencil (q : ℂ) :
     ComplexBUC2 (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n) :=
@@ -382,16 +278,20 @@ theorem contDiffAt_frontCriticalProjection :
   exact (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃).contDiffAt_criticalProjection
     (diffusionValue (frontComplexifiedDiffusion D))
 
-set_option maxRecDepth 1024 in
 /-- Near zero, the critical spectral projection is idempotent. -/
 theorem eventually_frontCriticalProjection_idempotent :
     ∀ᶠ q in 𝓝 0, ∀ w : BUC ℝ (ℂ^n),
       frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q
           (frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q w) =
         frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q w := by
-  exact SimpleFredholmZeroMode.eventually_criticalProjection_idempotent
-    (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃)
-    (diffusionValue (frontComplexifiedDiffusion D))
+  let S := frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃
+  let B := diffusionValue (frontComplexifiedDiffusion D)
+  filter_upwards [S.eventually_criticalNormalization_ne_zero B] with q hq
+  intro w
+  have hnorm := S.criticalLeftFunctional_eigenvector B q hq
+  dsimp only [S, B] at hnorm
+  simp only [frontCriticalProjection, SimpleFredholmZeroMode.criticalProjection_apply,
+    map_smul, hnorm, one_smul]
 
 /-- The projection has rank one and its kernel is precisely the range of the shifted front
 operator, which is the algebraic spectral splitting at the simple eigenvalue. -/
@@ -443,17 +343,6 @@ theorem eventually_frontCriticalEigenvalue_equation :
   simpa [frontCriticalEigenvalue, frontCriticalEigenvector,
     frontHorizontalSimpleFredholmZeroMode, horizontalSimpleFredholmZeroMode] using hq
 
-/-- The exact coefficient computed in Proposition 2.1: `λ'(0) = -d_perp`. -/
-theorem deriv_frontCriticalEigenvalue_zero :
-    deriv (frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃) 0 =
-      -(d_perp D φ ψ : ℂ) := by
-  change deriv
-      ((frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃).eigenvalueBranch
-        (diffusionValue (frontComplexifiedDiffusion D))) 0 = _
-  rw [(frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃).deriv_eigenvalueBranch_zero]
-  exact congrArg Neg.neg
-    (phaseFunctional_diffusionValue_translationMode f D c φ ψ h₃)
-
 /-- Proposition 2.1 in its natural analytic parameter: `λ(q) = -d_perp q + O(q²)`. -/
 theorem frontCriticalEigenvalue_firstOrder_isBigO :
     (fun q => frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃ q +
@@ -463,62 +352,6 @@ theorem frontCriticalEigenvalue_firstOrder_isBigO :
     phaseFunctional_diffusionValue_translationMode] using
     (frontHorizontalSimpleFredholmZeroMode f D c φ ψ h₁ h₂ h₃).eigenvalueBranch_firstOrder_isBigO
       (diffusionValue (frontComplexifiedDiffusion D))
-
-/-- The critical eigenvalue as a function of the real transverse wavenumber. -/
-def frontCriticalEigenvalueAtWavenumber (k : ℝ) : ℂ :=
-  frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃ (k ^ 2)
-
-/-- The paper's wavenumber form `λ(k) = -d_perp k² + O(k⁴)`. -/
-theorem frontCriticalEigenvalue_wavenumber_isBigO :
-    (fun k : ℝ => frontCriticalEigenvalueAtWavenumber f D c φ ψ h₁ h₂ h₃ k +
-        (k ^ 2 : ℂ) * (d_perp D φ ψ : ℂ)) =O[𝓝 0]
-      fun k : ℝ => ((k : ℂ) ^ 4) := by
-  have h := (frontCriticalEigenvalue_firstOrder_isBigO f D c φ ψ h₁ h₂ h₃).comp_tendsto
-    (show Tendsto (fun k : ℝ => (k ^ 2 : ℂ)) (𝓝 0) (𝓝 0) by
-      have hk : ContinuousAt (fun k : ℝ => (k : ℂ) ^ 2) 0 :=
-        (Complex.continuous_ofReal.pow 2).continuousAt
-      rw [show (0 : ℂ) = ((0 : ℝ) : ℂ) ^ 2 by norm_num]
-      exact hk)
-  refine h.congr' ?_ ?_
-  · filter_upwards [] with k
-    rfl
-  · filter_upwards [] with k
-    change (((k : ℂ) ^ 2) ^ 2) = (k : ℂ) ^ 4
-    ring
-
-/-- After `q = k²`, the normalized critical-eigenline projection differs from its neutral value
-by `O(k²)` in operator norm. -/
-theorem frontCriticalEigenlineProjection_wavenumber_isBigO :
-    (fun k : ℝ => frontCriticalEigenlineProjection f D c φ ψ h₁ h₂ h₃ (k ^ 2) -
-        profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃))
-      =O[𝓝 0] fun k : ℝ => ((k : ℂ) ^ 2) := by
-  have hk : Tendsto (fun k : ℝ => (k ^ 2 : ℂ)) (𝓝 0) (𝓝 0) := by
-    have hk' : ContinuousAt (fun k : ℝ => (k : ℂ) ^ 2) 0 :=
-      (Complex.continuous_ofReal.pow 2).continuousAt
-    rw [show (0 : ℂ) = ((0 : ℝ) : ℂ) ^ 2 by norm_num]
-    exact hk'
-  change ((fun q : ℂ => frontCriticalEigenlineProjection f D c φ ψ h₁ h₂ h₃ q -
-      profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃)) ∘
-      fun k : ℝ => (k ^ 2 : ℂ)) =O[𝓝 0]
-        ((fun q : ℂ => q) ∘ fun k : ℝ => (k ^ 2 : ℂ))
-  exact (frontCriticalEigenlineProjection_sub_isBigO f D c φ ψ h₁ h₂ h₃).comp_tendsto hk
-
-/-- Proposition 2.1's spectral-projection expansion in the real transverse wavenumber:
-`P(k²)-P(0)=O(k²)` in operator norm. -/
-theorem frontCriticalProjection_wavenumber_isBigO :
-    (fun k : ℝ => frontCriticalProjection f D c φ ψ h₁ h₂ h₃ (k ^ 2) -
-        profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃))
-      =O[𝓝 0] fun k : ℝ => ((k : ℂ) ^ 2) := by
-  have hk : Tendsto (fun k : ℝ => (k ^ 2 : ℂ)) (𝓝 0) (𝓝 0) := by
-    have hk' : ContinuousAt (fun k : ℝ => (k : ℂ) ^ 2) 0 :=
-      (Complex.continuous_ofReal.pow 2).continuousAt
-    rw [show (0 : ℂ) = ((0 : ℝ) : ℂ) ^ 2 by norm_num]
-    exact hk'
-  change ((fun q : ℂ => frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q -
-      profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃)) ∘
-      fun k : ℝ => (k ^ 2 : ℂ)) =O[𝓝 0]
-        ((fun q : ℂ => q) ∘ fun k : ℝ => (k ^ 2 : ℂ))
-  exact (frontCriticalProjection_sub_isBigO f D c φ ψ h₁ h₂ h₃).comp_tendsto hk
 
 /-- Positivity of the transverse diffusion coefficient, the first assertion in
 Proposition 2.1(3). -/
@@ -550,31 +383,6 @@ theorem exists_frontCriticalExpansion_bound :
         mul_le_mul_of_nonneg_right (le_max_left _ _) (sq_nonneg ‖q‖)
   · exact hPq.trans
       (mul_le_mul_of_nonneg_right (le_max_right _ _) (norm_nonneg q))
-
-/-- The same common-constant estimates after the substitution `q=k²`, in the exact powers used
-in the real-wavenumber statement of Proposition 2.1. -/
-theorem exists_frontCriticalExpansion_wavenumber_bound :
-    ∃ C₀ > 0, ∀ᶠ k : ℝ in 𝓝 0,
-      ‖frontCriticalEigenvalueAtWavenumber f D c φ ψ h₁ h₂ h₃ k +
-          (k ^ 2 : ℂ) * (d_perp D φ ψ : ℂ)‖ ≤ C₀ * |k| ^ 4 ∧
-        ‖frontCriticalProjection f D c φ ψ h₁ h₂ h₃ (k ^ 2) -
-          profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃)‖ ≤
-            C₀ * |k| ^ 2 := by
-  obtain ⟨C₀, hC₀, hbound⟩ :=
-    exists_frontCriticalExpansion_bound f D c φ ψ h₁ h₂ h₃
-  have hk : Tendsto (fun k : ℝ ↦ (k ^ 2 : ℂ)) (𝓝 0) (𝓝 0) := by
-    have hk' : ContinuousAt (fun k : ℝ ↦ (k : ℂ) ^ 2) 0 :=
-      (Complex.continuous_ofReal.pow 2).continuousAt
-    rw [show (0 : ℂ) = ((0 : ℝ) : ℂ) ^ 2 by norm_num]
-    exact hk'
-  refine ⟨C₀, hC₀, ?_⟩
-  filter_upwards [hk.eventually hbound] with k hkbound
-  have habs4 : |k| ^ 4 = (k ^ 2) ^ 2 := by
-    calc
-      |k| ^ 4 = (|k| ^ 2) ^ 2 := by ring
-      _ = (k ^ 2) ^ 2 := by rw [sq_abs]
-  rw [habs4, sq_abs]
-  simpa [frontCriticalEigenvalueAtWavenumber, norm_pow] using hkbound
 
 end
 

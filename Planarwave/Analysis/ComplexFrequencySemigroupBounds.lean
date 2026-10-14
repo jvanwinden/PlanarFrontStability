@@ -169,27 +169,6 @@ theorem frontLongitudinalPencil_shift_sub_real_eq
   ext v z
   rfl
 
-/-- Operator-norm form of the first estimate in (2.4). -/
-theorem norm_frontComplexFrequencyBoundedPerturbation_le
-    (D : ℝ^n →L[ℝ] ℝ^n) (ξ₀ ξ₁ : ℝ^m) :
-    ‖frontComplexFrequencyBoundedPerturbation D ξ₀ ξ₁‖ ≤
-      (‖ξ₁‖ ^ 2 + 2 * (‖ξ₀‖ * ‖ξ₁‖)) *
-        ‖frontComplexifiedDiffusionBUC D‖ := by
-  calc
-    ‖frontComplexFrequencyBoundedPerturbation D ξ₀ ξ₁‖ ≤
-          ‖(((‖ξ₀‖ ^ 2 : ℝ) : ℂ) -
-            complexFrequencyQuadratic (complexFrequencyShift ξ₀ ξ₁))‖ *
-          ‖frontComplexifiedDiffusionBUC D‖ :=
-      ContinuousLinearMap.opNorm_smul_le _ _
-    _ = ‖complexFrequencyQuadratic (complexFrequencyShift ξ₀ ξ₁) -
-            (((‖ξ₀‖ ^ 2 : ℝ) : ℂ))‖ *
-          ‖frontComplexifiedDiffusionBUC D‖ := by
-      rw [norm_sub_rev]
-    _ ≤ (‖ξ₁‖ ^ 2 + 2 * (‖ξ₀‖ * ‖ξ₁‖)) *
-          ‖frontComplexifiedDiffusionBUC D‖ := by
-      gcongr
-      exact norm_complexFrequencyQuadratic_shift_sub_le ξ₀ ξ₁
-
 /-- Young-inequality form of (2.4), with the fixed diffusion multiplier displayed explicitly. -/
 theorem norm_frontComplexFrequencyBoundedPerturbation_le_young
     (D : ℝ^n →L[ℝ] ℝ^n) (ξ₀ ξ₁ : ℝ^m) {δ : ℝ} (hδ : 0 < δ) :

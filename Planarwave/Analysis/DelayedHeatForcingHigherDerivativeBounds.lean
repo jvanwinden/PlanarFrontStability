@@ -17,9 +17,8 @@ public import Planarwave.Analysis.DelayedPolynomialDecay
 
 This proves the `C^9` forcing estimate `eq:gest` used before Step 1 of
 `lem:key`, in fact at every finite spatial order. The cutoff leaves a heat
-age of at least `1/4`; reserving `1/8` for differentiation also gives the
-smoothed-source version used after Lemma 4.2. No spatial derivative of the
-source is assumed.
+age of at least `1/4`, giving block and decay bounds and genuine BUC
+derivative fields. No spatial derivative of the source is assumed.
 -/
 
 open Set
@@ -90,31 +89,6 @@ theorem norm_iteratedFDeriv_delayedHeatForcing_block_le {a : ℝ} (ha : 0 < a)
     (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left
       (norm_delayedHeatBlock_le a N n hN) (delayedForcingSpatialConstant_pos a K).le)
       (trackingCutoff_nonneg τ))
-
-/-- The same all-order estimate uses only the source smoothed for time `1/8`.
-This is the derivative version of the factorization preceding Lemma 4.2's use. -/
-theorem norm_iteratedFDeriv_delayedHeatForcing_block_smoothed_le {a : ℝ} (ha : 0 < a)
-    (K k : ℕ) (hk : k ≤ K) (p : BUC E F) (N : ℝ → BUC E F) (n : ℕ)
-    {τ M : ℝ} (hτ : τ ∈ Icc (0 : ℝ) 1)
-    (hN : ContinuousOn N (Icc (n : ℝ) ((n : ℝ) + 1)))
-    (hbound : ∀ r ∈ Icc (n : ℝ) ((n : ℝ) + 1), ‖heatFlowBUC a (1 / 8) (N r)‖ ≤ M)
-    (x : E) :
-    ‖iteratedFDeriv ℝ k (delayedHeatForcing a p N ((n : ℝ) + 1 + τ) : E → F) x‖ ≤
-      trackingCutoff τ * (delayedForcingSpatialConstant a K * M) := by
-  rw [delayedHeatForcing_block_smoothed ha.le p N n hτ hN]
-  by_cases hρ : trackingCutoff τ = 0
-  · simp only [hρ, zero_smul, BUC.coe_zero, iteratedFDeriv_zero, Pi.zero_apply, norm_zero,
-      zero_mul, le_refl]
-  have hage : (1 : ℝ) / 8 ≤ τ - 1 / 8 := by linarith [(trackingCutoff_ne_zero_mem hρ).1]
-  let b := delayedHeatBlock a (fun r ↦ heatFlowBUC a (1 / 8) (N r)) n
-  change ‖iteratedFDeriv ℝ k (fun y ↦ trackingCutoff τ • heatFlow a (τ - 1 / 8) b y) x‖ ≤ _
-  rw [iteratedFDeriv_const_smul_apply'
-    (contDiff_nat_heatFlow k ha (by linarith) b).contDiffAt,
-    norm_smul, Real.norm_eq_abs, abs_of_nonneg (trackingCutoff_nonneg τ)]
-  apply mul_le_mul_of_nonneg_left _ (trackingCutoff_nonneg τ)
-  exact (norm_iteratedFDeriv_heatFlow_le_of_age K k ha (by norm_num) hk hage b x).trans
-    (mul_le_mul_of_nonneg_left (norm_delayedHeatBlock_le a _ n hbound)
-      (delayedForcingSpatialConstant_pos a K).le)
 
 /-- Polynomial source decay is inherited by every derivative through order `K`.
 The constant is uniform in the time horizon, source, initial datum, and spatial point. -/

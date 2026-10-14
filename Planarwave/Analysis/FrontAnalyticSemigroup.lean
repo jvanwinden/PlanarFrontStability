@@ -78,48 +78,6 @@ theorem exists_frontPencil_holomorphic_sector :
   refine ⟨H, hHa, hHreal, hHadd, hHzero, fun z hz ↦ ?_⟩
   simpa only [norm_smul, norm_neg, mul_assoc] using hHb z hz
 
-/-- The actual complex-frequency operator family used in Lemmas 2.3--2.4 has a
-holomorphic time extension, not merely a formal generator or a real growth bound. -/
-theorem exists_frontComplexFrequency_holomorphic_sector :
-    ∃ η > 0, ∀ ξ₀ ξ₁ : ℝ^m,
-      ∃ G : ℂ → (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)),
-        AnalyticOnNhd ℂ G (complexTimeSector η) ∧
-        (∀ t : ℝ, 0 < t → G t = frontComplexFrequencyC0Semigroup f D c φ h₁ h₂ ξ₀ ξ₁ t.toNNReal) ∧
-        (∀ z ∈ complexTimeSector η, ∀ w ∈ complexTimeSector η,
-          G (z + w) = (G z).comp (G w)) ∧
-        (∀ v, Tendsto (fun z ↦ G z v) (𝓝[complexTimeSector η] 0) (𝓝 v)) ∧
-        (∃ M > 0, ∃ ω > 0, ∀ z ∈ complexTimeSector η, ‖G z‖ ≤ M * Real.exp (ω * ‖z‖)) := by
-  obtain ⟨η, hη, _, M, hM, ω, hω, hext⟩ := exists_frontPencil_holomorphic_sector f D c φ h₁ h₂
-  refine ⟨η, hη, fun ξ₀ ξ₁ ↦ ?_⟩
-  let q := complexFrequencyQuadratic (complexFrequencyShift ξ₀ ξ₁)
-  obtain ⟨G, hGa, hreal, hadd, hzero, hb⟩ := hext q
-  refine ⟨G, hGa, ?_, hadd, hzero, M, hM,
-    ω + M * ‖q‖ * ‖frontComplexifiedDiffusionBUC D‖, by positivity, hb⟩
-  intro t ht
-  rw [frontComplexFrequencyC0Semigroup_eq_pencil]
-  exact hreal t ht
-
-/-- Near the critical frequency, the holomorphic time extension respects the
-same critical projection as the real semigroup. This establishes analytic
-invariance of the splitting, but does not yet assert complementary decay. -/
-theorem exists_eventually_frontPencil_holomorphic_splitting
-    (ψ : ℝ → ℝ^n) (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
-    ∃ η > 0, ∀ᶠ q : ℂ in 𝓝 0,
-      ∃ G : ℂ → (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)),
-        AnalyticOnNhd ℂ G (complexTimeSector η) ∧
-        (∀ t : ℝ, 0 < t → G t = frontPencilC0Semigroup f D c φ h₁ h₂ q t.toNNReal) ∧
-        (∀ z ∈ complexTimeSector η,
-          (G z).comp (frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q) =
-            (frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q).comp (G z)) := by
-  obtain ⟨η, hη, _, _, _, _, _, hext⟩ := exists_frontPencil_holomorphic_sector f D c φ h₁ h₂
-  refine ⟨η, hη, ?_⟩
-  filter_upwards [eventually_frontPencilSemigroup_comp_criticalProjection f D c φ ψ h₁ h₂ h₃]
-    with q hcomm
-  obtain ⟨G, hGa, hreal, _, _, _⟩ := hext q
-  exact ⟨G, hGa, hreal, fun _ hz ↦
-    (frontPencilC0Semigroup f D c φ h₁ h₂ q).holomorphicSectorExtension_comp_comm
-      hη hGa hreal (frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q) hcomm hz⟩
-
 end
 
 end Planarwave

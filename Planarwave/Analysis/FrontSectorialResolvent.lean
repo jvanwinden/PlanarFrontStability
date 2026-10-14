@@ -13,9 +13,9 @@ import Planarwave.Analysis.SectorialResolvent
 # Uniform sectorial resolvent bounds for the longitudinal pencil
 
 The analytic semigroups constructed for Section 2 give a common spectral wedge
-on bounded sets of complex Fourier parameters. In particular the portion of the
-spectrum in any right half-plane is compact; high imaginary spectral parameters
-are excluded by a genuine resolvent estimate, not by a bounded-parameter argument.
+on bounded sets of complex Fourier parameters. A uniform sectorial resolvent
+estimate excludes high imaginary spectral parameters and bounds the spectrum
+inside the corresponding sector.
 -/
 
 open Filter Set Topology
@@ -77,14 +77,6 @@ theorem exists_uniform_frontPencil_spectrum_sector_bound {R : ℝ} (hR : 0 ≤ R
   intro q hq z hz
   by_contra! hlt
   exact hz (hres q hq z hlt).1
-
-/-- The spectrum of each longitudinal pencil in a right half-plane is compact. -/
-theorem isCompact_frontPencil_spectrum_inter_rightHalfPlane (q : ℂ) (r : ℝ) :
-    IsCompact ((frontPencilClosedOperator f D c φ h₁ h₂ q).spectrum ∩ {z : ℂ | r ≤ z.re}) := by
-  obtain ⟨a, ha, Ω, _, hspec⟩ :=
-    exists_uniform_frontPencil_spectrum_sector_bound f D c φ h₁ h₂ (norm_nonneg q)
-  exact (frontPencilClosedOperator f D c φ h₁ h₂ q).isCompact_spectrum_inter_rightHalfPlane
-    ha (hspec q le_rfl) r
 
 end
 

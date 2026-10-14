@@ -185,16 +185,6 @@ theorem operatorEquation_of_isTransverseResolventSolution
   rw [← hk_smul]
   exact hz
 
-/-- Exact equivalence between the bundled operator equation and the challenge's classical
-resolvent predicate. -/
-theorem operatorEquation_iff_isTransverseResolventSolution
-    {k : ℝ} {l : ℂ} {v : ComplexBUC2 (ℂ^n)} {w : BUC ℝ (ℂ^n)} :
-    challengeResolventMap D c A k l v = w ↔
-      IsTransverseResolventSolution f D c φ k l
-        (v : ℝ → ℂ^n) (w : ℝ → ℂ^n) :=
-  ⟨isTransverseResolventSolution_of_operatorEquation f D c φ A hA,
-    operatorEquation_of_isTransverseResolventSolution f D c φ A hA⟩
-
 omit hA
 
 /-- Bundling a classical solution preserves its underlying function. -/

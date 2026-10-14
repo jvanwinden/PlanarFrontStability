@@ -69,15 +69,6 @@ theorem phaseFunctional_translationMode_eq_one
   exact phaseFunctional_embedded_deriv_eq_one_of_spectralStability h₃
     (translationModeBUC f D c φ ψ h₃) (translationModeBUC_apply f D c φ ψ h₃)
 
-/-- Normalization makes the translation mode nonzero. -/
-theorem translationModeBUC_ne_zero
-    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
-    translationModeBUC f D c φ ψ h₃ ≠ 0 := by
-  intro hzero
-  have := phaseFunctional_translationMode_eq_one f D c φ ψ h₃
-  rw [hzero, map_zero] at this
-  norm_num at this
-
 /-! ## The translation mode in the common `BUC²` graph domain -/
 
 /-- The first iterated derivative of the translation mode is BUC. -/
@@ -178,39 +169,6 @@ theorem translationModeProjection_apply
     translationModeProjection f D c φ ψ h₃ v =
       phaseFunctional ψ h₃.integrable v • translationModeBUC f D c φ ψ h₃ :=
   rfl
-
-/-- The range of the canonical projection is the span of the graph-domain translation mode's
-value. -/
-theorem range_translationModeProjection
-    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
-    LinearMap.range (translationModeProjection f D c φ ψ h₃).toLinearMap =
-      Submodule.span ℂ
-        {ComplexBUC2.value (ℂ^n) (translationModeComplexBUC2 f D c φ ψ h₃)} := by
-  simpa [translationModeProjection] using
-    range_profileProjection h₃ (translationModeBUC f D c φ ψ h₃)
-      (translationModeBUC_apply f D c φ ψ h₃)
-
-/-- The kernel of the canonical projection is the kernel of the phase functional. -/
-theorem ker_translationModeProjection
-    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ) :
-    LinearMap.ker (translationModeProjection f D c φ ψ h₃).toLinearMap =
-      LinearMap.ker (phaseFunctional ψ h₃.integrable).toLinearMap := by
-  simpa [translationModeProjection] using
-    ker_profileProjection h₃ (translationModeBUC f D c φ ψ h₃)
-      (translationModeBUC_apply f D c φ ψ h₃)
-
-/-- On the common graph domain, the homogeneous resolvent kernel is exactly the range of the
-canonical profile projection. -/
-theorem horizontal_kernel_complexBUC2_iff_value_mem_range_translationModeProjection
-    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
-    (v : ComplexBUC2 (ℂ^n)) :
-    IsTransverseResolventSolution f D c φ 0 0 (v : ℝ → ℂ^n) 0 ↔
-      ComplexBUC2.value (ℂ^n) v ∈
-        LinearMap.range (translationModeProjection f D c φ ψ h₃).toLinearMap := by
-  exact horizontal_kernel_iff_mem_range_profileProjection h₃
-    (translationModeBUC f D c φ ψ h₃)
-    (translationModeBUC_apply f D c φ ψ h₃)
-    (ComplexBUC2.value (ℂ^n) v)
 
 end
 

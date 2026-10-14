@@ -187,24 +187,6 @@ theorem HasGeneratorAt.laplaceResolvent_apply {S : C0Semigroup ℂ E} {x y : E}
   rw [heq, map_neg, neg_inj] at hi
   exact hi
 
-/-- The first resolvent identity, in operator norm and with the `z I - A` convention. -/
-theorem laplaceResolvent_sub (S : C0Semigroup ℂ E) {M ω : ℝ}
-    (hbound : ∀ t : NNReal, ‖S t‖ ≤ M * Real.exp (ω * t))
-    (z w : ℂ) (hz : ω < z.re) (hw : ω < w.re) :
-    S.laplaceResolvent hbound z hz - S.laplaceResolvent hbound w hw =
-      (w - z) • (S.laplaceResolvent hbound w hw).comp (S.laplaceResolvent hbound z hz) := by
-  ext x
-  let Rz := S.laplaceResolvent hbound z hz
-  let Rw := S.laplaceResolvent hbound w hw
-  have hi := (S.hasGeneratorAt_laplaceResolvent hbound z hz x).laplaceResolvent_apply hbound w hw
-  have heq : w • Rz x - (z • Rz x - x) = (w - z) • Rz x + x := by
-    rw [sub_smul]
-    abel
-  change Rw (w • Rz x - (z • Rz x - x)) = Rz x at hi
-  rw [heq, _root_.map_add, map_smul] at hi
-  change Rz x - Rw x = (w - z) • Rw (Rz x)
-  exact sub_eq_iff_eq_add.mpr hi.symm
-
 end
 
 end C0Semigroup

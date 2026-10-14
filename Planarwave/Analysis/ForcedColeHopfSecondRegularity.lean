@@ -32,6 +32,15 @@ variable {E : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
 
+local instance coleHopfScalarNormedAddCommGroup : NormedAddCommGroup (BUC E ℝ) :=
+  BUC.instNormedAddCommGroup (α := E) (E := ℝ)
+local instance coleHopfScalarNormedSpace : NormedSpace ℝ (BUC E ℝ) :=
+  BUC.instNormedSpace (𝕜 := ℝ) (α := E) (E := ℝ)
+local instance coleHopfFirstTensorNormedAddCommGroup : NormedAddCommGroup (E →L[ℝ] ℝ) :=
+  inferInstance
+local instance coleHopfFirstTensorNormedSpace : NormedSpace ℝ (E →L[ℝ] ℝ) :=
+  inferInstance
+
 local instance coleHopfFirstDerivativeNormedAddCommGroup :
     NormedAddCommGroup (BUC E (E →L[ℝ] ℝ)) :=
   BUC.instNormedAddCommGroup (α := E) (E := E →L[ℝ] ℝ)
@@ -49,6 +58,12 @@ local instance coleHopfSecondDerivativeNormedAddCommGroup :
 local instance coleHopfSecondDerivativeNormedSpace :
     NormedSpace ℝ (BUC E (E →L[ℝ] E →L[ℝ] ℝ)) :=
   BUC.instNormedSpace (𝕜 := ℝ) (α := E) (E := E →L[ℝ] E →L[ℝ] ℝ)
+
+-- Normalize scalar variables once instead of expanding nested BUC operator expressions.
+private theorem coleHopf_secondSource_algebra (β X G H K Qv Qw Gv Gw : ℝ) :
+    -(H + β * (X * H + Qv * Gw)) + ((-β * G) * K + (-β * Gv) * Qw) =
+      -(H + β * (G * K + X * H + Qv * Gw + Gv * Qw)) := by
+  ring
 
 /-- Two BUC derivatives of the forcing give two genuine BUC spatial
 derivatives of the existing mild solution, both continuous in time. -/
@@ -123,12 +138,13 @@ theorem IsForcedColeHopfMild.exists_buc_second_fderivative_duhamel {a β T : ℝ
       intro r hr
       dsimp only [P]
       rw [hXeq r ⟨hr.1, hr.2.trans ht.2⟩, smul_add]
-      abel
+      exact (add_assoc _ _ _).symm.trans (add_right_comm _ _ _)
     have hb : (fun r ↦ BUC.smulBUC ((-β) • g r) (q r)) =
         fun r ↦ (-β) • BUC.smulBUC (g r) (q r) := by
       funext r
       ext x v
-      simp [smul_smul]
+      change (-β * g r x) * q r x v = -β * (g r x * q r x v)
+      exact mul_assoc _ _ _
     have hβq : Continuous (fun r ↦ β • BUC.smulBUC (g r) (q r)) := hqg.const_smul β
     rw [hqeq t ht, hs, heatDuhamel_add a hPc hβq, heatDuhamel_smul, hb, heatDuhamel_smul]
     dsimp only [f]
@@ -143,14 +159,9 @@ theorem IsForcedColeHopfMild.exists_buc_second_fderivative_duhamel {a β T : ℝ
   refine ⟨q, q', hqc, hq'c, fun t ht x ↦ ⟨hqd t ht x, hq'd t ht x⟩, hqeq, ?_⟩
   let R := fun r ↦ BUC.smulBUC ((-β) • g r) (q' r) +
     BUC.bilinearBUC (ContinuousLinearMap.smulRightL ℝ E (E →L[ℝ] ℝ)) ((-β) • g' r) (q r)
-  have hRc : Continuous R := by
-    let B : BUC E ℝ →L[ℝ] BUC E (E →L[ℝ] E →L[ℝ] ℝ) →L[ℝ]
-        BUC E (E →L[ℝ] E →L[ℝ] ℝ) := BUC.bilinearBUCCLM (ContinuousLinearMap.lsmul ℝ ℝ)
-    let C : BUC E (E →L[ℝ] ℝ) →L[ℝ] BUC E (E →L[ℝ] ℝ) →L[ℝ]
-        BUC E (E →L[ℝ] E →L[ℝ] ℝ) :=
-      BUC.bilinearBUCCLM (ContinuousLinearMap.smulRightL ℝ E (E →L[ℝ] ℝ))
-    exact ((B.continuous.comp (hg.const_smul (-β))).clm_apply hq'c).add
-      ((C.continuous.comp (hg'.const_smul (-β))).clm_apply hqc)
+  have hRc : Continuous R :=
+    ((B₂.continuous.comp (hg.const_smul (-β))).clm_apply hq'c).add
+      ((B₃.continuous.comp (hg'.const_smul (-β))).clm_apply hqc)
   intro t ht
   rw [hq'eq t ht]
   change -heatDuhamel a P' t + heatDuhamel a R t = _
@@ -168,11 +179,8 @@ theorem IsForcedColeHopfMild.exists_buc_second_fderivative_duhamel {a β T : ℝ
   dsimp only [P', R]
   rw [hXeq r hrT, hQeq]
   ext x v w
-  simp only [smul_add, neg_add_rev, neg_smul, BUC.add_apply, BUC.neg_apply, BUC.smul_apply,
-    BUC.bilinearBUC_apply, ContinuousLinearMap.smulRightL_apply_apply, BUC.smulBUC_apply,
-    smul_smul, smul_eq_mul, neg_mul, map_neg, map_smul, neg_apply, smul_apply, add_apply,
-    ContinuousLinearMap.smulRight_apply]
-  ring
+  exact coleHopf_secondSource_algebra β (ξ r x) (g r x) (g'' r x v w)
+    (q' r x v w) (q r x v) (q r x w) (g' r x v) (g' r x w)
 
 /-- Two genuine BUC derivatives, as a projection of the differentiated
 Duhamel construction. -/
@@ -217,50 +225,6 @@ theorem IsForcedColeHopfMild.delayed_contDiff_two {a β T : ℝ}
   apply (contDiff_succ_iff_hasFDerivAt (n := 1)).mpr
   refine ⟨q t, ?_, fun x ↦ (hd t ht x).1⟩
   exact contDiff_one_iff_hasFDerivAt.mpr ⟨h t, (h t).continuous, fun x ↦ (hd t ht x).2⟩
-
-/-- The Laplacian is an actual BUC field continuous in time. This is the
-spatial prerequisite for identifying the classical heat equation. -/
-theorem IsForcedColeHopfMild.delayed_exists_buc_laplacian {a β T : ℝ}
-    {p : BUC E ℝ} {N ξ : ℝ → BUC E ℝ}
-    (hξ : IsForcedColeHopfMild a β (delayedHeatForcing a p N) ξ T)
-    (ha : 0 < a) (hT : 0 ≤ T) :
-    ∃ L : ℝ → BUC E ℝ, Continuous L ∧
-      ∀ t ∈ Icc 0 T, ∀ x, L t x = Δ (ξ t : E → ℝ) x := by
-  obtain ⟨q, h, _, hc, hd⟩ := hξ.delayed_exists_buc_second_fderivative ha hT
-  let traceMap : BUC E (E →L[ℝ] E →L[ℝ] ℝ) →L[ℝ] BUC E ℝ :=
-    BUC.postcompCLM (𝕜 := ℝ) (E := E →L[ℝ] E →L[ℝ] ℝ) (F := ℝ)
-      (laplacianTraceCLM (E := E) (F := ℝ))
-  refine ⟨fun t ↦ traceMap (h t), traceMap.continuous.comp hc, ?_⟩
-  intro t ht x
-  exact (laplacian_eq_trace_of_hasFDerivAt (ξ t) (q t) (h t)
-    (fun y ↦ (hd t ht y).1) (fun y ↦ (hd t ht y).2) x).symm
-
-/-- Construct the delayed-forcing solution and its first two genuine BUC
-derivatives. All three vanish during the initial inactive forcing interval. -/
-theorem exists_delayed_forcedColeHopf_mild_second_fderivative {a : ℝ} (ha : 0 < a)
-    (β : ℝ) {T : ℝ} (hT : 0 ≤ T) (p : BUC E ℝ) (N : ℝ → BUC E ℝ) :
-    ∃ (ξ : ℝ → BUC E ℝ) (q : ℝ → BUC E (E →L[ℝ] ℝ))
-      (h : ℝ → BUC E (E →L[ℝ] E →L[ℝ] ℝ)),
-      IsForcedColeHopfMild a β (delayedHeatForcing a p N) ξ T ∧
-      Continuous q ∧ Continuous h ∧
-      (∀ t ∈ Icc 0 T, ∀ x, HasFDerivAt (ξ t) (q t x) x ∧ HasFDerivAt (q t) (h t x) x) ∧
-      ∀ t ∈ Icc 0 T, t ≤ 1 / 4 → ξ t = 0 ∧ q t = 0 ∧ h t = 0 := by
-  obtain ⟨ξ, hξ, hz⟩ := exists_delayed_forcedColeHopf_mild a β hT p N
-  obtain ⟨q, h, hqc, hhc, hd⟩ := hξ.delayed_exists_buc_second_fderivative ha hT
-  refine ⟨ξ, q, h, hξ, hqc, hhc, hd, ?_⟩
-  intro t ht hquarter
-  have hqzero : q t = 0 := by
-    ext x : 1
-    have hq := (hd t ht x).1
-    rw [hz t ht hquarter] at hq
-    simpa only [BUC.zero_apply] using
-      hq.unique (by simpa using! hasFDerivAt_const (𝕜 := ℝ) (0 : ℝ) x)
-  refine ⟨hz t ht hquarter, hqzero, ?_⟩
-  ext x : 1
-  have hh := (hd t ht x).2
-  rw [hqzero] at hh
-  simpa only [BUC.zero_apply] using
-    hh.unique (by simpa using! hasFDerivAt_const (𝕜 := ℝ) (0 : E →L[ℝ] ℝ) x)
 
 end
 

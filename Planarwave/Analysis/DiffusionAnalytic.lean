@@ -58,36 +58,6 @@ theorem exists_uniform_frontDiffusion_analytic_extension
   obtain ⟨η, hη, hη₁, hg⟩ := C0Semigroup.exists_uniform_analytic_extension_of_smoothing S hC.le hs
   exact ⟨η, hη, hη₁, fun t ht q hq ↦ hg t ht ⟨q, hq⟩⟩
 
-/-- In particular the operator-valued principal semigroup is real analytic, a strictly
-stronger conclusion than the previously proved positive-time smoothness. -/
-theorem analyticOnNhd_frontDiffusionC0Semigroup
-    (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (hDinj : Function.Injective D)
-    (c : ℝ) {q : ℝ} (hq : 0 ≤ q) :
-    AnalyticOnNhd ℝ (fun t : ℝ ↦ frontDiffusionC0Semigroup D hD c q t.toNNReal) (Ioi 0) := by
-  obtain ⟨η, hη, _, hext⟩ := exists_uniform_frontDiffusion_analytic_extension D hD hDinj c
-  intro t ht
-  change 0 < t at ht
-  obtain ⟨g, hg, hagree⟩ := hext t ht q hq
-  have hr : 0 < η * min t 1 := mul_pos hη (lt_min ht zero_lt_one)
-  have hgc : AnalyticAt ℂ g (t : ℂ) := hg _ (Metric.mem_ball_self hr)
-  have hgr : AnalyticAt ℝ (fun s : ℝ ↦ g (s : ℂ)) t := by
-    exact (hgc.restrictScalars (𝕜 := ℝ)).comp (Complex.ofRealCLM.analyticAt t)
-  apply hgr.congr
-  filter_upwards [Metric.ball_mem_nhds t hr] with s hs
-  exact hagree s (by simpa only [Metric.mem_ball, Real.dist_eq] using hs)
-
-/-- A single holomorphic time extension of each principal matrix diffusion semigroup,
-on one open complex neighborhood uniform over all nonnegative Fourier parameters. -/
-theorem exists_frontDiffusion_holomorphic_timeExtension
-    (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (hDinj : Function.Injective D) (c : ℝ) :
-    ∃ η > 0, η ≤ 1 / 2 ∧ ∀ q : ℝ, 0 ≤ q →
-      ∃ g : ℂ → (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)),
-        AnalyticOnNhd ℂ g (positiveTimeNeighborhood η) ∧
-        ∀ t : ℝ, 0 < t → g t = frontDiffusionC0Semigroup D hD c q t.toNNReal := by
-  obtain ⟨η, hη, hη₁, hext⟩ := exists_uniform_frontDiffusion_analytic_extension D hD hDinj c
-  exact ⟨η, hη, hη₁, fun q hq ↦
-    exists_analytic_extension_positiveTimeNeighborhood hη (fun t ht ↦ hext t ht q hq)⟩
-
 /-- The principal diffusion family has uniformly bounded holomorphic time extensions,
 strongly converging to the identity at zero and satisfying the local complex semigroup
 law. Both the opening and the bound are chosen before the Fourier parameter. -/

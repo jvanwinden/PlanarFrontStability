@@ -201,27 +201,6 @@ theorem exists_analytic_extension_on_ball_of_factorial_bound
     hδ hM hK r hr hrδ hKr hf hb
   exact ⟨g, hg, heq⟩
 
-/-- A convenient existential-radius form of the local holomorphic extension criterion. -/
-theorem exists_analytic_extension_of_factorial_bound
-    [NormedSpace ℂ F] [IsScalarTower ℝ ℂ F]
-    {f : ℝ → F} {x δ M K : ℝ} (hδ : 0 < δ) (hM : 0 ≤ M) (hK : 0 ≤ K)
-    (hf : ∀ n : ℕ, ∀ y ∈ Metric.ball x δ, ContDiffAt ℝ n f y)
-    (hb : ∀ n : ℕ, ∀ y ∈ Metric.ball x δ,
-      ‖(n.factorial : ℝ)⁻¹ • iteratedDeriv n f y‖ ≤ M * K ^ n) :
-    ∃ r : NNReal, 0 < r ∧ (r : ℝ) ≤ δ ∧ ∃ g : ℂ → F,
-      AnalyticOnNhd ℂ g (Metric.ball (x : ℂ) r) ∧
-      ∀ y : ℝ, |y - x| < r → g y = f y := by
-  let r : NNReal := ⟨min δ (1 / (K + 1)), by positivity⟩
-  have hr : 0 < r := show 0 < min δ (1 / (K + 1)) from lt_min hδ (by positivity)
-  have hrδ : (r : ℝ) ≤ δ := min_le_left _ _
-  have hrK : (r : ℝ) ≤ 1 / (K + 1) := min_le_right _ _
-  have hKr : K * r < 1 := by
-    have h := (le_div_iff₀ (show 0 < K + 1 by positivity)).mp hrK
-    have hr' : 0 < (r : ℝ) := hr
-    nlinarith
-  exact ⟨r, hr, hrδ, exists_analytic_extension_on_ball_of_factorial_bound hδ hM hK
-    r hr hrδ hKr hf hb⟩
-
 end
 
 end Planarwave

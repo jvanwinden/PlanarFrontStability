@@ -42,22 +42,6 @@ def BUC.ofIsBUC {g : A → E} (hg : IsBUC g) : BUC A E where
 theorem BUC.ofIsBUC_apply {g : A → E} (hg : IsBUC g) (x : A) :
     BUC.ofIsBUC hg x = g x := rfl
 
-/-- Exact equivalence between the statement-level predicate and membership in the bundled BUC
-space. -/
-theorem isBUC_iff_exists_buc (g : A → E) :
-    IsBUC g ↔ ∃ G : BUC A E, (G : A → E) = g := by
-  constructor
-  · intro hg
-    exact ⟨BUC.ofIsBUC hg, rfl⟩
-  · rintro ⟨G, rfl⟩
-    exact isBUC_coe G
-
-/-- The canonical bundled representative is bounded by the same bound supplied to `IsBUC`. -/
-theorem BUC.norm_ofIsBUC_le {g : A → E} (hg : IsBUC g) {C : ℝ}
-    (hC : 0 ≤ C) (hgC : ∀ x, ‖g x‖ ≤ C) : ‖BUC.ofIsBUC hg‖ ≤ C := by
-  rw [BUC.norm_le hC]
-  exact hgC
-
 end
 
 end Planarwave

@@ -88,13 +88,6 @@ theorem isRDESolution_of_lifetime_top (hT : T = ⊤) :
   · intro t ht x
     exact (hm.hasDerivAt ht (hfinite t) x).deriv
 
-/-- The global PDE conclusion needed once the nonlinear bootstrap has
-established a uniform BUC bound. -/
-theorem isRDESolution_of_bounded {B : ℝ} (hB : 0 ≤ B)
-    (hb : ∀ t, 0 ≤ t → ENNReal.ofReal t < T → ‖u t‖ ≤ B) :
-    IsRDESolution f D (fun t x ↦ u t x) :=
-  hm.isRDESolution_of_lifetime_top (hm.lifetime_eq_top_of_bounded hB hb)
-
 end GlobalSolution
 
 end IsMaximalMatrixReactionDiffusion

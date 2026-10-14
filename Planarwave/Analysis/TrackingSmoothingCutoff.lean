@@ -35,9 +35,6 @@ theorem abs_trackingSmoothingCutoff_le_one (t : ℝ) : |trackingSmoothingCutoff 
   rw [abs_of_nonneg (Real.smoothTransition.nonneg _)]
   exact Real.smoothTransition.le_one _
 
-theorem contDiff_trackingSmoothingCutoff : ContDiff ℝ (⊤ : ℕ∞) trackingSmoothingCutoff :=
-  Real.smoothTransition.contDiff.comp (by fun_prop)
-
 end
 
 end Planarwave

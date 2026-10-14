@@ -101,37 +101,6 @@ theorem frontInverseModulatedPerturbation_pde
   rw [eq_neg_of_add_eq_zero_left hode]
   abel
 
-/-- The perturbation equation starting from the unchanged challenge's
-`IsRDESolution` predicate in full Euclidean coordinates. Spatial and phase
-jets are regularity data for the chosen modulation, not extra assumptions
-on the front or the spectral problem. -/
-theorem frontInverseModulatedPerturbation_pde_of_solution
-    {d : ℕ} (hd : 2 ≤ d) (u : ℝ → ℝ^d → ℝ^n) (hu : IsRDESolution f D u)
-    (v : ℝ → BUC (ℝ^(d - 1) × ℝ) (ℝ^n))
-    (σ : ℝ → ℝ^(d - 1) → ℝ) (t : ℝ) (ht : 0 < t)
-    (hvs : ContDiff ℝ 2 (v t)) (hσs : ContDiff ℝ 2 (σ t))
-    (v₁ : BUC (ℝ^(d - 1) × ℝ) ((ℝ^(d - 1) × ℝ) →L[ℝ] ℝ^n))
-    (v₂ : BUC (ℝ^(d - 1) × ℝ) ((ℝ^(d - 1) × ℝ) →L[ℝ] (ℝ^(d - 1) × ℝ) →L[ℝ] ℝ^n))
-    (hv₁ : ∀ x, HasFDerivAt (v t) (v₁ x) x)
-    (hv₂ : ∀ x, HasFDerivAt v₁ (v₂ x) x)
-    (s : BUC (ℝ^(d - 1)) (ℝ^(d - 1))) (l g : BUC (ℝ^(d - 1)) ℝ)
-    (hs : ∀ y, s y = ∇ (σ t) y) (hl : ∀ y, l y = Δ (σ t) y)
-    (hmod : ∀ r y z, v r (y, z) = u r (full y (z + c * r + σ r y)) - φ z)
-    (y : ℝ^(d - 1)) (z : ℝ)
-    (hv : DifferentiableAt ℝ (fun tx : ℝ × (ℝ^(d - 1) × ℝ) ↦ v tx.1 tx.2) (t, y, z))
-    (hphase : HasDerivAt (fun r ↦ σ r y)
-      (d_perp D φ ψ * Δ (σ t) y + (c / 2) * ‖∇ (σ t) y‖ ^ 2 - g y) t) :
-    deriv (fun r ↦ v r (y, z)) t =
-      (D (splitLaplacian (v t) (y, z)) + c • v₁ (y, z) (0, 1) +
-        fderiv ℝ f (φ z) (v t (y, z))) +
-      l y • (d_perp D φ ψ • deriv φ z - D (deriv φ z)) +
-      ‖s y‖ ^ 2 • (D (deriv (deriv φ) z) + (c / 2) • deriv φ z) +
-      frontInverseModulationNonlinearity f D c φ ψ h₁ h₂ (v t) v₁ v₂ s l g (y, z) -
-      g y • deriv φ z :=
-  frontInverseModulatedPerturbation_pde f D c φ ψ h₁ h₂
-    (fun r x ↦ u r (full x.1 x.2)) v σ t hvs hσs v₁ v₂ hv₁ hv₂
-    s l g hs hl hmod y z hv hphase (fun w ↦ IsRDESolution.split_pde hd hu ht y w)
-
 end
 
 end Planarwave

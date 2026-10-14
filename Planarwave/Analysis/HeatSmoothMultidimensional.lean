@@ -159,11 +159,6 @@ theorem contDiff_nat_heatFlow (k : ℕ) {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     rw [heq]
     exact ih hhalf gw
 
-/-- Positive-time heat flow is spatially smooth in every finite dimension. -/
-theorem contDiff_infty_heatFlow {a t : ℝ} (ha : 0 < a) (ht : 0 < t) (f : BUC E F) :
-    ContDiff ℝ ∞ (heatFlow a t f) :=
-  contDiff_infty.mpr fun k => contDiff_nat_heatFlow k ha ht f
-
 end
 
 end Planarwave

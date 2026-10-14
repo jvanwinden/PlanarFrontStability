@@ -85,15 +85,6 @@ theorem ambientResolvent_eq_neg_laplace (A : ClosedOperator ℂ E Dom) (S : C0Se
   rw [A.ambientResolvent_eq hres]
   exact A.inclusion_resolventInverse_eq_neg_laplace S hgen hbound z hz hres
 
-/-- The spectrum of a generator lies to the left of each valid semigroup growth bound.
-The reverse implication needs additional semigroup regularity and is not asserted here. -/
-theorem re_le_of_mem_spectrum_of_semigroup_bound (A : ClosedOperator ℂ E Dom) (S : C0Semigroup ℂ E)
-    (hgen : ∀ x y, S.HasGeneratorAt x y ↔ ∃ v, A.inclusion v = x ∧ A.operator v = y)
-    {M ω : ℝ} (hbound : ∀ t : NNReal, ‖S t‖ ≤ M * Real.exp (ω * t))
-    {z : ℂ} (hz : z ∈ A.spectrum) : z.re ≤ ω := by
-  by_contra! hlt
-  exact hz (A.isInResolvent_of_semigroup_bound S hgen hbound z hlt)
-
 end
 
 end Planarwave.ClosedOperator

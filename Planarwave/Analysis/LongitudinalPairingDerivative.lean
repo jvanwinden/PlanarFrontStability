@@ -89,14 +89,6 @@ theorem longitudinalPairingDerivative_apply_vector (ψ : ℝ → F) (hψ : Integ
     longitudinalPairingDerivative ψ hψ g y s = ∫ z, ⟪ψ z, g (y, z) s⟫_ℝ :=
   ContinuousLinearMap.integral_apply (integrable_pairingDerivativeIntegrand hψ (BUC.slice g y)) s
 
-theorem norm_longitudinalPairingDerivative_le (ψ : ℝ → F) (hψ : Integrable ψ)
-    (g : BUC (Y × ℝ) (Y →L[ℝ] F)) :
-    ‖longitudinalPairingDerivative ψ hψ g‖ ≤ (∫ z, ‖ψ z‖) * ‖g‖ := by
-  apply (BUC.norm_le (mul_nonneg (integral_nonneg fun _ ↦ norm_nonneg _) (norm_nonneg g))).mpr
-  intro y
-  exact (norm_integral_pairingDerivative_le hψ (BUC.slice g y)).trans
-    (mul_le_mul_of_nonneg_left (BUC.norm_slice_le g y) (integral_nonneg fun _ ↦ norm_nonneg _))
-
 /-- Differentiation under the longitudinal integral, with an integrable majorant
 uniform in the transverse point. -/
 theorem hasFDerivAt_longitudinalPairing (ψ : ℝ → F) (hψ : Integrable ψ)

@@ -77,11 +77,6 @@ def challengeComplexifyLinearMap :
     simp [challengeComplexifyCLM, ContinuousLinearMap.complexify, Matrix.mulVec,
       dotProduct, mul_assoc, Finset.mul_sum]
 
-/-- Complexification depends continuously on the real matrix. -/
-theorem continuous_challengeComplexifyCLM :
-    Continuous (challengeComplexifyCLM (n := n)) :=
-  challengeComplexifyLinearMap.continuous_of_finiteDimensional
-
 /-- Continuous-linear packaging of real-to-complex matrix extension. -/
 def challengeComplexifyOperator :
     (ℝ^n →L[ℝ] ℝ^n) →L[ℝ] (ℂ^n →L[ℂ] ℂ^n) :=
@@ -202,15 +197,6 @@ theorem frontLongitudinalPencil_zero
   ext v z
   simp
 
-/-- The concrete operator is definitionally the challenge operator supplied with the coefficient
-constructed above. -/
-theorem challengeTransverseOperator_frontCoefficient_eq
-    (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ) (k : ℝ) :
-    challengeTransverseOperator D c
-        (complexFrontDerivativeCoefficient f D c φ h₁ h₂) k =
-      frontTransverseOperator f D c φ h₁ h₂ k :=
-  rfl
-
 /-- The concrete common-domain resolvent pencil `L(k)-l`. -/
 def frontChallengeResolventMap
     (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ)
@@ -291,28 +277,6 @@ def frontHorizontalComplementEquiv :=
     (complexFrontDerivativeCoefficient f D c φ h₁ h₂)
     (fun z v => complexFrontDerivativeCoefficient_apply f D c φ h₁ h₂ z v)
 
-/-- The horizontal operator as a closed operator, now constructed directly from challenge data. -/
-def frontHorizontalClosedOperator :
-    ClosedOperator ℂ (BUC ℝ (ℂ^n)) (ComplexBUC2 (ℂ^n)) :=
-  horizontalClosedOperator f D c φ ψ h₃
-    (complexFrontDerivativeCoefficient f D c φ h₁ h₂)
-    (fun z v => complexFrontDerivativeCoefficient_apply f D c φ h₁ h₂ z v)
-
-/-- Its bundled closed-operator spectrum is exactly the semantic horizontal spectrum appearing
-in `Challenge.lean`. -/
-theorem mem_frontHorizontalClosedOperator_spectrum_iff (l : ℂ) :
-    l ∈ (frontHorizontalClosedOperator f D c φ ψ h₁ h₂ h₃).spectrum ↔
-      l ∈ TransverseSpectrum f D c φ 0 := by
-  exact mem_horizontalClosedOperator_spectrum_iff f D c φ ψ h₃
-    (complexFrontDerivativeCoefficient f D c φ h₁ h₂)
-    (fun z v => complexFrontDerivativeCoefficient_apply f D c φ h₁ h₂ z v) l
-
-/-- In particular the horizontal closed operator has the simple neutral spectral point at zero. -/
-theorem zero_mem_frontHorizontalClosedOperator_spectrum :
-    (0 : ℂ) ∈ (frontHorizontalClosedOperator f D c φ ψ h₁ h₂ h₃).spectrum := by
-  exact zero_mem_horizontalClosedOperator_spectrum f D c φ ψ h₃
-    (complexFrontDerivativeCoefficient f D c φ h₁ h₂)
-    (fun z v => complexFrontDerivativeCoefficient_apply f D c φ h₁ h₂ z v)
 
 end ConcreteSpectralData
 

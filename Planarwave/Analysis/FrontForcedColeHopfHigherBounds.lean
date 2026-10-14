@@ -56,32 +56,6 @@ theorem exists_front_forcedColeHopf_cn_bound (k : ℕ) :
   rw [← hq x]
   simpa only [neg_div] using (q.norm_apply_le x).trans hqn
 
-/-- Construct the actual transformed solution together with all spatial
-regularity and the `C^k` a priori bound. No derivative of `N` is assumed. -/
-theorem exists_front_forcedColeHopf_spatially_smooth_bound (k : ℕ) :
-    ∃ C > 0, ∀ (T M : ℝ) (v₀ : BUC (ℝ^m × ℝ) (ℝ^n))
-      (N : ℝ → BUC (ℝ^m × ℝ) (ℝ^n)),
-      0 ≤ T → 0 ≤ M → M ≤ 1 → ‖v₀‖ ≤ M →
-      (∀ r ∈ Icc 0 T, ‖N r‖ ≤ M * (1 + r) ^ (-(5 : ℝ) / 4)) →
-      ∃ ξ : ℝ → BUC (ℝ^m) ℝ,
-        IsForcedColeHopfMild (d_perp D φ ψ) (c / (2 * d_perp D φ ψ))
-          (frontDelayedForcing f D c φ ψ h₃ v₀ N) ξ T ∧
-        (∀ j : ℕ, BUCSpatialRegularOn (Icc 0 T) j ξ) ∧
-        (∀ t ∈ Icc 0 T, ContDiff ℝ ∞ (ξ t : ℝ^m → ℝ) ∧
-          BUCSpatialBound k (ξ t) (C * M)) ∧
-        ∀ t ∈ Icc 0 T, t ≤ 1 / 4 → ξ t = 0 := by
-  obtain ⟨C, hC, hb⟩ := exists_front_forcedColeHopf_cn_bound (m := m) f D c φ ψ h₃ k
-  refine ⟨C, hC, ?_⟩
-  intro T M v₀ N hT hM hM1 hv₀ hN
-  obtain ⟨ξ, hξ, hreg, hz⟩ := exists_delayed_forcedColeHopf_mild_spatially_smooth
-    h₃.transverse_low_wavenumber (c / (2 * d_perp D φ ψ)) hT
-    (longitudinalPairing ψ h₃.integrable v₀)
-    (fun r ↦ longitudinalPairing ψ h₃.integrable (N r))
-  refine ⟨ξ, hξ, hreg, ?_, hz⟩
-  intro t ht
-  exact ⟨hξ.delayed_contDiff_infty h₃.transverse_low_wavenumber ht,
-    hb T M v₀ N ξ hT hM hM1 hv₀ hN hξ t ht⟩
-
 end
 
 end Planarwave

@@ -677,17 +677,6 @@ theorem norm_second_deriv_heatFlow_real_le {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
       rw [heatScale_sq ha.le ht.le]
       field_simp [ne_of_gt ha, ne_of_gt ht]
 
-/-- Scale-invariant form of the first-derivative estimate. -/
-theorem heatScale_mul_norm_deriv_heatFlow_real_le {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
-    (f : BUC ℝ F) (x : ℝ) :
-    heatScale a t * ‖deriv (heatFlow a t f) x‖ ≤ ‖f‖ := by
-  have hs := heatScale_pos_of_pos ha ht
-  calc
-    heatScale a t * ‖deriv (heatFlow a t f) x‖ ≤
-        heatScale a t * (‖f‖ / heatScale a t) :=
-      mul_le_mul_of_nonneg_left (norm_deriv_heatFlow_real_le ha ht f x) hs.le
-    _ = ‖f‖ := by field_simp [ne_of_gt hs]
-
 /-- The `sqrt(t)`-weighted gradient bound, with the explicit diffusivity constant from the
 Gaussian proof. -/
 theorem sqrt_time_mul_norm_deriv_heatFlow_real_le {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
@@ -716,22 +705,6 @@ theorem time_mul_norm_second_deriv_heatFlow_real_le {a t : ℝ} (ha : 0 < a) (ht
       mul_le_mul_of_nonneg_left (norm_second_deriv_heatFlow_real_le ha ht f x) ht.le
     _ = ‖f‖ / a := by
       field_simp [ne_of_gt ha, ne_of_gt ht]
-
-/-- The one-dimensional, explicit-constant version of the full estimate in paper Lemma 3.2. -/
-theorem heatFlow_real_smoothing_estimate {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
-    (f : BUC ℝ F) (x : ℝ) :
-    ‖heatFlow a t f x‖ + Real.sqrt t * ‖deriv (heatFlow a t f) x‖ +
-        t * ‖deriv (deriv (heatFlow a t f)) x‖ ≤
-      (1 + 1 / Real.sqrt (2 * a) + 1 / a) * ‖f‖ := by
-  have h₀ : ‖heatFlow a t f x‖ ≤ ‖f‖ := norm_heatFlow_le (fun y => f.norm_apply_le y) x
-  have h₁ := sqrt_time_mul_norm_deriv_heatFlow_real_le ha ht f x
-  have h₂ := time_mul_norm_second_deriv_heatFlow_real_le ha ht f x
-  calc
-    ‖heatFlow a t f x‖ + Real.sqrt t * ‖deriv (heatFlow a t f) x‖ +
-        t * ‖deriv (deriv (heatFlow a t f)) x‖ ≤
-        ‖f‖ + ‖f‖ / Real.sqrt (2 * a) + ‖f‖ / a :=
-      add_le_add (add_le_add h₀ h₁) h₂
-    _ = (1 + 1 / Real.sqrt (2 * a) + 1 / a) * ‖f‖ := by ring
 
 end HeatFlowConsequences
 

@@ -169,38 +169,6 @@ theorem exists_semilinearHeat_cn_bound (k : ℕ) {a δ B : ℝ} (ha : 0 < a)
     rw [← hm s (δ / 2) hs0 hhalf.le (by rw [hst]; exact ht.2), hst] at htotal
     exact htotal
 
-/-- The uniform estimate for the usual, un-restarted mild equation. -/
-theorem exists_semilinearHeat_cn_bound_of_mild (k : ℕ) {a δ B : ℝ} (ha : 0 < a)
-    (hδ : 0 < δ) (hB : 0 ≤ B) (f : V → V) (hf : ContDiff ℝ ∞ f) :
-    ∃ C > 0, ∀ T : ℝ, 0 ≤ T → ∀ u : ℝ → BUC E V,
-      ContinuousOn u (Icc 0 T) → (∀ t ∈ Icc 0 T, ‖u t‖ ≤ B) →
-      (∀ t ∈ Icc 0 T, u t = heatFlowBUC a t (u 0) +
-        heatDuhamel a (fun r ↦ BUC.postcompContinuous f hf.continuous (u r)) t) →
-      BUCSpatialRegularOn (Icc δ T) k u ∧
-        ∀ t ∈ Icc δ T, BUCSpatialBound k (u t) C := by
-  obtain ⟨C, hC, hb⟩ := exists_semilinearHeat_cn_bound (E := E) k ha hδ hB f hf
-  exact ⟨C, hC, fun T hT u hu hbound hm ↦
-    hb T hT u hu hbound (isSemilinearHeatMildOn_of_mild ha.le hT f hf hu hm)⟩
-
-/-- The cutoff version of the positive-time parabolic bound, including the
-unsmoothed initial datum where the cutoff vanishes. Take `k = 9` in Step 4. -/
-theorem exists_semilinearHeat_cutoff_cn_bound (k : ℕ) {a δ B : ℝ} (ha : 0 < a)
-    (hδ : 0 < δ) (hB : 0 ≤ B) (f : V → V) (hf : ContDiff ℝ ∞ f) :
-    ∃ C > 0, ∀ T : ℝ, 0 ≤ T → ∀ u : ℝ → BUC E V,
-      ContinuousOn u (Icc 0 T) → (∀ t ∈ Icc 0 T, ‖u t‖ ≤ B) →
-      IsSemilinearHeatMildOn a f hf.continuous T u →
-      ∀ χ : ℝ → ℝ, (∀ t < δ, χ t = 0) → (∀ t, |χ t| ≤ 1) →
-      ∀ t ∈ Icc 0 T, BUCSpatialBound k (χ t • u t) C := by
-  obtain ⟨C, hC, hb⟩ := exists_semilinearHeat_cn_bound (E := E) k ha hδ hB f hf
-  refine ⟨C, hC, fun T hT u hu hbound hm χ hχ₀ hχ t ht ↦ ?_⟩
-  by_cases hδt : δ ≤ t
-  · exact (((hb T hT u hu hbound hm).2 t ⟨hδt, ht.2⟩).smul (χ t)).mono
-      (by have := mul_le_mul_of_nonneg_right (hχ t) hC.le; simpa using this)
-  · rw [hχ₀ t (lt_of_not_ge hδt), zero_smul]
-    have hz : BUC.const E (0 : V) = (0 : BUC E V) := BUC.ext fun _ ↦ rfl
-    simpa only [hz] using
-      (BUCSpatialBound.const (E := E) k (0 : V)).mono (by simpa using hC.le)
-
 end
 
 end Planarwave

@@ -141,18 +141,6 @@ theorem gaussian_fourier_normalization {b : ℝ} (hb : 0 < b) (m : ℕ) :
     inv_mul_cancel₀ (ne_of_gt (Real.rpow_pos_of_pos (show 0 < Real.pi / b by positivity) _)),
     mul_one]
 
-/-- Exact normalized inverse Fourier Gaussian, with the paper's phase convention. -/
-theorem normalized_oscillatoryIntegral_gaussian {b : ℝ} (hb : 0 < b) (x : V) :
-    (((2 * Real.pi) ^ Module.finrank ℝ V)⁻¹ : ℝ) •
-        oscillatoryIntegral (fun ξ : V ↦ Complex.exp (-(b : ℂ) * ‖ξ‖ ^ 2)) x =
-      (gaussianDensity (4 * b)⁻¹ x : ℂ) := by
-  rw [oscillatoryIntegral_gaussian hb, Complex.real_smul, ← Complex.ofReal_mul]
-  congr 1
-  simp only [gaussianDensity]
-  rw [← mul_assoc, gaussian_fourier_normalization hb]
-  congr 2
-  ring
-
 variable {G : Type*} [NormedAddCommGroup G] [NormedSpace ℂ G] [CompleteSpace G]
 
 omit [CompleteSpace G] in

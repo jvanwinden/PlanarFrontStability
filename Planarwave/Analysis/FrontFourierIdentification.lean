@@ -5,7 +5,8 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-import all Planarwave.Analysis.FrontFourierInitial
+import all Planarwave.Analysis.FrontBoundedDuhamel
+import all Planarwave.Analysis.FrontSpatialKernel
 import Planarwave.Analysis.BUCVolterraUniqueness
 
 /-!
@@ -212,16 +213,6 @@ theorem frontSpatialC0Semigroup_eq_fourierConvolution (hd : 2 ≤ d) (T : NNReal
     (t := (T : ℝ)) ⟨hT, le_rfl⟩
   simpa only [u, a, S, Real.toNNReal_coe, C0Semigroup.realOrbit_coe,
     frontFourierConvolutionCLM, operatorConvolutionCLM_apply] using! he.symm
-
-/-- The spatial semigroup itself, not just a Fourier candidate, decomposes into
-the transverse critical heat evolution and the constructed remainder. -/
-theorem frontSpatialC0Semigroup_decomposition (hd : 2 ≤ d) (t : NNReal) (ht : 0 < t)
-    (v : BUC (ℝ^d) (ℂ^n)) :
-    spatialSlices hd (frontSpatialC0Semigroup f D c φ h₁ h₂ hd t v) =
-      frontCriticalHeatEvolution f D c φ ψ h₃ t (spatialSlices hd v) +
-        frontRemainderConvolutionCLM f D c φ h₁ h₂ ψ h₃ t ht (spatialSlices hd v) := by
-  rw [frontSpatialC0Semigroup_eq_fourierConvolution f D c φ h₁ h₂ ψ h₃ hd t ht v,
-    frontFourierConvolutionCLM_decomposition]
 
 /-- The long-time `C/t` remainder estimate now holds for the independently
 constructed spatial semigroup in the original spatial supremum norm. -/

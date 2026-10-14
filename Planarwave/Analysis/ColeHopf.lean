@@ -84,10 +84,6 @@ theorem one_add_mul_coleHopf (β s : ℝ) :
     field_simp
     ring
 
-theorem mul_coleHopf (β s : ℝ) :
-    β * coleHopf β s = Real.exp (β * s) - 1 := by
-  linarith [one_add_mul_coleHopf β s]
-
 /-- The Cole--Hopf transform always lands in its logarithmic inverse's domain. -/
 theorem coleHopf_mem_domain (β s : ℝ) : coleHopf β s ∈ coleHopfDomain β := by
   rw [mem_coleHopfDomain]
@@ -172,37 +168,12 @@ theorem hasDerivAt_coleHopf (β s : ℝ) :
 theorem deriv_coleHopf (β s : ℝ) : deriv (coleHopf β) s = Real.exp (β * s) :=
   (hasDerivAt_coleHopf β s).deriv
 
-theorem deriv_coleHopf_eq_one_add (β s : ℝ) :
-    deriv (coleHopf β) s = 1 + β * coleHopf β s := by
-  rw [deriv_coleHopf, one_add_mul_coleHopf]
-
 /-- The scalar Cole--Hopf transform is strictly increasing for every `β`. -/
 theorem strictMono_coleHopf (β : ℝ) : StrictMono (coleHopf β) := by
   apply strictMono_of_deriv_pos
   intro s
   rw [deriv_coleHopf]
   exact Real.exp_pos _
-
-/-- On `[-R,R]`, the Cole--Hopf transform has Lipschitz constant `exp (|β| R)`. -/
-theorem lipschitzOnWith_coleHopf_Icc (β R : ℝ) (_hR : 0 ≤ R) :
-    LipschitzOnWith (Real.toNNReal (Real.exp (|β| * R)))
-      (coleHopf β) (Icc (-R) R) := by
-  apply Convex.lipschitzOnWith_of_nnnorm_deriv_le
-  · intro s _hs
-    exact (hasDerivAt_coleHopf β s).differentiableAt
-  · intro s hs
-    have habs : |s| ≤ R := abs_le.2 hs
-    have harg : β * s ≤ |β| * R := by
-      calc
-        β * s ≤ |β * s| := le_abs_self _
-        _ = |β| * |s| := abs_mul β s
-        _ ≤ |β| * R := mul_le_mul_of_nonneg_left habs (abs_nonneg β)
-    rw [deriv_coleHopf]
-    apply NNReal.coe_le_coe.mp
-    rw [coe_nnnorm, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _),
-      Real.coe_toNNReal _ (Real.exp_pos _).le]
-    exact Real.exp_le_exp.mpr harg
-  · exact convex_Icc (-R) R
 
 /-- A uniform first-order bound near the origin. -/
 theorem abs_coleHopf_le_two_mul_abs {β s : ℝ} (hsmall : |β * s| ≤ 1) :

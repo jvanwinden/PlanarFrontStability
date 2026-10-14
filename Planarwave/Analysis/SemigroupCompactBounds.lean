@@ -76,20 +76,6 @@ theorem exists_uniform_boundedPerturbation_bound (S : C0Semigroup ℂ E)
     exact (S.norm_boundedPerturbation_le_of_mem_ball (hM A) (hMb A) hBA t).trans
       (mul_le_mul_of_nonneg_right (Finset.le_sup' M hAF) (Real.exp_pos _).le)
 
-/-- The uniform-semigroup lemma of the appendix: bounded individual semigroups on a compact
-perturbation family admit one bound `C exp (ε t)` for every `ε > 0`. -/
-theorem exists_uniform_boundedPerturbation_bound_of_bounded (S : C0Semigroup ℂ E)
-    {K : Set (E →L[ℂ] E)} (hK : IsCompact K)
-    (hbound : ∀ B ∈ K, ∃ M > 0, ∀ t : NNReal, ‖S.boundedPerturbation B t‖ ≤ M)
-    {ε : ℝ} (hε : 0 < ε) :
-    ∃ C > 0, ∀ B ∈ K, ∀ t : NNReal,
-      ‖S.boundedPerturbation B t‖ ≤ C * Real.exp (ε * t) := by
-  have hbound' : ∀ B ∈ K, ∃ M > 0, ∀ t : NNReal,
-      ‖S.boundedPerturbation B t‖ ≤ M * Real.exp (0 * t) := by
-    simpa only [zero_mul, Real.exp_zero, mul_one] using hbound
-  simpa only [zero_add] using
-    S.exists_uniform_boundedPerturbation_bound hK hbound' hε
-
 /-- The same uniformization for a continuous bounded-operator family indexed by a compact set.
 This is the form used for compact frequency regions in Lemmas 2.3 and 2.4. -/
 theorem exists_uniform_boundedPerturbation_bound_on (S : C0Semigroup ℂ E)

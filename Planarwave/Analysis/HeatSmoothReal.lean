@@ -108,11 +108,6 @@ theorem contDiff_nat_heatFlow_real (k : ℕ) {a t : ℝ} (ha : 0 < a) (ht : 0 < 
         (by norm_num) x).hasDerivAt)]
     exact ih hhalf (heatDerivBUC ha hhalf f)
 
-/-- Positive-time heat flow of BUC data is smooth in the spatial variable. -/
-theorem contDiff_infty_heatFlow_real {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
-    (f : BUC ℝ F) : ContDiff ℝ ∞ (heatFlow a t f) :=
-  contDiff_infty.mpr fun k => contDiff_nat_heatFlow_real k ha ht f
-
 end
 
 end Planarwave

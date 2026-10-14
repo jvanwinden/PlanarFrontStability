@@ -146,21 +146,6 @@ theorem frontAdjoint_weakEquation_buc (η η₁ η₂ : BUC ℝ ℝ)
   rw [← h₁.positive.inner_left_eq_inner_right]
   simp only [real_inner_comm]
 
-/-- In particular the original spectral hypotheses imply the distributional
-adjoint ODE against every smooth compactly supported scalar test. -/
-theorem frontAdjoint_weakEquation (η : ℝ → ℝ) (hη : ContDiff ℝ ∞ η)
-    (hc : HasCompactSupport η) :
-    (∫ z, deriv (deriv η) z • D (ψ z) + (c * deriv η z) • ψ z +
-      η z • (fderiv ℝ f (φ z)).adjoint (ψ z)) = 0 := by
-  have hη₁ := (contDiff_infty_iff_deriv.mp hη).2
-  have hη₂ := (contDiff_infty_iff_deriv.mp hη₁).2
-  exact frontAdjoint_weakEquation_buc f D c φ ψ h₁ h₂ h₃
-    (BUC.ofCompactSupport η hη.continuous hc)
-    (BUC.ofCompactSupport (deriv η) hη₁.continuous hc.deriv)
-    (BUC.ofCompactSupport (deriv (deriv η)) hη₂.continuous hc.deriv.deriv)
-    (fun z ↦ (hη.differentiable (by simp) z).hasDerivAt)
-    (fun z ↦ (hη₁.differentiable (by simp) z).hasDerivAt)
-
 /-- Convolving the weak adjoint equation is legitimate at every point. The
 variable reaction coefficient stays inside its convolution; no commutation
 with multiplication by that coefficient is assumed. -/

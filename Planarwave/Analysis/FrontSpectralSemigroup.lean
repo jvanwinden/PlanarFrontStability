@@ -13,8 +13,8 @@ import Planarwave.Analysis.SemigroupIntertwining
 # Invariance of the front's critical spectral splitting
 
 The critical projection intertwines the full generator, not just its critical eigenline.
-Consequently it commutes with the longitudinal semigroup, its complementary kernel is invariant,
-and critical evolution can be extracted on either side. These are the splitting identities
+Consequently it commutes with the longitudinal semigroup and its complementary kernel is
+invariant. These are the splitting identities
 underlying the complementary estimate in Lemma 2.3; no complementary decay is assumed or claimed.
 -/
 
@@ -75,27 +75,6 @@ theorem eventually_frontPencilSemigroup_comp_criticalProjection :
   rw [hPy]
   exact hrange x
 
-/-- Critical scalar evolution on either side of the full semigroup. -/
-theorem eventually_frontPencilSemigroup_critical_eq :
-    ∀ᶠ q : ℂ in 𝓝 0, ∀ t : NNReal,
-      (frontPencilC0Semigroup f D c φ h₁ h₂ q t).comp
-          (frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q) =
-        Complex.exp ((t : ℂ) * frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃ q) •
-          frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q ∧
-      (frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q).comp
-          (frontPencilC0Semigroup f D c φ h₁ h₂ q t) =
-        Complex.exp ((t : ℂ) * frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃ q) •
-          frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q := by
-  filter_upwards [eventually_frontCriticalProjection_eigenrange f D c φ ψ h₁ h₂ h₃,
-    eventually_frontPencilSemigroup_comp_criticalProjection f D c φ ψ h₁ h₂ h₃]
-    with q hrange hcomm
-  intro t
-  have heq := (frontPencilC0Semigroup f D c φ h₁ h₂ q).comp_eq_exp_smul_of_generator_eigenrange
-    (frontCriticalProjection f D c φ ψ h₁ h₂ h₃ q)
-    (frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃ q)
-    (fun x ↦ (frontPencilC0Semigroup_hasGeneratorAt_iff f D c φ h₁ h₂ q _ _).mpr (hrange x)) t
-  exact ⟨heq, (hcomm t).symm.trans heq⟩
-
 /-- The complementary kernel remains invariant under the longitudinal flow. -/
 theorem eventually_frontPencilSemigroup_preserves_criticalKernel :
     ∀ᶠ q : ℂ in 𝓝 0, ∀ (t : NNReal) (x : BUC ℝ (ℂ^n)),
@@ -107,24 +86,6 @@ theorem eventually_frontPencilSemigroup_preserves_criticalKernel :
   intro t x hx
   have heq := congrArg (fun A : BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n) ↦ A x) (hq t)
   simpa only [ContinuousLinearMap.comp_apply, hx, map_zero] using! heq.symm
-
-/-- The complementary projection commutes with evolution at small complex contour frequencies. -/
-theorem eventually_frontComplexFrequencySemigroup_comp_complement :
-    ∀ᶠ ξ : ℂ^m in 𝓝 0, ∀ (ξ₀ ξ₁ : ℝ^m), complexFrequencyShift ξ₀ ξ₁ = ξ →
-      ∀ t : NNReal,
-        (frontComplexFrequencyC0Semigroup f D c φ h₁ h₂ ξ₀ ξ₁ t).comp
-            (ContinuousLinearMap.id ℂ (BUC ℝ (ℂ^n)) -
-              frontCriticalProjectionAtComplexFrequency f D c φ ψ h₁ h₂ h₃ ξ) =
-          (ContinuousLinearMap.id ℂ (BUC ℝ (ℂ^n)) -
-              frontCriticalProjectionAtComplexFrequency f D c φ ψ h₁ h₂ h₃ ξ).comp
-            (frontComplexFrequencyC0Semigroup f D c φ h₁ h₂ ξ₀ ξ₁ t) := by
-  filter_upwards [(tendsto_complexFrequencyQuadratic_zero (m := m)).eventually
-    (eventually_frontPencilSemigroup_comp_criticalProjection f D c φ ψ h₁ h₂ h₃)] with ξ hξ
-  intro ξ₀ ξ₁ hshift t
-  rw [frontComplexFrequencyC0Semigroup_eq_pencil, hshift]
-  simp only [ContinuousLinearMap.comp_sub, ContinuousLinearMap.sub_comp,
-    ContinuousLinearMap.comp_id, ContinuousLinearMap.id_comp,
-    frontCriticalProjectionAtComplexFrequency, hξ t]
 
 end
 

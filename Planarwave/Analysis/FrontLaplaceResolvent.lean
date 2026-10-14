@@ -11,11 +11,10 @@ import Planarwave.Analysis.SemigroupClosedOperator
 /-!
 # Laplace resolvent estimates for the longitudinal front pencil
 
-The full generator identification turns the semigroup estimates of Lemma 2.2 into quantitative
-resolvent estimates on right half-planes. The real-frequency estimate also localizes the
-semantic `TransverseSpectrum` from the challenge. No spectral-stability hypothesis is needed
-for these upper bounds. These results do not yet give a sectorial resolvent estimate or the
-converse passage from the spectral bound to semigroup decay.
+The full generator identification turns the real-frequency semigroup estimate of Lemma 2.2
+into a quantitative resolvent estimate on a right half-plane. This file also identifies the
+concrete resolvent pencil and proves analytic dependence of its graph-domain inverse.
+Sectorial bounds and the passage from spectral bounds to semigroup decay are proved separately.
 -/
 
 namespace Planarwave
@@ -50,57 +49,12 @@ theorem exists_uniform_frontLinearized_resolvent_bound :
   have hres := A.isInResolvent_of_semigroup_bound S hgen hb z hz
   exact ⟨hres, A.norm_inclusion_resolventInverse_le S hgen hM.le hb z hz hres⟩
 
-/-- The shifted complex-frequency semigroups give a uniform right-half-plane bound too. -/
-theorem exists_uniform_frontComplexFrequency_resolvent_bound :
-    ∃ M > 0, ∃ μ > 0, ∃ κ > 0, ∀ (ξ₀ ξ₁ : ℝ^m) (z : ℂ),
-      κ - μ * ‖ξ₀‖ ^ 2 + κ * ‖ξ₁‖ ^ 2 < z.re →
-      ∃ hres : (frontPencilClosedOperator f D c φ h₁ h₂
-        (complexFrequencyQuadratic (complexFrequencyShift ξ₀ ξ₁))).IsInResolvent z,
-        ‖(frontPencilClosedOperator f D c φ h₁ h₂
-            (complexFrequencyQuadratic (complexFrequencyShift ξ₀ ξ₁))).inclusion.comp
-          ((frontPencilClosedOperator f D c φ h₁ h₂
-            (complexFrequencyQuadratic (complexFrequencyShift ξ₀ ξ₁))).resolventInverse z hres)‖ ≤
-          M / (z.re - (κ - μ * ‖ξ₀‖ ^ 2 + κ * ‖ξ₁‖ ^ 2)) := by
-  obtain ⟨M, hM, μ, hμ, κ, hκ, hbound⟩ :=
-    exists_frontComplexFrequency_allFrequency_bound (m := m) f D c φ h₁ h₂
-  refine ⟨M, hM, μ, hμ, κ, hκ, ?_⟩
-  intro ξ₀ ξ₁ z hz
-  let A := frontPencilClosedOperator f D c φ h₁ h₂
-    (complexFrequencyQuadratic (complexFrequencyShift ξ₀ ξ₁))
-  let S := frontComplexFrequencyC0Semigroup f D c φ h₁ h₂ ξ₀ ξ₁
-  have hgen : ∀ x y, S.HasGeneratorAt x y ↔ ∃ v, A.inclusion v = x ∧ A.operator v = y :=
-    frontComplexFrequencyC0Semigroup_hasGeneratorAt_iff f D c φ h₁ h₂ ξ₀ ξ₁
-  have hb : ∀ t : NNReal,
-      ‖S t‖ ≤ M * Real.exp ((κ - μ * ‖ξ₀‖ ^ 2 + κ * ‖ξ₁‖ ^ 2) * t) := by
-    intro t
-    simpa only [add_mul, sub_mul] using! hbound ξ₀ ξ₁ t
-  have hres := A.isInResolvent_of_semigroup_bound S hgen hb z hz
-  exact ⟨hres, A.norm_inclusion_resolventInverse_le S hgen hM.le hb z hz hres⟩
-
 /-- At a real wavenumber the closed-operator resolvent is exactly the challenge resolvent. -/
 theorem frontPencilClosedOperator_resolventMap_eq (k : ℝ) (z : ℂ) :
     (frontPencilClosedOperator f D c φ h₁ h₂ ((k ^ 2 : ℝ) : ℂ)).resolventMap z =
       frontChallengeResolventMap f D c φ h₁ h₂ k z := by
   ext v a
   simp [ClosedOperator.resolventMap, frontPencilClosedOperator]
-
-include h₁ h₂ in
-/-- A concrete spectral upper bound, in the exact semantic spectrum of `Challenge.lean`.
-This is the growth-bound-to-spectral-bound direction, not its analytic converse. -/
-theorem exists_uniform_transverseSpectrum_re_bound :
-    ∃ μ > 0, ∃ C > 0, ∀ (k : ℝ) (z : ℂ), z ∈ TransverseSpectrum f D c φ k →
-      z.re ≤ C - μ * k ^ 2 := by
-  obtain ⟨M, hM, μ, hμ, C, hC, hres⟩ :=
-    exists_uniform_frontLinearized_resolvent_bound f D c φ h₁ h₂
-  refine ⟨μ, hμ, C, hC, ?_⟩
-  intro k z hz
-  by_contra! hlt
-  obtain ⟨hr, _⟩ := hres (k ^ 2) (sq_nonneg k) z hlt
-  have hb : Function.Bijective (frontChallengeResolventMap f D c φ h₁ h₂ k z) := by
-    rw [← frontPencilClosedOperator_resolventMap_eq f D c φ h₁ h₂ k z]
-    exact hr
-  exact (mem_transverseSpectrum_iff_frontChallengeResolventMap_not_bijective
-    f D c φ h₁ h₂ k z).mp hz hb
 
 /-- The full common-domain resolvent pencil is jointly holomorphic in transverse parameter
 and spectral parameter, as required by the complex-frequency contour argument. -/
@@ -120,13 +74,6 @@ theorem contDiffAt_frontPencil_graphResolvent {p : ℂ × ℂ}
   have hi := ((frontPencilClosedOperator f D c φ h₁ h₂ p.1).isInResolvent_iff_isInvertible p.2).mp hp
   exact hi.contDiffAt_map_inverse.comp p
     (contDiff_frontPencil_resolventMap f D c φ h₁ h₂).contDiffAt
-
-/-- Joint holomorphic dependence in the ambient BUC operator norm. -/
-theorem contDiffAt_frontPencil_ambientResolvent {p : ℂ × ℂ}
-    (hp : (frontPencilClosedOperator f D c φ h₁ h₂ p.1).IsInResolvent p.2) :
-    ContDiffAt ℂ ω (fun r : ℂ × ℂ ↦
-      (frontPencilClosedOperator f D c φ h₁ h₂ r.1).ambientResolvent r.2) p := by
-  exact contDiffAt_const.clm_comp (contDiffAt_frontPencil_graphResolvent f D c φ h₁ h₂ hp)
 
 end
 

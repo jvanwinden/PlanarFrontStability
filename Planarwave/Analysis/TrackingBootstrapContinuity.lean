@@ -54,13 +54,6 @@ theorem le_trackingRunningSup {q : ℝ → ℝ} {T t s : ℝ}
     (hs : s ∈ Icc 0 t) : q s ≤ trackingRunningSup q t :=
   (trackingRunningSup_le_iff hq ht).mp le_rfl s hs
 
-theorem monotoneOn_trackingRunningSup {q : ℝ → ℝ} {T : ℝ}
-    (hq : ContinuousOn q (Icc 0 T)) :
-    MonotoneOn (trackingRunningSup q) (Icc 0 T) := by
-  intro s hs t ht hst
-  exact (trackingRunningSup_le_iff hq hs).mpr fun r hr =>
-    le_trackingRunningSup hq ht ⟨hr.1, hr.2.trans hst⟩
-
 /-- Continuity of a running maximum of a continuous real function.
 
 Clamping the spatial parameter to `[0,t]` realizes all these maxima on the
@@ -107,19 +100,6 @@ theorem tracking_bootstrap_of_continuousOn {η : ℝ → ℝ} {T : ℝ}
     (show (1 : ℝ) ∈ Icc (η 0) (η t) from ⟨by linarith, hgt.le⟩)
   have hhalf := himprove s ⟨hs.1, hs.2.trans ht.2⟩ (by linarith)
   linarith
-
-/-- A bootstrap hypothesis over the entire preceding interval can be closed
-using precisely the running supremum appearing in the paper. -/
-theorem tracking_running_sup_bootstrap {q : ℝ → ℝ} {T : ℝ}
-    (hq : ContinuousOn q (Icc 0 T)) (hzero : q 0 ≤ 1 / 2)
-    (himprove : ∀ t ∈ Icc 0 T, (∀ s ∈ Icc 0 t, q s ≤ 1) →
-      ∀ s ∈ Icc 0 t, q s ≤ 1 / 2) :
-    ∀ t ∈ Icc 0 T, trackingRunningSup q t ≤ 1 / 2 := by
-  apply tracking_bootstrap_of_continuousOn (continuousOn_trackingRunningSup hq)
-  · simpa using hzero
-  · intro t ht hsmall
-    exact (trackingRunningSup_le_iff hq ht).mpr
-      (himprove t ht ((trackingRunningSup_le_iff hq ht).mp hsmall))
 
 /-- The explicit smallness threshold from the proof of Lemma `key`. -/
 theorem tracking_bootstrap_smallness {C : ℝ} (hC : 0 < C) :

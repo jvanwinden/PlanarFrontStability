@@ -148,55 +148,6 @@ theorem differentiableOn_frontDiffusionC0Semigroup
   obtain ⟨B, hB, _⟩ := hb q hq r hr hr₁
   exact ⟨B, hB⟩
 
-/-- The principal matrix semigroup is smooth in the operator norm on the positive
-real time axis. Complex-time analyticity requires a further argument. -/
-theorem contDiffOn_frontDiffusionC0Semigroup
-    (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (hDinj : Function.Injective D)
-    (c : ℝ) {q : ℝ} (hq : 0 ≤ q) :
-    ContDiffOn ℝ ∞ (fun t : ℝ ↦ frontDiffusionC0Semigroup D hD c q t.toNNReal) (Ioi 0) := by
-  obtain ⟨C, hC, hb⟩ := exists_uniform_frontDiffusion_generator_opNorm_bound D hD hDinj c
-  apply (frontDiffusionC0Semigroup D hD c q).contDiffOn_infty_operator_of_smoothing
-  intro r hr hr₁
-  obtain ⟨B, hB, _⟩ := hb q hq r hr hr₁
-  exact ⟨B, hB⟩
-
-/-- The actual operator-valued time derivative obeys the short-time parabolic bound.
-The constant is chosen before the frequency and time. -/
-theorem exists_uniform_deriv_frontDiffusionC0Semigroup_bound
-    (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (hDinj : Function.Injective D) (c : ℝ) :
-    ∃ C > 0, ∀ q : ℝ, 0 ≤ q → ∀ t : ℝ, 0 < t → t ≤ 1 →
-      ‖deriv (fun s : ℝ ↦ frontDiffusionC0Semigroup D hD c q s.toNNReal) t‖ ≤ C / t := by
-  obtain ⟨C, hC, hb⟩ := exists_uniform_frontDiffusion_generator_opNorm_bound D hD hDinj c
-  refine ⟨C, hC, fun q hq t ht ht₁ ↦ ?_⟩
-  obtain ⟨B, hB, hnorm⟩ := hb q hq ⟨t, ht.le⟩ ht ht₁
-  have hdiff := (differentiableOn_frontDiffusionC0Semigroup D hD hDinj c hq t ht).differentiableAt
-    (isOpen_Ioi.mem_nhds ht)
-  have heq : deriv (fun s : ℝ ↦ frontDiffusionC0Semigroup D hD c q s.toNNReal) t = B := by
-    apply ContinuousLinearMap.ext
-    intro v
-    have hd := (frontDiffusionC0Semigroup D hD c q).hasGeneratorAt_of_hasDerivAt_operator ht.le
-      hdiff.hasDerivAt v
-    rw [Real.toNNReal_of_nonneg ht.le] at hd
-    exact hd.unique (hB v)
-  rw [heq]
-  exact hnorm
-
-/-- The time derivative just constructed acts by the exact principal differential
-expression on the smoothed datum, not merely by an abstract generator extension. -/
-theorem deriv_frontDiffusionC0Semigroup_apply
-    (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (hDinj : Function.Injective D)
-    (c : ℝ) {q t : ℝ} (hq : 0 ≤ q) (ht : 0 < t)
-    (v : BUC ℝ (ℂ^n)) (w : ComplexBUC2 (ℂ^n))
-    (hw : ComplexBUC2.value (ℂ^n) w = frontDiffusionFlowBUC D hD c q t v) :
-    deriv (fun s : ℝ ↦ frontDiffusionC0Semigroup D hD c q s.toNNReal) t v =
-      longitudinalOperator (frontComplexifiedDiffusion D) (c : ℂ) (q : ℂ) 0 w := by
-  have hdiff := (differentiableOn_frontDiffusionC0Semigroup D hD hDinj c hq t ht).differentiableAt
-    (isOpen_Ioi.mem_nhds ht)
-  have hd := (frontDiffusionC0Semigroup D hD c q).hasGeneratorAt_of_hasDerivAt_operator ht.le
-    hdiff.hasDerivAt v
-  rw [frontDiffusionC0Semigroup_apply, Real.coe_toNNReal t ht.le, ← hw] at hd
-  exact hd.unique (frontDiffusionC0Semigroup_hasGeneratorAt D hD hDinj c q w)
-
 end
 
 end Planarwave

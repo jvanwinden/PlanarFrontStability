@@ -56,18 +56,6 @@ theorem frontRemainderConvolutionCLM_apply (t : NNReal) (ht : 0 < t)
       (continuous_frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t ht)
       (integrable_frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t ht)]
 
-/-- The outer integral in the paper's source-coordinate form. -/
-theorem frontRemainderConvolutionCLM_apply_eq_integral (t : NNReal) (ht : 0 < t)
-    (v : BUC (ℝ^m) (BUC ℝ (ℂ^n))) (y : ℝ^m) :
-    frontRemainderConvolutionCLM f D c φ h₁ h₂ ψ h₃ t ht v y =
-      ((2 * Real.pi) ^ m)⁻¹ • ∫ y' : ℝ^m,
-        frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t (y - y') (v y') := by
-  rw [frontRemainderConvolutionCLM_apply]
-  congr 1
-  simpa only [sub_sub_cancel] using!
-    (integral_sub_left_eq_self
-      (fun x : ℝ^m ↦ frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t x (v (y - x))) volume y).symm
-
 /-- The convolution norm is bounded by the normalized spatial mass of the kernel. -/
 theorem norm_frontRemainderConvolutionCLM_le (t : NNReal) (ht : 0 < t) :
     ‖frontRemainderConvolutionCLM (m := m) f D c φ h₁ h₂ ψ h₃ t ht‖ ≤
@@ -101,19 +89,6 @@ theorem exists_frontRemainderConvolutionCLM_pointwise_decay_bound :
   exact (BUC.norm_apply_le _ z).trans ((BUC.norm_apply_le _ y).trans
     (((frontRemainderConvolutionCLM f D c φ h₁ h₂ ψ h₃ t ht).le_opNorm v).trans
       (mul_le_mul_of_nonneg_right (hb t ht htone) (norm_nonneg v))))
-
-/-- In particular, the estimate applies to every jointly BUC spatial perturbation,
-with its original supremum norm and no additional slice-regularity hypothesis. -/
-theorem exists_frontRemainderConvolution_spatial_decay_bound :
-    ∃ C > 0, ∀ (t : NNReal) (ht : 0 < t), 1 ≤ t →
-      ∀ (v : BUC ((ℝ^m) × ℝ) (ℂ^n)) (y : ℝ^m) (z : ℝ),
-      ‖frontRemainderConvolutionCLM f D c φ h₁ h₂ ψ h₃ t ht (BUC.curry v) y z‖ ≤
-        (C / t) * ‖v‖ := by
-  obtain ⟨C, hC, hb⟩ :=
-    exists_frontRemainderConvolutionCLM_pointwise_decay_bound (m := m) f D c φ h₁ h₂ ψ h₃
-  refine ⟨C, hC, ?_⟩
-  intro t ht htone v y z
-  simpa only [BUC.norm_curry] using hb t ht htone (BUC.curry v) y z
 
 end
 

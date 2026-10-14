@@ -74,15 +74,6 @@ theorem profileProjection_idempotent (v : LongitudinalBUC n) :
   rw [phaseFunctional_translationMode_eq_one hstable Φ hΦ]
   simp
 
-/-- Idempotence as an equality of continuous linear endomorphisms. -/
-theorem profileProjection_comp_self :
-    (profileProjection ψ hstable.integrable Φ).comp
-        (profileProjection ψ hstable.integrable Φ) =
-      profileProjection ψ hstable.integrable Φ := by
-  apply ContinuousLinearMap.ext
-  intro v
-  exact profileProjection_idempotent hstable Φ hΦ v
-
 /-- The phase functional is nonzero because it takes value one on `Φ`. -/
 theorem phaseFunctional_ne_zero : phaseFunctional ψ hstable.integrable ≠ 0 := by
   intro hzero
@@ -159,15 +150,6 @@ theorem horizontal_kernel_iff_mem_range_profileProjection (v : LongitudinalBUC n
       v ∈ LinearMap.range (profileProjection ψ hstable.integrable Φ).toLinearMap := by
   rw [horizontal_kernel_iff_mem_span hstable Φ hΦ v, range_profileProjection hstable Φ hΦ]
 
-/-- The same kernel identification on the paper's common graph domain `BUC²`. -/
-theorem horizontal_kernel_complexBUC2_iff_value_mem_span
-    (v : ComplexBUC2 (EuclideanSpace ℂ (Fin n))) :
-    IsTransverseResolventSolution f D c φ 0 0
-        (v : ℝ → EuclideanSpace ℂ (Fin n)) 0 ↔
-      ComplexBUC2.value (EuclideanSpace ℂ (Fin n)) v ∈ Submodule.span ℂ {Φ} := by
-  exact horizontal_kernel_iff_mem_span hstable Φ hΦ
-    (ComplexBUC2.value (EuclideanSpace ℂ (Fin n)) v)
-
 omit hΦ
 /-- Challenge's horizontal-solvability hypothesis is precisely vanishing of the bundled phase
 functional on `BUC`. -/
@@ -181,11 +163,6 @@ theorem phaseFunctional_eq_zero_iff_horizontal_solvable (w : LongitudinalBUC n) 
 include hΦ
 
 omit hΦ
-/-- Every profile splits algebraically into its neutral part and its complementary part. -/
-theorem profile_eq_projection_add_complement (v : LongitudinalBUC n) :
-    v = profileProjection ψ hstable.integrable Φ v +
-      (v - profileProjection ψ hstable.integrable Φ v) := by
-  abel
 include hΦ
 
 /-- The complementary summand has zero phase. -/
@@ -194,21 +171,6 @@ theorem phaseFunctional_complement_eq_zero (v : LongitudinalBUC n) :
       (v - profileProjection ψ hstable.integrable Φ v) = 0 := by
   rw [map_sub, profileProjection_apply, map_smul,
     phaseFunctional_translationMode_eq_one hstable Φ hΦ, smul_eq_mul, mul_one, sub_self]
-
-/-- Equivalently, the complementary summand belongs to the kernel of `P₀`. -/
-theorem complement_mem_ker_profileProjection (v : LongitudinalBUC n) :
-    v - profileProjection ψ hstable.integrable Φ v ∈
-      LinearMap.ker (profileProjection ψ hstable.integrable Φ).toLinearMap := by
-  rw [ker_profileProjection hstable Φ hΦ, LinearMap.mem_ker]
-  exact phaseFunctional_complement_eq_zero hstable Φ hΦ v
-
-/-- The complementary summand satisfies the paper's Fredholm solvability condition. -/
-theorem exists_horizontal_resolventSolution_complement (v : LongitudinalBUC n) :
-    ∃ u, IsTransverseResolventSolution f D c φ 0 0 u
-      ((v - profileProjection ψ hstable.integrable Φ v : LongitudinalBUC n) :
-        ℝ → EuclideanSpace ℂ (Fin n)) := by
-  apply (phaseFunctional_eq_zero_iff_horizontal_solvable hstable _).mp
-  exact phaseFunctional_complement_eq_zero hstable Φ hΦ v
 
 end Normalized
 

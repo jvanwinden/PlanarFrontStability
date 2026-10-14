@@ -45,14 +45,6 @@ theorem restrictInvariant_apply_coe (S : C0Semigroup ℂ E) (K : Submodule ℂ E
     [CompleteSpace K] (hK : ∀ t : NNReal, ∀ x ∈ K, S t x ∈ K) (t : NNReal) (x : K) :
     (S.restrictInvariant K hK t x : E) = S t x := rfl
 
-/-- Restriction does not increase the operator norm. -/
-theorem norm_restrictInvariant_le (S : C0Semigroup ℂ E) (K : Submodule ℂ E)
-    [CompleteSpace K] (hK : ∀ t : NNReal, ∀ x ∈ K, S t x ∈ K) (t : NNReal) :
-    ‖S.restrictInvariant K hK t‖ ≤ ‖S t‖ := by
-  apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _)
-  intro x
-  exact (S t).le_opNorm (x : E)
-
 /-- Both inclusions of the generator domain are inherited under restriction. -/
 theorem restrictInvariant_hasGeneratorAt_iff (S : C0Semigroup ℂ E)
     (K : Submodule ℂ E) [CompleteSpace K]

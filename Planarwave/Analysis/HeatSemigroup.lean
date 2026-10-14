@@ -188,11 +188,6 @@ theorem continuous_heatFlowBUC_time (a : ℝ) (f : BUC E F) :
   exact tendsto_integral_filter_of_dominated_convergence (fun _ : E ↦ ‖f‖)
     hmeas hbound (integrable_const ‖f‖) hlim
 
-/-- Strong continuity of the continuous-linear heat evolution at time zero. -/
-theorem tendsto_heatOperator_zero_apply (a : ℝ) (f : BUC E F) :
-    Tendsto (fun t ↦ heatOperator a t f) (nhds 0) (nhds f) :=
-  tendsto_heatFlowBUC_zero a f
-
 /-- The paper's transverse heat evolution as a strongly continuous semigroup on BUC. -/
 def heatC0Semigroup (a : ℝ) (ha : 0 ≤ a) : C0Semigroup ℝ (BUC E F) where
   toFun t := heatOperator a t

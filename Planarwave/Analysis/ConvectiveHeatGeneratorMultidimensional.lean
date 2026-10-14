@@ -95,16 +95,6 @@ theorem hasDerivWithinAt_convectiveHeatFlowBUC_zero_fderiv {a : ℝ} (ha : 0 < a
       (continuous_convectiveHeatFlowBUC_time a b (convectiveGeneratorBUC a b g h))
       (fun t ht x ↦ hasDerivAt_convectiveHeatFlow_pointwise_fderiv ha ht b v g h hg hh x)
 
-/-- The complex scalar spatial heat semigroup has the expected generator on BUC² data. -/
-theorem complexConvectiveHeatC0Semigroup_hasGeneratorAt_fderiv {a : ℝ} (ha : 0 < a)
-    (b : E) (v : BUC E ℂ) (g : BUC E (E →L[ℝ] ℂ)) (h : BUC E (E →L[ℝ] E →L[ℝ] ℂ))
-    (hg : ∀ x, HasFDerivAt v (g x) x) (hh : ∀ x, HasFDerivAt g (h x) x) :
-    (complexConvectiveHeatC0Semigroup a ha.le b).HasGeneratorAt v (convectiveGeneratorBUC a b g h) := by
-  apply (hasDerivWithinAt_convectiveHeatFlowBUC_zero_fderiv ha b v g h hg hh).congr
-  · intro t ht
-    simp only [C0Semigroup.realOrbit, complexConvectiveHeatC0Semigroup_apply, Real.coe_toNNReal _ ht]
-  · simp [C0Semigroup.realOrbit]
-
 end
 
 end Planarwave

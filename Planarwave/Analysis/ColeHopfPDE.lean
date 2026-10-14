@@ -81,21 +81,6 @@ theorem hasDerivAt_coleHopf_of_forced_vHJ
   rw [hpde, laplacian_coleHopf_comp_apply β (σ t) hspace x, ← hcancel]
   ring
 
-/-- The preceding forced heat equation with the exponential factor rewritten as
-`1 + β * coleHopf β σ`. -/
-theorem hasDerivAt_coleHopf_of_forced_vHJ_eq_one_add
-    (σ : ℝ → E → ℝ) (t : ℝ) (x : E) (σt dPerp c β g : ℝ)
-    (htime : HasDerivAt (fun s => σ s x) σt t)
-    (hspace : ContDiff ℝ 2 (σ t))
-    (hcancel : dPerp * β = c / 2)
-    (hpde : σt = dPerp * Δ (σ t) x + (c / 2) * ‖∇ (σ t) x‖ ^ 2 - g) :
-    HasDerivAt (fun s => coleHopf β (σ s x))
-      (dPerp * Δ (coleHopf β ∘ σ t) x -
-        (1 + β * coleHopf β (σ t x)) * g) t := by
-  rw [one_add_mul_coleHopf]
-  exact hasDerivAt_coleHopf_of_forced_vHJ σ t x σt dPerp c β g
-    htime hspace hcancel hpde
-
 /-- Pointwise forced heat equation for `exp (β * σ)`. -/
 theorem hasDerivAt_exp_mul_of_forced_vHJ
     (σ : ℝ → E → ℝ) (t : ℝ) (x : E) (σt dPerp c β g : ℝ)
@@ -111,44 +96,12 @@ theorem hasDerivAt_exp_mul_of_forced_vHJ
   rw [hpde, laplacian_exp_mul_comp_apply β (σ t) hspace x, ← hcancel]
   ring
 
-/-- The paper's parameter choice `β = c / (2 * dPerp)` satisfies the cancellation relation when
-the transverse diffusivity is nonzero. -/
-theorem hasDerivAt_exp_mul_c_div_two_mul_of_forced_vHJ
-    (σ : ℝ → E → ℝ) (t : ℝ) (x : E) (σt dPerp c g : ℝ)
-    (hdPerp : dPerp ≠ 0)
-    (htime : HasDerivAt (fun s => σ s x) σt t)
-    (hspace : ContDiff ℝ 2 (σ t))
-    (hpde : σt = dPerp * Δ (σ t) x + (c / 2) * ‖∇ (σ t) x‖ ^ 2 - g) :
-    HasDerivAt (fun s => Real.exp ((c / (2 * dPerp)) * σ s x))
-      (dPerp * Δ (fun y => Real.exp ((c / (2 * dPerp)) * σ t y)) x -
-        (c / (2 * dPerp)) * Real.exp ((c / (2 * dPerp)) * σ t x) * g) t := by
-  apply hasDerivAt_exp_mul_of_forced_vHJ σ t x σt dPerp c (c / (2 * dPerp)) g
-    htime hspace
-  · field_simp
-  · exact hpde
-
 end PointwiseCancellation
 
 section FieldCancellation
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [FiniteDimensional ℝ E]
-
-/-- Forced heat equation at a fixed time, stated as an equality of spatial scalar fields.  The
-function `σt` supplies the explicitly assumed time derivative of `σ`. -/
-theorem deriv_exp_mul_of_forced_vHJ
-    (σ : ℝ → E → ℝ) (σt g : E → ℝ) (t dPerp c β : ℝ)
-    (htime : ∀ x, HasDerivAt (fun s => σ s x) (σt x) t)
-    (hspace : ContDiff ℝ 2 (σ t))
-    (hcancel : dPerp * β = c / 2)
-    (hpde : ∀ x,
-      σt x = dPerp * Δ (σ t) x + (c / 2) * ‖∇ (σ t) x‖ ^ 2 - g x) :
-    (fun x => deriv (fun s => Real.exp (β * σ s x)) t) =
-      fun x => dPerp * Δ (fun y => Real.exp (β * σ t y)) x -
-        β * Real.exp (β * σ t x) * g x := by
-  funext x
-  exact (hasDerivAt_exp_mul_of_forced_vHJ σ t x (σt x) dPerp c β (g x)
-    (htime x) hspace hcancel (hpde x)).deriv
 
 end FieldCancellation
 

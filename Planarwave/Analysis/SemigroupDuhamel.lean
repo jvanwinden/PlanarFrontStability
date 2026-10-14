@@ -191,54 +191,6 @@ def freePath (S : C0Semigroup ℂ E) (T : NNReal) (x : E) : TimePath (E := E) T 
   toFun t := S.realOrbit x t
   continuous_toFun := (S.continuous_realOrbit x).comp continuous_subtype_val
 
-/-- Small-time existence and uniqueness for the bounded-perturbation integral equation. -/
-theorem existsUnique_perturbedPath_of_bound (S : C0Semigroup ℂ E) (B : E →L[ℂ] E)
-    (T : NNReal) {M : ℝ} (hM : 0 ≤ M) (hbound : ∀ r : NNReal, r ≤ T → ‖S r‖ ≤ M)
-    (hsmall : M * ‖B‖ * T < 1) (x : E) :
-    ∃! u : TimePath (E := E) T, ∀ t, u t = S.realOrbit x t + S.perturbationPath B T u t := by
-  have hnorm : ‖S.perturbationOperator B T‖ < 1 :=
-    (S.norm_perturbationOperator_le B T hM hbound).trans_lt hsmall
-  have hbij : Function.Bijective
-      (1 - S.perturbationOperator B T : TimePath (E := E) T →L[ℂ] TimePath (E := E) T) :=
-    ContinuousLinearMap.isUnit_iff_bijective.mp (isUnit_one_sub_of_norm_lt_one hnorm)
-  obtain ⟨u, hu⟩ := hbij.surjective (S.freePath T x)
-  refine ⟨u, ?_, ?_⟩
-  · intro t
-    have h := congrArg (fun v : TimePath (E := E) T ↦ v t) hu
-    change u t - S.perturbationPath B T u t = S.realOrbit x t at h
-    exact sub_eq_iff_eq_add.mp h
-  · intro v hv
-    apply hbij.injective
-    rw [hu]
-    ext t
-    change v t - S.perturbationPath B T v t = S.realOrbit x t
-    exact sub_eq_iff_eq_add.mpr (hv t)
-
-/-- A positive time interval can be chosen independently of the initial datum. -/
-theorem exists_local_perturbedPath (S : C0Semigroup ℂ E) (B : E →L[ℂ] E) :
-    ∃ T : NNReal, 0 < T ∧ ∀ x : E, ∃! u : TimePath (E := E) T,
-      ∀ t, u t = S.realOrbit x t + S.perturbationPath B T u t := by
-  obtain ⟨M, hM, hbound⟩ := S.exists_local_bound 1
-  have hM₀ : 0 ≤ M := zero_le_one.trans hM
-  let a := M * ‖B‖
-  have ha : 0 ≤ a := by positivity
-  let τ : ℝ := min 1 (1 / (2 * (a + 1)))
-  have hτ : 0 < τ := by dsimp [τ]; positivity
-  let T : NNReal := ⟨τ, hτ.le⟩
-  have hT : T ≤ 1 := by
-    change min 1 (1 / (2 * (a + 1))) ≤ (1 : ℝ)
-    exact min_le_left _ _
-  have hsmall : M * ‖B‖ * (T : ℝ) < 1 := by
-    calc
-      a * τ ≤ a * (1 / (2 * (a + 1))) :=
-        mul_le_mul_of_nonneg_left (min_le_right _ _) ha
-      _ < 1 := by
-        rw [mul_one_div]
-        apply (div_lt_iff₀ (by positivity)).mpr
-        linarith
-  exact ⟨T, hτ, fun x ↦ S.existsUnique_perturbedPath_of_bound B T hM₀
-    (fun r hr ↦ hbound r (hr.trans hT)) hsmall x⟩
-
 end
 
 end C0Semigroup

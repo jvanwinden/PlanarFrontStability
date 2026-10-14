@@ -77,43 +77,6 @@ theorem realTranslationMode_equation (z : ℝ) :
   rw [heq] at hd
   simpa only [deriv_const] using hd.deriv.symm
 
-include h₂ in
-/-- The parameter derivative of the rescaled front used in the paper. -/
-theorem hasDerivAt_front_rescaling (z : ℝ) :
-    HasDerivAt (fun α : ℝ ↦ φ (z / α)) (-(z • deriv φ z)) 1 := by
-  have hin : HasDerivAt (fun α : ℝ ↦ z / α) (-z) 1 := by
-    simpa [div_eq_mul_inv] using (((hasDerivAt_id (1 : ℝ)).inv (by norm_num)).const_mul z)
-  have hout : HasDerivAt φ (deriv φ z) ((fun α : ℝ ↦ z / α) 1) := by
-    simpa only [div_one] using (h₂.smooth.differentiable (by simp) z).hasDerivAt
-  simpa only [Function.comp_def, neg_smul] using hout.scomp (1 : ℝ) hin
-
-include h₁ h₂ h₃ in
-/-- The equation for the parameter variation in the proof of
-`lem:ndispersion`, with its actual first and second derivatives. -/
-theorem front_scalingVariation_equation (z : ℝ) :
-    D (deriv (deriv (fun r ↦ -(r • deriv φ r))) z) +
-      c • deriv (fun r ↦ -(r • deriv φ r)) z +
-      fderiv ℝ f (φ z) (-(z • deriv φ z)) =
-        -((2 : ℝ) • D (deriv (deriv φ) z) + c • deriv φ z) := by
-  have hs₁ := (contDiff_infty_iff_deriv.mp h₂.smooth).2
-  have hs₂ := (contDiff_infty_iff_deriv.mp hs₁).2
-  have hd (r : ℝ) : HasDerivAt (fun x ↦ -(x • deriv φ x))
-      (-(r • deriv (deriv φ) r + deriv φ r)) r := by
-    simpa only [one_smul, id_eq, Pi.smul_apply, Pi.neg_apply] using! ((hasDerivAt_id r).smul
-      ((hs₁.differentiable (by simp) r).hasDerivAt)).neg
-  have hd₂ : HasDerivAt (fun r ↦ -(r • deriv (deriv φ) r + deriv φ r))
-      (-(z • deriv (deriv (deriv φ)) z + deriv (deriv φ) z + deriv (deriv φ) z)) z := by
-    simpa only [one_smul, id_eq, Pi.smul_apply, Pi.add_apply, Pi.neg_apply] using! (((hasDerivAt_id z).smul
-      ((hs₂.differentiable (by simp) z).hasDerivAt)).add
-        ((hs₁.differentiable (by simp) z).hasDerivAt)).neg
-  have heq := funext fun r ↦ (hd r).deriv
-  rw [heq, hd₂.deriv]
-  have hk := realTranslationMode_equation f D c φ ψ h₁ h₂ h₃ z
-  simp only [realTranslationModeSecondDerivativeBUC_apply,
-    realTranslationModeDerivativeBUC_apply, realTranslationModeBUC_apply] at hk
-  simp only [map_neg, map_add, map_smul, smul_neg, smul_add]
-  linear_combination (norm := module) -(z • hk)
-
 include h₁ h₂ in
 /-- The adjoint annihilates the right side of the scaling-variation equation. -/
 theorem realPairing_front_scaling_equation :

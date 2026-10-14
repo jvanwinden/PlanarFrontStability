@@ -37,13 +37,6 @@ def frontLinearizedC0Semigroup (q : ℝ) : C0Semigroup ℂ (BUC ℝ (ℂ^n)) :=
   (frontDiffusionC0Semigroup D h₁.positive c q).boundedPerturbation
     (frontReactionMultiplication f D c φ h₁ h₂)
 
-/-- The global semigroup agrees with the previously constructed finite-horizon mild paths. -/
-theorem frontLinearizedC0Semigroup_eq_mildPath (q : ℝ) {t T : NNReal} (ht : t ≤ T)
-    (x : BUC ℝ (ℂ^n)) :
-    frontLinearizedC0Semigroup f D c φ h₁ h₂ q t x =
-      frontLinearizedMildPathOperator f D c φ h₁ h₂ q T x ⟨t, t.2, ht⟩ :=
-  C0Semigroup.perturbedOperator_eq_path _ _ ht x
-
 /-- Exact generator and full domain for the real-frequency longitudinal pencil. -/
 theorem frontLinearizedC0Semigroup_hasGeneratorAt_iff (q : ℝ) (x y : BUC ℝ (ℂ^n)) :
     (frontLinearizedC0Semigroup f D c φ h₁ h₂ q).HasGeneratorAt x y ↔

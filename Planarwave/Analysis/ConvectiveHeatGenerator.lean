@@ -66,17 +66,6 @@ theorem hasDerivAt_convectiveHeatFlow_pointwise {a t : ℝ} (ha : 0 < a) (ht : 0
     deriv_heatFlow_of_hasDerivAt a t g h hgh] at hd
   simpa [Function.comp_def, convectiveHeatFlowBUC_apply] using hd
 
-/-- The convective heat equation holds in the supremum norm on twice differentiable BUC data. -/
-theorem hasDerivAt_convectiveHeatFlowBUC {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
-    (c : ℝ) (f g h : BUC ℝ F)
-    (hfg : ∀ x, HasDerivAt f (g x) x) (hgh : ∀ x, HasDerivAt g (h x) x) :
-    HasDerivAt (fun r ↦ convectiveHeatFlowBUC a r c f)
-      (a • convectiveHeatFlowBUC a t c h + c • convectiveHeatFlowBUC a t c g) t := by
-  apply BUC.hasDerivAt_of_pointwise (continuous_convectiveHeatFlowBUC_time a c f)
-    (((continuous_convectiveHeatFlowBUC_time a c h).const_smul a).add
-      ((continuous_convectiveHeatFlowBUC_time a c g).const_smul c))
-    (fun r hr x ↦ hasDerivAt_convectiveHeatFlow_pointwise ha hr c f g h hfg hgh x) ht
-
 /-- The right generator limit for the convective heat semigroup, in BUC norm. -/
 theorem hasDerivWithinAt_convectiveHeatFlowBUC_zero {a : ℝ} (ha : 0 < a)
     (c : ℝ) (f g h : BUC ℝ F)

@@ -92,12 +92,6 @@ theorem l1SmoothingBUC_apply (η : BUC ℝ ℝ) (u : ℝ → F) (hu : Integrable
     l1SmoothingBUC η u hu x = l1Smoothing η u x := rfl
 
 omit [CompleteSpace F] in
-theorem norm_l1SmoothingBUC_le (η : BUC ℝ ℝ) (u : ℝ → F) (hu : Integrable u) :
-    ‖l1SmoothingBUC η u hu‖ ≤ ‖η‖ * ∫ z, ‖u z‖ :=
-  (BUC.norm_le (mul_nonneg (norm_nonneg _) (integral_nonneg fun _ ↦ norm_nonneg _))).mpr
-    (norm_l1Smoothing_le η hu)
-
-omit [CompleteSpace F] in
 /-- Differentiate an L1 convolution using a bounded derivative of the kernel. -/
 theorem hasDerivAt_l1Smoothing (η η₁ : BUC ℝ ℝ)
     (hη : ∀ x, HasDerivAt η (η₁ x) x) {u : ℝ → F} (hu : Integrable u) (x : ℝ) :

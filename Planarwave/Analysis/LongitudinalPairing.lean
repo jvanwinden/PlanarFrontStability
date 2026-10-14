@@ -69,11 +69,6 @@ def realPairingCLM (ψ : ℝ → F) (hψ : Integrable ψ) : BUC ℝ F →L[ℝ] 
 theorem realPairingCLM_apply (ψ : ℝ → F) (hψ : Integrable ψ) (v : BUC ℝ F) :
     realPairingCLM ψ hψ v = ∫ z, ⟪ψ z, v z⟫_ℝ := rfl
 
-theorem norm_realPairingCLM_le (ψ : ℝ → F) (hψ : Integrable ψ) :
-    ‖realPairingCLM ψ hψ‖ ≤ ∫ z, ‖ψ z‖ := by
-  apply LinearMap.mkContinuous_norm_le
-  exact integral_nonneg fun _ ↦ norm_nonneg _
-
 /-- Pair the longitudinal slices of joint BUC data, retaining transverse BUC. -/
 def longitudinalPairing (ψ : ℝ → F) (hψ : Integrable ψ) :
     BUC (Y × ℝ) F →L[ℝ] BUC Y ℝ :=
@@ -157,28 +152,6 @@ theorem longitudinalPairing_secondDerivative {ψ ψ₁ ψ₂ : ℝ → F}
   ext y
   exact realPairingCLM_secondDerivative hψ hψ₁ hψ₂ hderiv hderiv₁
     (BUC.slice v y) (BUC.slice vz y) (BUC.slice vzz y) (hv y) (hvz y)
-
-/-- Pairing a longitudinal derivative costs only the undifferentiated perturbation norm. -/
-theorem norm_longitudinalPairing_derivative_le {ψ ψ₁ : ℝ → F}
-    (hψ : Integrable ψ) (hψ₁ : Integrable ψ₁)
-    (hderiv : ∀ z, HasDerivAt ψ (ψ₁ z) z)
-    (v vz : BUC (Y × ℝ) F)
-    (hv : ∀ y z, HasDerivAt (fun r ↦ v (y, r)) (vz (y, z)) z) :
-    ‖longitudinalPairing ψ hψ vz‖ ≤ (∫ z, ‖ψ₁ z‖) * ‖v‖ := by
-  rw [longitudinalPairing_derivative hψ hψ₁ hderiv v vz hv, norm_neg]
-  exact norm_longitudinalPairing_le ψ₁ hψ₁ v
-
-/-- Pairing a second longitudinal derivative also loses no perturbation derivatives. -/
-theorem norm_longitudinalPairing_secondDerivative_le {ψ ψ₁ ψ₂ : ℝ → F}
-    (hψ : Integrable ψ) (hψ₁ : Integrable ψ₁) (hψ₂ : Integrable ψ₂)
-    (hderiv : ∀ z, HasDerivAt ψ (ψ₁ z) z)
-    (hderiv₁ : ∀ z, HasDerivAt ψ₁ (ψ₂ z) z)
-    (v vz vzz : BUC (Y × ℝ) F)
-    (hv : ∀ y z, HasDerivAt (fun r ↦ v (y, r)) (vz (y, z)) z)
-    (hvz : ∀ y z, HasDerivAt (fun r ↦ vz (y, r)) (vzz (y, z)) z) :
-    ‖longitudinalPairing ψ hψ vzz‖ ≤ (∫ z, ‖ψ₂ z‖) * ‖v‖ := by
-  rw [longitudinalPairing_secondDerivative hψ hψ₁ hψ₂ hderiv hderiv₁ v vz vzz hv hvz]
-  exact norm_longitudinalPairing_le ψ₂ hψ₂ v
 
 end
 

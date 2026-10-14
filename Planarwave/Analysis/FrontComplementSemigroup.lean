@@ -85,21 +85,6 @@ theorem exists_eventually_frontPencil_complement_bound :
     exact hne ((hgapq z hright.le).mp hz)
   · linarith
 
-/-- The same individual complementary bound in the paper's complex Fourier coordinates. -/
-theorem exists_eventually_frontComplexFrequency_complement_bound :
-    ∃ θ > 0, ∀ᶠ ξ : ℂ^m in 𝓝 0, ∀ ξ₀ ξ₁ : ℝ^m,
-      complexFrequencyShift ξ₀ ξ₁ = ξ → ∃ M > 0, ∀ t : NNReal,
-        ‖(frontComplexFrequencyC0Semigroup f D c φ h₁ h₂ ξ₀ ξ₁ t).comp
-            (ContinuousLinearMap.id ℂ (BUC ℝ (ℂ^n)) -
-              frontCriticalProjectionAtComplexFrequency f D c φ ψ h₁ h₂ h₃ ξ)‖ ≤
-          M * Real.exp (-(θ / 4) * t) := by
-  obtain ⟨θ, hθ, hb⟩ := exists_eventually_frontPencil_complement_bound f D c φ ψ h₁ h₂ h₃
-  refine ⟨θ, hθ, ?_⟩
-  filter_upwards [(tendsto_complexFrequencyQuadratic_zero (m := m)).eventually hb] with ξ hξ
-  intro ξ₀ ξ₁ hshift
-  rw [frontComplexFrequencyC0Semigroup_eq_pencil, hshift]
-  exact hξ
-
 end
 
 end Planarwave

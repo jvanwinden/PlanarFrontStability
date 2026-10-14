@@ -558,17 +558,6 @@ theorem eventually_not_bijective_affinePencil_iff_eq_eigenvalueBranch
     with p hp
   rw [← hp, S.affinePencil_isInvertible_iff_bijective B p.1 p.2]
 
-/-- Equivalently, the scalar Schur complement has exactly one nearby zero. -/
-theorem eventually_characteristicValue_eq_zero_iff_eq_eigenvalueBranch
-    (B : Dom →L[ℂ] X) :
-    ∀ᶠ p in nhds (0, 0),
-      S.characteristicValue B p.1 p.2 = 0 ↔
-        p.2 = S.eigenvalueBranch B p.1 := by
-  filter_upwards [S.eventually_complementPencil_isInvertible B,
-    S.eventually_not_affinePencil_isInvertible_iff_eq_eigenvalueBranch B] with p hC hspectrum
-  rw [← hspectrum,
-    S.not_affinePencil_isInvertible_iff_characteristicValue_eq_zero B p.1 p.2 hC]
-
 /-! ## The complementary block along the critical branch -/
 
 /-- The pencil evaluated on the Lyapunov--Schmidt critical eigenvalue. -/
@@ -853,17 +842,6 @@ theorem range_criticalPencil_eq_kernel_criticalCokernelFunctional
     rw [hw, zero_smul, zero_add] at hdecomp
     exact hdecomp.symm
 
-/-- Near zero, the critical pencil has the exact perturbed Fredholm alternative: its range is
-the kernel of the perturbed left eigenfunctional. -/
-theorem eventually_range_criticalPencil_eq_kernel_criticalCokernelFunctional
-    (B : Dom →L[ℂ] X) :
-    ∀ᶠ q in nhds 0,
-      LinearMap.range (S.criticalPencil B q).toLinearMap =
-        LinearMap.ker (S.criticalCokernelFunctional B q).toLinearMap := by
-  filter_upwards [S.eventually_criticalComplementPencil_isInvertible B,
-    S.eventually_criticalPencil_eigenvector_eq_zero B] with q hC heig
-  exact S.range_criticalPencil_eq_kernel_criticalCokernelFunctional B q hC heig
-
 /-! ## The normalized perturbed projection -/
 
 /-- The pairing of the unnormalized perturbed left functional with the normalized right
@@ -1007,28 +985,6 @@ theorem kernel_criticalProjection_eq_range_criticalPencil
   rw [S.kernel_criticalProjection_eq_kernel_criticalLeftFunctional B q,
     S.kernel_criticalLeftFunctional_eq_kernel_criticalCokernelFunctional B q hq,
     ← S.range_criticalPencil_eq_kernel_criticalCokernelFunctional B q hC heig]
-
-/-- The critical projection annihilates every value of the shifted critical pencil. -/
-theorem criticalProjection_criticalPencil
-    (B : Dom →L[ℂ] X) (q : ℂ)
-    (hC : (S.criticalComplementPencil B q).IsInvertible)
-    (heig : S.criticalPencil B q (S.eigenvectorBranch B q) = 0)
-    (x : Dom) :
-    S.criticalProjection B q (S.criticalPencil B q x) = 0 := by
-  rw [criticalProjection_apply]
-  change ((S.criticalNormalization B q)⁻¹ *
-    S.criticalCokernelFunctional B q (S.criticalPencil B q x)) •
-      S.inclusion (S.eigenvectorBranch B q) = 0
-  rw [S.criticalCokernelFunctional_criticalPencil B q hC heig, mul_zero, zero_smul]
-
-/-- The critical rank-one map is a projection near zero. -/
-theorem eventually_criticalProjection_idempotent (B : Dom →L[ℂ] X) :
-    ∀ᶠ q in nhds 0, ∀ w : X,
-      S.criticalProjection B q (S.criticalProjection B q w) =
-        S.criticalProjection B q w := by
-  filter_upwards [S.eventually_criticalNormalization_ne_zero B] with q hq
-  intro w
-  simp [criticalProjection_apply, S.criticalLeftFunctional_eigenvector B q hq]
 
 /-- Near zero, the projection has rank one and its kernel is exactly the range of the shifted
 critical pencil. -/

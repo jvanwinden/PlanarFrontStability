@@ -43,18 +43,6 @@ theorem norm_frontCriticalHeatEvolution_le (t : NNReal) (v : BUC (ℝ^m) (BUC �
       ‖profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃)‖ * ‖v‖ :=
   (norm_heatFlowBUC_le _ _ _).trans (BUC.norm_postcompCLM_apply_le _ _)
 
-include h₃ in
-/-- The paper's first iterated Fourier representation, now for the actual
-spatial semigroup, on bounded data without spatial integrability assumptions. -/
-theorem frontSpatialC0Semigroup_eq_fourierIntegral (hd : 2 ≤ d) (t : NNReal) (ht : 0 < t)
-    (v : BUC (ℝ^d) (ℂ^n)) (y : ℝ^(d-1)) :
-    spatialSlices hd (frontSpatialC0Semigroup f D c φ h₁ h₂ hd t v) y =
-      ((2 * Real.pi) ^ (d-1))⁻¹ • ∫ y' : ℝ^(d-1), ∫ ξ : ℝ^(d-1),
-        Complex.exp (Complex.I * (⟪ξ, y-y'⟫ : ℂ)) •
-          (frontFourierSemigroupSymbol f D c φ h₁ h₂ t (embed ξ) (spatialSlices hd v y')) := by
-  rw [frontSpatialC0Semigroup_eq_fourierConvolution f D c φ h₁ h₂ ψ h₃ hd t ht v]
-  exact frontFourierConvolutionCLM_apply_eq_fourierIntegral f D c φ h₁ h₂ ψ h₃ t ht (spatialSlices hd v) y
-
 /-- The all-time remainder estimate of the paper's semigroup decomposition
 theorem, including zero, for the independently defined spatial evolution. -/
 theorem exists_frontSpatialC0Semigroup_remainder_bound (hd : 2 ≤ d) :
@@ -93,29 +81,6 @@ theorem exists_frontSpatialC0Semigroup_remainder_bound (hd : 2 ≤ d) :
       apply (div_le_div_iff₀ hpos hden).mpr
       nlinarith [mul_le_mul_of_nonneg_right hCtwo hpos.le]
     exact (hlong t (show 1 ≤ t from ht') v).trans (mul_le_mul_of_nonneg_right hfrac (norm_nonneg v))
-
-include h₃ in
-/-- The actual spatial semigroup is uniformly bounded for all nonnegative times. -/
-theorem exists_frontSpatialC0Semigroup_uniform_bound (hd : 2 ≤ d) :
-    ∃ M > 0, ∀ t : NNReal, ‖frontSpatialC0Semigroup f D c φ h₁ h₂ hd t‖ ≤ M := by
-  obtain ⟨C, hC, hb⟩ := exists_frontSpatialC0Semigroup_remainder_bound f D c φ h₁ h₂ ψ h₃ hd
-  let P := profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃)
-  refine ⟨C + ‖P‖, by positivity, fun t ↦ ?_⟩
-  apply ContinuousLinearMap.opNorm_le_bound _ (by positivity)
-  intro v
-  have hheat : ‖frontCriticalHeatEvolution f D c φ ψ h₃ t (spatialSlices hd v)‖ ≤ ‖P‖ * ‖v‖ := by
-    simpa only [norm_spatialSlices] using! norm_frontCriticalHeatEvolution_le f D c φ ψ h₃ t (spatialSlices hd v)
-  have hfrac : C / (1 + (t : ℝ)) ≤ C := by
-    apply (div_le_iff₀ (by positivity : 0 < 1 + (t : ℝ))).mpr
-    nlinarith [mul_nonneg hC.le t.2]
-  rw [← norm_spatialSlices hd]
-  calc
-    _ ≤ ‖spatialSlices hd (frontSpatialC0Semigroup f D c φ h₁ h₂ hd t v) -
-        frontCriticalHeatEvolution f D c φ ψ h₃ t (spatialSlices hd v)‖ +
-          ‖frontCriticalHeatEvolution f D c φ ψ h₃ t (spatialSlices hd v)‖ := norm_le_norm_sub_add _ _
-    _ ≤ (C / (1 + t)) * ‖v‖ + ‖P‖ * ‖v‖ := add_le_add (hb t v) hheat
-    _ ≤ C * ‖v‖ + ‖P‖ * ‖v‖ := add_le_add (mul_le_mul_of_nonneg_right hfrac (norm_nonneg v)) le_rfl
-    _ = _ := by ring
 
 end
 

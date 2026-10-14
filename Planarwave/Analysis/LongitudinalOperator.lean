@@ -97,15 +97,6 @@ theorem longitudinalOperator_sub (D : V →L[ℂ] V) (c q r : ℂ)
   simp [longitudinalOperator]
   module
 
-/-- Lipschitz dependence on the transverse Fourier parameter in operator norm. -/
-theorem norm_longitudinalOperator_sub_le (D : V →L[ℂ] V) (c q r : ℂ)
-    (A : BUC ℝ (V →L[ℂ] V)) :
-    ‖longitudinalOperator D c q A - longitudinalOperator D c r A‖ ≤
-      ‖r - q‖ * ‖diffusionValue D‖ := by
-  rw [longitudinalOperator_sub]
-  exact ContinuousLinearMap.opNorm_smul_le (r - q)
-    (diffusionValue D : LongitudinalDomain V →L[ℂ] LongitudinalSpace V)
-
 /-- The real transverse wavenumber `k` enters through `q = k²`. -/
 def transverseFourierOperator (D : V →L[ℂ] V) (c : ℂ)
     (A : BUC ℝ (V →L[ℂ] V)) (k : ℝ) :

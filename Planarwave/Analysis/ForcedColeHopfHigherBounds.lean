@@ -74,29 +74,6 @@ theorem IsForcedColeHopfMild.spatial_bound {a β T C M : ℝ}
       (fun _ _ ↦ le_rfl) ht
   exact (hU t ht).1.mono hb
 
-/-- Apply the a priori estimate to the actual delayed forcing using only
-the undifferentiated source bootstrap. -/
-theorem IsForcedColeHopfMild.delayed_spatial_bound {a β T M : ℝ}
-    {p : BUC E ℝ} {N ξ : ℝ → BUC E ℝ}
-    (hξ : IsForcedColeHopfMild a β (delayedHeatForcing a p N) ξ T)
-    (ha : 0 < a) (hT : 0 ≤ T) (hM : 0 ≤ M) (hM1 : M ≤ 1) (k : ℕ)
-    (hp : ‖p‖ ≤ M)
-    (hN : ∀ r ∈ Icc 0 T, ‖N r‖ ≤ M * (1 + r) ^ (-(5 : ℝ) / 4))
-    {t : ℝ} (ht : t ∈ Icc 0 T) :
-    let C := ‖trackingCutoff‖ * delayedForcingSpatialConstant a k * (3 : ℝ) ^ ((5 : ℝ) / 4)
-    BUCSpatialBound k (ξ t) ((4 * C * Real.exp (4 * (|β| * 2 ^ k) * C)) * M) := by
-  dsimp only
-  have hg := bucSpatialRegularOn_delayedHeatForcing k ha p N T
-  apply hξ.spatial_bound hT (by
-    have h := (delayedForcingSpatialConstant_pos a k).le
-    positivity) hM hM1 k hg _ ht
-  intro r hr
-  apply hg.bound_of_iteratedFDeriv hr
-  intro j hj x
-  simpa only [neg_div] using norm_iteratedFDeriv_delayedHeatForcing_decay_le ha
-    (by norm_num : (0 : ℝ) ≤ 5 / 4) k j hj p N hM hp
-    (by simpa only [neg_div] using hN) hr x
-
 end
 
 end Planarwave

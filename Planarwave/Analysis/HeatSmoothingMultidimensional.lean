@@ -69,45 +69,6 @@ theorem integrable_sq_norm_stdGaussian :
     (IsGaussian.memLp_two_id : MemLp (id : E → E) 2 (stdGaussian E)).integrable_norm_pow
       (by norm_num)
 
-/-- A convenient dimension-explicit first radial moment bound.  It is sharp in dimension one
-for the elementary inequality used here and avoids special functions. -/
-theorem integral_norm_stdGaussian_le :
-    ∫ z : E, ‖z‖ ∂(stdGaussian E) ≤ (Module.finrank ℝ E + 1 : ℝ) / 2 := by
-  have hpoint (z : E) : ‖z‖ ≤ (‖z‖ ^ 2 + 1) / 2 := by
-    nlinarith [sq_nonneg (‖z‖ - 1)]
-  calc
-    ∫ z : E, ‖z‖ ∂(stdGaussian E) ≤
-        ∫ z : E, (‖z‖ ^ 2 + 1) / 2 ∂(stdGaussian E) := by
-      exact integral_mono
-        (IsGaussian.integrable_id : Integrable (id : E → E) (stdGaussian E)).norm
-        ((integrable_sq_norm_stdGaussian.add (integrable_const 1)).div_const 2) hpoint
-    _ = (Module.finrank ℝ E + 1 : ℝ) / 2 := by
-      rw [integral_div, integral_add, integral_sq_norm_stdGaussian]
-      · simp
-      · exact integrable_sq_norm_stdGaussian
-      · exact integrable_const 1
-
-/-- The radial second Hermite polynomial has `L¹` norm at most twice the dimension. -/
-theorem integral_abs_sq_norm_sub_finrank_stdGaussian_le :
-    ∫ z : E, |‖z‖ ^ 2 - Module.finrank ℝ E| ∂(stdGaussian E) ≤
-      2 * Module.finrank ℝ E := by
-  let n : ℝ := Module.finrank ℝ E
-  have hn : 0 ≤ n := by positivity
-  have hint : Integrable (fun z : E => |‖z‖ ^ 2 - n|) (stdGaussian E) := by
-    exact (integrable_sq_norm_stdGaussian.sub (integrable_const n)).norm
-  calc
-    ∫ z : E, |‖z‖ ^ 2 - n| ∂(stdGaussian E) ≤
-        ∫ z : E, (‖z‖ ^ 2 + n) ∂(stdGaussian E) := by
-      exact integral_mono hint (integrable_sq_norm_stdGaussian.add (integrable_const n))
-        (fun z => by rw [abs_le]; constructor <;> nlinarith [sq_nonneg ‖z‖])
-    _ = (Module.finrank ℝ E : ℝ) + n := by
-      rw [integral_add integrable_sq_norm_stdGaussian (integrable_const n),
-        integral_sq_norm_stdGaussian]
-      simp
-    _ = 2 * Module.finrank ℝ E := by
-      dsimp [n]
-      ring
-
 end GaussianMoments
 
 section HermiteKernels

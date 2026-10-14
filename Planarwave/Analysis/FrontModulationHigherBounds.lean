@@ -10,12 +10,12 @@ import all Planarwave.Analysis.FrontForcedPhaseHigherBounds
 import Planarwave.Analysis.SpatialTrackingInterpolation
 
 /-!
-# Step 4: higher regularity transfer and interpolation for the actual front
+# Step 4: higher regularity transfer for the actual front
 
 The phase bound is derived from the original source bootstrap, and all
-profile bounds from the original front hypotheses. Transfer the cut off
-reaction--diffusion bound through the actual modulation map, then use
-the logarithmic tracking bound to obtain `eq:vestC2`.
+profile bounds from the original front hypotheses. Transfer a supplied
+cut off reaction--diffusion bound through the actual modulation map to
+obtain higher spatial bounds for the inverse-modulated perturbation.
 
 The parabolic `C^9` estimate for the cut off reaction--diffusion solution
 remains an explicit prerequisite; this file does not assert it or a
@@ -61,40 +61,6 @@ theorem exists_front_modulated_cutoff_cn_bound (k : ℕ) {B : ℝ} (hB : 0 ≤ B
   have hM1 : M ≤ 1 := hMM.trans (min_le_right _ _)
   have hσ := (hphase T M v₀ N ξ σ hT hM (hMM.trans (min_le_left _ _)) hv₀ hN hξ hCH t ht).2
   exact hu.modulationShift_sub_cutoff (hσ.mono (show K * M ≤ K by nlinarith)) hp hχ (c * t)
-
-include h₁ in
-/-- The paper's `3/4` interpolation decay for the actual cut off perturbation.
-Its BUC first and second derivative fields are constructed, not assumed.
-The remaining high-order input concerns only the reaction--diffusion slice. -/
-theorem exists_front_modulated_cutoff_c2_decay {B K : ℝ} (hB : 0 ≤ B) (hK : 0 ≤ K) :
-    ∃ C > 0, ∃ M₀ > 0,
-      ∀ (T M : ℝ) (v₀ : BUC (ℝ^m × ℝ) (ℝ^n))
-        (N : ℝ → BUC (ℝ^m × ℝ) (ℝ^n)) (ξ σ : ℝ → BUC (ℝ^m) ℝ),
-      0 ≤ T → 0 ≤ M → M ≤ M₀ → ‖v₀‖ ≤ M →
-      (∀ r ∈ Icc 0 T, ‖N r‖ ≤ M * (1 + r) ^ (-(5 : ℝ) / 4)) →
-      IsForcedColeHopfMild (d_perp D φ ψ) (c / (2 * d_perp D φ ψ))
-        (frontDelayedForcing f D c φ ψ h₃ v₀ N) ξ T →
-      (∀ t ∈ Icc 0 T, coleHopfBUC (c / (2 * d_perp D φ ψ)) (σ t) = ξ t) →
-      ∀ t ∈ Icc 0 T, ∀ (u : BUC (ℝ^m × ℝ) (ℝ^n)) (χ : ℝ),
-        |χ| ≤ 1 → BUCSpatialBound 9 (χ • u) B →
-        ‖modulationShift (c * t) (σ t) u - frontSplitProfileBUC f D c φ h₂‖ ≤
-          K * M / (1 + t) * Real.log (2 + t) →
-        BUCSpatialBound 2
-          (χ • (modulationShift (c * t) (σ t) u - frontSplitProfileBUC f D c φ h₂))
-          (C * M ^ ((3 : ℝ) / 4) * (1 + t) ^ (-(3 : ℝ) / 4)) := by
-  obtain ⟨A, hA, μ, hμ, hhigher⟩ :=
-    exists_front_modulated_cutoff_cn_bound (m := m) f D c φ ψ h₁ h₂ h₃ 9 hB
-  obtain ⟨C, hC, ε, hε, hi⟩ := exists_tracking_spatial_c2_bound
-    (E := ℝ^m × ℝ) (F := ℝ^n) hK hA.le
-  refine ⟨C, hC, min μ ε, lt_min hμ hε, ?_⟩
-  intro T M v₀ N ξ σ hT hM hMM hv₀ hN hξ hCH t ht u χ hχ hu hv
-  have hb := hhigher T M v₀ N ξ σ hT hM (hMM.trans (min_le_left _ _)) hv₀ hN hξ hCH t ht u χ hχ hu
-  apply hi M t _ ⟨hM, hMM.trans (min_le_right _ _)⟩ ht.1 hb
-  calc
-    _ = |χ| * ‖modulationShift (c * t) (σ t) u - frontSplitProfileBUC f D c φ h₂‖ := by
-      rw [norm_smul, Real.norm_eq_abs]
-    _ ≤ 1 * ‖modulationShift (c * t) (σ t) u - frontSplitProfileBUC f D c φ h₂‖ := by gcongr
-    _ ≤ _ := by simpa only [one_mul] using hv
 
 end
 

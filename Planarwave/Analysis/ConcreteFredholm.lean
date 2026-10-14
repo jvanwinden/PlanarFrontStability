@@ -10,7 +10,7 @@ import all Planarwave.Analysis.PhaseFunctional
 import all Planarwave.Analysis.ProfileProjection
 import all Planarwave.Analysis.TranslationMode
 import all Planarwave.Analysis.TransverseOperatorBridge
-import Planarwave.Analysis.ClosedOperatorFromResolvent
+import Planarwave.Analysis.ClosedOperator
 import Planarwave.Analysis.FredholmProjection
 
 /-!
@@ -115,106 +115,11 @@ def horizontalSimpleFredholmZeroMode :
   kernel_eq_span := horizontalOperator_kernel_eq_span f D c φ ψ h₃ A hA
   solvable_iff := exists_horizontalOperator_eq_iff_phase_zero f D c φ ψ h₃ A hA
 
-/-- Consequently zero is semisimple: the embedded translation mode is not in the range of the
-horizontal operator. -/
-theorem translationMode_not_mem_horizontalOperator_range :
-    ComplexBUC2.value (ℂ^n) (translationModeComplexBUC2 f D c φ ψ h₃) ∉
-      LinearMap.range (challengeTransverseOperator D c A 0).toLinearMap := by
-  exact (horizontalSimpleFredholmZeroMode f D c φ ψ h₃ A hA).inclusion_mode_not_mem_range
-
 /-- The horizontal operator restricted to the phase-zero complements is a bounded linear
 equivalence, exactly as used in the Lyapunov--Schmidt reduction of Proposition 2.1. -/
 noncomputable def horizontalComplementEquiv :=
   (horizontalSimpleFredholmZeroMode f D c φ ψ h₃ A hA).complementOperatorEquiv
 
-/-! ## Transfer of the challenge spectrum to the bundled pencil -/
-
-include h₃
-
-/-- The horizontal spectral gap, stated directly for failure of bijectivity of the bundled
-common-domain resolvent. -/
-theorem bundled_horizontal_spectral_gap :
-    ∃ θ > 0, ∀ l : ℂ,
-      ¬ Function.Bijective (challengeResolventMap D c A 0 l) →
-        l = 0 ∨ l.re ≤ -θ := by
-  obtain ⟨θ, hθ, hgap⟩ := h₃.horizontal_spectral_gap
-  refine ⟨θ, hθ, fun l hl ↦ ?_⟩
-  exact hgap l ((mem_transverseSpectrum_iff_not_bijective f D c φ A hA 0 l).2 hl)
-
-/-- The medium/high-wavenumber spectral gap in bundled-operator form. -/
-theorem bundled_transverse_high_wavenumber :
-    ∀ k₀ > 0, ∃ θ₁ > 0,
-      ∀ k ≥ k₀, ∀ l : ℂ,
-        ¬ Function.Bijective (challengeResolventMap D c A k l) → l.re ≤ -θ₁ := by
-  intro k₀ hk₀
-  obtain ⟨θ₁, hθ₁, hgap⟩ := h₃.transverse_high_wavenumber k₀ hk₀
-  refine ⟨θ₁, hθ₁, fun k hk l hl ↦ ?_⟩
-  exact hgap k hk l
-    ((mem_transverseSpectrum_iff_not_bijective f D c φ A hA k l).2 hl)
-
-/-- The positive real number one lies in the horizontal resolvent set.  This follows immediately
-from the spectral gap and provides a resolvent point from which closedness of the horizontal
-operator is obtained. -/
-theorem horizontal_resolventMap_one_bijective :
-    Function.Bijective (challengeResolventMap D c A 0 1) := by
-  obtain ⟨θ, hθ, hgap⟩ := bundled_horizontal_spectral_gap f D c φ ψ h₃ A hA
-  by_contra hnot
-  rcases hgap 1 hnot with hone | hle
-  · norm_num at hone
-  · norm_num at hle
-    linarith
-
-/-- The concrete horizontal operator as a closed operator on longitudinal BUC.  Closedness is
-derived, rather than assumed, from the resolvent point `1`. -/
-def horizontalClosedOperator :
-    ClosedOperator ℂ (BUC ℝ (ℂ^n)) (ComplexBUC2 (ℂ^n)) :=
-  ClosedOperator.ofBijectiveResolvent
-    (ComplexBUC2.valueCLM (ℂ^n))
-    (challengeTransverseOperator D c A 0)
-    (ComplexBUC2.valueCLM_injective (ℂ^n)) 1
-    (by
-      change Function.Bijective (challengeResolventMap D c A 0 1)
-      exact horizontal_resolventMap_one_bijective f D c φ ψ h₃ A hA)
-
-@[simp]
-theorem horizontalClosedOperator_operator :
-    (horizontalClosedOperator f D c φ ψ h₃ A hA).operator =
-      challengeTransverseOperator D c A 0 :=
-  rfl
-
-@[simp]
-theorem horizontalClosedOperator_inclusion :
-    (horizontalClosedOperator f D c φ ψ h₃ A hA).inclusion =
-      ComplexBUC2.valueCLM (ℂ^n) :=
-  rfl
-
-@[simp]
-theorem horizontalClosedOperator_resolventMap (l : ℂ) :
-    (horizontalClosedOperator f D c φ ψ h₃ A hA).resolventMap l =
-      challengeResolventMap D c A 0 l :=
-  rfl
-
-/-- The spectrum of the concrete closed horizontal operator is exactly the semantic spectrum from
-the challenge statement. -/
-theorem mem_horizontalClosedOperator_spectrum_iff (l : ℂ) :
-    l ∈ (horizontalClosedOperator f D c φ ψ h₃ A hA).spectrum ↔
-      l ∈ TransverseSpectrum f D c φ 0 := by
-  rw [ClosedOperator.mem_spectrum,
-    mem_transverseSpectrum_iff_not_bijective f D c φ A hA 0 l]
-  rfl
-
-/-- Zero belongs to the horizontal spectrum because the normalized translation mode is nonzero. -/
-theorem zero_mem_horizontalClosedOperator_spectrum :
-    (0 : ℂ) ∈ (horizontalClosedOperator f D c φ ψ h₃ A hA).spectrum := by
-  rw [ClosedOperator.mem_spectrum]
-  intro hbij
-  let S := horizontalSimpleFredholmZeroMode f D c φ ψ h₃ A hA
-  have hzero : (challengeTransverseOperator D c A 0) S.mode = 0 := S.operator_mode
-  have hmap : (horizontalClosedOperator f D c φ ψ h₃ A hA).resolventMap 0 S.mode =
-      (horizontalClosedOperator f D c φ ψ h₃ A hA).resolventMap 0 0 := by
-    simpa [S] using hzero
-  have := hbij.injective hmap
-  exact S.mode_ne_zero this
 
 end
 

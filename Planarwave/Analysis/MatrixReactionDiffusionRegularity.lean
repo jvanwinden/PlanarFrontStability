@@ -57,24 +57,6 @@ def IsMatrixReactionDiffusionMildOn (f : ℝ^n → ℝ^n) (hf : Continuous f)
   IsFiniteHeatSystemMildOn (diffusionEigenvalues D hD) (matrixDiffusionCoordinate D hD)
     f hf T u
 
-/-- It is enough to establish the usual coordinate mild formula from the
-initial datum; all later restart formulas follow from the heat semigroup. -/
-theorem isMatrixReactionDiffusionMildOn_of_mild
-    (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (h₁ : IsSmoothParabolic f D)
-    {T : ℝ} {u : ℝ → BUC E (ℝ^n)} (hu : ContinuousOn u (Icc 0 T))
-    (hm : ∀ t ∈ Icc 0 T, ∀ i,
-      BUC.postcompCLM (matrixDiffusionCoordinate D h₁.positive i) (u t) =
-        heatFlowBUC (diffusionEigenvalues D h₁.positive i) t
-          (BUC.postcompCLM (matrixDiffusionCoordinate D h₁.positive i) (u 0)) +
-        heatDuhamel (diffusionEigenvalues D h₁.positive i) (fun r ↦
-          BUC.postcompContinuous (fun v ↦ matrixDiffusionCoordinate D h₁.positive i (f v))
-            ((matrixDiffusionCoordinate D h₁.positive i).continuous.comp h₁.smooth.continuous)
-            (u r)) t) :
-    IsMatrixReactionDiffusionMildOn f h₁.smooth.continuous D h₁.positive T u :=
-  isFiniteHeatSystemMildOn_of_mild (diffusionEigenvalues D h₁.positive)
-    (diffusionEigenvalues_nonneg D h₁.positive) (matrixDiffusionCoordinate D h₁.positive)
-    f h₁.smooth hu hm
-
 /-- Uniform all-order parabolic bounds for a bounded solution of the
 original matrix mild equations. All constants precede the horizon and
 solution, and no spatial derivative of the solution is assumed. -/

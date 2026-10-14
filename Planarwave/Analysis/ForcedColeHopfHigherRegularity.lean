@@ -77,21 +77,6 @@ theorem IsForcedColeHopfMild.delayed_contDiff_infty {a β T : ℝ}
   contDiff_infty.mpr fun k ↦
     (hξ.delayed_bucSpatialRegularOn ha (ht.1.trans ht.2) k).contDiff ht
 
-/-- Inverse Cole--Hopf preserves spatial smoothness on its small admissible range. -/
-theorem IsForcedColeHopfMild.delayed_phase_contDiff_infty {a β T : ℝ}
-    {p : BUC E ℝ} {N ξ σ : ℝ → BUC E ℝ}
-    (hξ : IsForcedColeHopfMild a β (delayedHeatForcing a p N) ξ T)
-    (ha : 0 < a) {t : ℝ} (ht : t ∈ Icc 0 T)
-    (hsmall : |β| * ‖ξ t‖ ≤ 1 / 2)
-    (hσ : ∀ x, σ t x = coleHopfInv β (ξ t x)) :
-    ContDiff ℝ ∞ (σ t : E → ℝ) := by
-  have heq : (σ t : E → ℝ) = coleHopfInv β ∘ ξ t := funext hσ
-  rw [heq, ← contDiffOn_univ]
-  apply (contDiffOn_coleHopfInv β).comp (hξ.delayed_contDiff_infty ha ht).contDiffOn
-  intro x _
-  exact Icc_subset_coleHopfDomain_of_small_radius hsmall
-    (abs_le.mp ((ξ t).norm_apply_le x))
-
 /-- Construct a solution with all spatial BUC derivative paths at once.
 This does not yet claim uniform-in-horizon bounds for those derivatives. -/
 theorem exists_delayed_forcedColeHopf_mild_spatially_smooth {a : ℝ} (ha : 0 < a)

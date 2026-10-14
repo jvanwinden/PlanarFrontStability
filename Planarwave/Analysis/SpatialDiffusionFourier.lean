@@ -7,6 +7,7 @@ module
 
 import all Planarwave.Analysis.SpatialHeatFourier
 import all Planarwave.Analysis.FrontSpatialSemigroup
+import all Planarwave.Analysis.DiffusionSemigroup
 import Planarwave.Analysis.DiagonalHeatFourier
 
 /-!

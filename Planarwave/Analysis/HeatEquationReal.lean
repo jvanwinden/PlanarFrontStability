@@ -109,12 +109,6 @@ theorem hasDerivAt_heatFlow_time_real {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
   filter_upwards [Ioi_mem_nhds (show t / 2 < t by linarith)] with r hr
   exact congrFun (hsplit r hr).symm x
 
-/-- Equality form of the positive-time heat equation. -/
-theorem deriv_heatFlow_time_real {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
-    (f : BUC ℝ F) (x : ℝ) :
-    deriv (fun r => heatFlow a r f x) t = a • deriv (deriv (heatFlow a t f)) x :=
-  (hasDerivAt_heatFlow_time_real ha ht f x).deriv
-
 end
 
 end Planarwave

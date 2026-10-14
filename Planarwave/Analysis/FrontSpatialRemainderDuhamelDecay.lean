@@ -116,9 +116,13 @@ theorem frontSpatialDuhamel_decomposition (hd : 2 ≤ d) (v₀ : BUC (ℝ^d) (�
   have hage : Continuous (fun r : ℝ ↦ ((t - r).toNNReal : ℝ)) :=
     continuous_subtype_val.comp (continuous_real_toNNReal.comp (continuous_const.sub continuous_id))
   have hPc : ContinuousOn (fun r ↦ frontCriticalHeatEvolution f D c φ ψ h₃
-      (t - r).toNNReal (spatialSlices hd (G r))) (Icc 0 t) :=
-    (continuous_heatFlowBUC_joint (d_perp D φ ψ)).comp_continuousOn
-      (hage.continuousOn.prodMk (P.continuous.comp_continuousOn hG))
+      (t - r).toNNReal (spatialSlices hd (G r))) (Icc 0 t) := by
+    change ContinuousOn (fun r ↦ heatFlowBUC (d_perp D φ ψ)
+      ((t - r).toNNReal : ℝ) (P (G r))) (Icc 0 t)
+    simpa only [Function.comp_def] using!
+      (continuous_heatFlowBUC_joint (E := ℝ^(d - 1)) (F := BUC ℝ (ℂ^n))
+        (d_perp D φ ψ)).comp_continuousOn
+          (hage.continuousOn.prodMk (P.continuous.comp_continuousOn hG))
   have hcomm := A.intervalIntegral_comp_comm (hSc.intervalIntegrable_of_Icc (μ := volume) ht)
   change A (S t.toNNReal v₀ + ∫ r in (0 : ℝ)..t, S (t - r).toNNReal (G r)) = _
   rw [map_add, ← hcomm]

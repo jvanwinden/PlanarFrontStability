@@ -129,22 +129,6 @@ theorem IsForcedColeHopfMild.delayed_hasDerivAt {a β T : ℝ}
       (BUC.evalCLM (𝕜 := ℝ) (E := ℝ) x).hasFDerivAt.comp_hasDerivAt t hdt
   rwa [heq t ⟨ht.1.le, ht.2.le⟩] at hp
 
-/-- Classical existence for the actual delayed forcing from a supplied
-nonlinear source. The coupled tracking source is not constructed here. -/
-theorem exists_delayed_forcedColeHopf_classical {a : ℝ} (ha : 0 < a) (β : ℝ)
-    {T : ℝ} (hT : 0 ≤ T) (p : BUC E ℝ) (N : ℝ → BUC E ℝ) :
-    ∃ ξ v : ℝ → BUC E ℝ,
-      IsForcedColeHopfMild a β (delayedHeatForcing a p N) ξ T ∧ Continuous v ∧
-      (∀ t ∈ Icc 0 T, ContDiff ℝ 2 (ξ t : E → ℝ) ∧
-        HasDerivWithinAt ξ (v t) (Icc 0 T) t ∧
-        ∀ x, v t x = a * Δ (ξ t : E → ℝ) x -
-          (1 + β * ξ t x) * delayedHeatForcing a p N t x) ∧
-      ∀ t ∈ Icc 0 T, t ≤ 1 / 4 → ξ t = 0 := by
-  obtain ⟨ξ, hξ, hz⟩ := exists_delayed_forcedColeHopf_mild a β hT p N
-  obtain ⟨v, hvc, hd, heq⟩ := hξ.delayed_exists_time_derivative ha hT
-  exact ⟨ξ, v, hξ, hvc, fun t ht ↦
-    ⟨hξ.delayed_contDiff_two ha hT ht, hd t ht, heq t ht⟩, hz⟩
-
 end
 
 end Planarwave

@@ -58,14 +58,6 @@ theorem joint {a b : ℝ} {k j : ℕ} {f : ℝ → BUC E F}
   | zero => exact hf.2
   | succ j => exact hf.2.1
 
-theorem spatialRegular {a b : ℝ} {k j : ℕ} {f : ℝ → BUC E F}
-    (hf : BUCSpacetimeRegularOn a b k j f) : BUCSpatialRegularOn (Icc a b) j f := by
-  induction j generalizing F with
-  | zero => exact hf.1
-  | succ j ih =>
-    obtain ⟨hc, _, f', hf', hd⟩ := hf
-    exact ⟨hc, f', ih hf', hd⟩
-
 theorem of_succ {a b : ℝ} {k j : ℕ} {f : ℝ → BUC E F}
     (hf : BUCSpacetimeRegularOn a b k (j + 1) f) : BUCSpacetimeRegularOn a b k j f := by
   induction j generalizing F with

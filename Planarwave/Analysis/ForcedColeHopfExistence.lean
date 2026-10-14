@@ -100,16 +100,6 @@ theorem IsForcedColeHopfMild.congr_forcing {a β T : ℝ} {g h ξ : ℝ → BUC 
   dsimp only
   rw [hgh ⟨hr.1, hr.2.trans ht.2⟩]
 
-/-- Causality: solutions with equal past forcing have equal past values,
-regardless of their later forcing or final times. -/
-theorem IsForcedColeHopfMild.eqOn_of_forcing_eqOn {a β S T U : ℝ}
-    {g h ξ η : ℝ → BUC E ℝ}
-    (hξ : IsForcedColeHopfMild a β g ξ S) (hη : IsForcedColeHopfMild a β h η T)
-    (hU : 0 ≤ U) (hUS : U ≤ S) (hUT : U ≤ T)
-    (hg : ContinuousOn g (Icc 0 U)) (hgh : EqOn g h (Icc 0 U)) :
-    EqOn ξ η (Icc 0 U) :=
-  (hξ.mono hUS).unique ((hη.mono hUT).congr_forcing hgh.symm) hg hU
-
 /-- Restart the mild solution at an intermediate time. This is the local
 evolution formula used when extending the tracking scheme. -/
 theorem IsForcedColeHopfMild.restart {a β T s t : ℝ} {g ξ : ℝ → BUC E ℝ}
@@ -164,18 +154,6 @@ theorem exists_delayed_forcedColeHopf_mild (a β : ℝ) {T : ℝ} (hT : 0 ≤ T)
     (continuous_delayedHeatForcing a p N).continuousOn
   exact ⟨ξ, hξ, fun _ ht hquarter ↦ hξ.delayed_initial_zero ht hquarter⟩
 
-/-- The phase is unique in the class whose Cole--Hopf transforms satisfy
-the mild equation. Classical-to-mild regularity is not presumed here. -/
-theorem eqOn_of_forcedColeHopf_transform {a β T : ℝ} {g σ τ : ℝ → BUC E ℝ}
-    (hσ : IsForcedColeHopfMild a β g (fun t ↦ coleHopfBUC β (σ t)) T)
-    (hτ : IsForcedColeHopfMild a β g (fun t ↦ coleHopfBUC β (τ t)) T)
-    (hg : ContinuousOn g (Icc 0 T)) (hT : 0 ≤ T) : EqOn σ τ (Icc 0 T) := by
-  intro t ht
-  have heq := hσ.unique hτ hg hT ht
-  ext x
-  apply (strictMono_coleHopf β).injective
-  exact congrArg (fun u : BUC E ℝ ↦ u x) heq
-
 /-- A canonical finite-horizon solution; its values on the horizon are
 independent of the choice made in this definition. -/
 def forcedColeHopfMildSolution (a β : ℝ) {T : ℝ} (hT : 0 ≤ T)
@@ -186,16 +164,6 @@ theorem isForcedColeHopfMild_solution (a β : ℝ) {T : ℝ} (hT : 0 ≤ T)
     (g : ℝ → BUC E ℝ) (hg : ContinuousOn g (Icc 0 T)) :
     IsForcedColeHopfMild a β g (forcedColeHopfMildSolution a β hT g hg) T :=
   (exists_forcedColeHopf_mild a β hT g hg).choose_spec
-
-/-- Enlarging the final time does not alter the constructed solution on
-the earlier interval. -/
-theorem forcedColeHopfMildSolution_consistent (a β : ℝ) {S T : ℝ}
-    (hS : 0 ≤ S) (hT : 0 ≤ T) (hST : S ≤ T)
-    (g : ℝ → BUC E ℝ) (hgS : ContinuousOn g (Icc 0 S)) (hgT : ContinuousOn g (Icc 0 T)) :
-    EqOn (forcedColeHopfMildSolution a β hS g hgS)
-      (forcedColeHopfMildSolution a β hT g hgT) (Icc 0 S) :=
-  (isForcedColeHopfMild_solution a β hS g hgS).unique
-    ((isForcedColeHopfMild_solution a β hT g hgT).mono hST) hgS hS
 
 /-- Existence and the uniform zero-order phase estimate, with constants
 chosen before the forcing and time interval. This is the continuous mild

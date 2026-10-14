@@ -65,9 +65,6 @@ theorem eqOn_inter_real_centered_balls_of_analytic {f g : ℂ → F} {a b r s : 
 def positiveTimeNeighborhood (η : ℝ) : Set ℂ :=
   ⋃ t : {t : ℝ // 0 < t}, Metric.ball (t.val : ℂ) (η * min t.val 1)
 
-theorem isOpen_positiveTimeNeighborhood (η : ℝ) : IsOpen (positiveTimeNeighborhood η) :=
-  isOpen_iUnion fun _ ↦ Metric.isOpen_ball
-
 theorem mem_positiveTimeNeighborhood_of_real {η t : ℝ} (hη : 0 < η) (ht : 0 < t) :
     (t : ℂ) ∈ positiveTimeNeighborhood η := by
   apply mem_iUnion.mpr

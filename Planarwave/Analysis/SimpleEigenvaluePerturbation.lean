@@ -365,11 +365,6 @@ theorem hasDerivAt_eigenvalueBranch (B : Dom →L[ℂ] X) :
     (-S.functional (B S.mode)) 0
   exact hderiv
 
-/-- Coefficient form of the critical-eigenvalue expansion at the origin. -/
-theorem deriv_eigenvalueBranch_zero (B : Dom →L[ℂ] X) :
-    deriv (S.eigenvalueBranch B) 0 = -S.functional (B S.mode) :=
-  (S.hasDerivAt_eigenvalueBranch B).deriv
-
 /-- The normalized eigenvector correction has the first-order bound `O(q)` in the graph
 domain. -/
 theorem eigenvectorBranch_sub_mode_isBigO (B : Dom →L[ℂ] X) :
@@ -384,46 +379,6 @@ theorem eigenvectorBranch_sub_mode_isBigO (B : Dom →L[ℂ] X) :
     (fun q : ℂ => S.eigenpairBranch B q - S.eigenpairBranch B 0) (𝓝 0)
   have hcorr := hC.trans hbranch
   simpa [C, eigenvectorBranch] using hcorr
-
-/-- The adjoint-normalized rank-one projection onto the constructed critical eigenline.
-This map has the correct range and normalization; identifying it with the Riesz projection
-requires a perturbed left eigenfunctional and is intentionally kept as a separate later step. -/
-def eigenlineProjection (B : Dom →L[ℂ] X) (q : ℂ) : X →L[ℂ] X :=
-  S.functional.smulRight (S.inclusion (S.eigenvectorBranch B q))
-
-@[simp]
-theorem eigenlineProjection_apply (B : Dom →L[ℂ] X) (q : ℂ) (w : X) :
-    S.eigenlineProjection B q w =
-      S.functional w • S.inclusion (S.eigenvectorBranch B q) :=
-  rfl
-
-@[simp]
-theorem eigenlineProjection_zero (B : Dom →L[ℂ] X) :
-    S.eigenlineProjection B 0 = S.projection := by
-  ext w
-  simp [eigenlineProjection, projection_apply]
-
-/-- Each member of the normalized eigenline projection family is idempotent. -/
-theorem eigenlineProjection_idempotent (B : Dom →L[ℂ] X) (q : ℂ) (w : X) :
-    S.eigenlineProjection B q (S.eigenlineProjection B q w) =
-      S.eigenlineProjection B q w := by
-  simp [eigenlineProjection_apply, S.eigenvectorBranch_normalized]
-
-/-- The normalized eigenline projection differs from the neutral projection by `O(q)` in
-operator norm. -/
-theorem eigenlineProjection_sub_projection_isBigO (B : Dom →L[ℂ] X) :
-    (fun q => S.eigenlineProjection B q - S.projection) =O[𝓝 0]
-      fun q : ℂ => q := by
-  have hinclusion :
-      (fun q => S.inclusion (S.eigenvectorBranch B q - S.mode)) =O[𝓝 0]
-        fun q : ℂ => q :=
-    (S.inclusion.isBigO_comp (fun q => S.eigenvectorBranch B q - S.mode) (𝓝 0)).trans
-      (S.eigenvectorBranch_sub_mode_isBigO B)
-  let R : X →L[ℂ] (X →L[ℂ] X) :=
-    ContinuousLinearMap.smulRightL ℂ X X S.functional
-  have hR := (R.isBigO_comp
-    (fun q => S.inclusion (S.eigenvectorBranch B q - S.mode)) (𝓝 0)).trans hinclusion
-  simpa [R, eigenlineProjection, projection, map_sub] using hR
 
 /-- The first-order eigenvalue expansion with its rigorous quadratic remainder:
 `λ(q) = -q ℓ(Bφ) + O(q²)`. -/

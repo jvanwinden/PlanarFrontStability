@@ -39,18 +39,6 @@ variable {n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
 def frontReactionMultiplication : BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n) :=
   BUC.operatorApplyCLM (complexFrontDerivativeCoefficient f D c φ h₁ h₂)
 
-/-- The bounded perturbation constant is independent of the transverse frequency. -/
-theorem norm_frontReactionMultiplication_le :
-    ‖frontReactionMultiplication f D c φ h₁ h₂‖ ≤
-      ‖complexFrontDerivativeCoefficient f D c φ h₁ h₂‖ := by
-  let A := complexFrontDerivativeCoefficient f D c φ h₁ h₂
-  apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg A)
-  intro v
-  apply (BUC.norm_le (by positivity)).mpr
-  intro z
-  exact ((A z).le_opNorm (v z)).trans
-    (mul_le_mul (A.norm_apply_le z) (v.norm_apply_le z) (norm_nonneg _) (norm_nonneg _))
-
 /-- The exact bounded-perturbation identity on the common `BUC²` domain. -/
 theorem frontLongitudinalPencil_eq_principal_add (q : ℝ) :
     frontLongitudinalPencil f D c φ h₁ h₂ (q : ℂ) =
@@ -75,26 +63,6 @@ def frontLinearizedMildPathOperator (q : ℝ) (T : NNReal) :
 theorem frontLinearizedMildPathOperator_zero (q : ℝ) (T : NNReal) (v₀ : BUC ℝ (ℂ^n)) :
     frontLinearizedMildPathOperator f D c φ h₁ h₂ q T v₀ ⟨0, le_rfl, T.2⟩ = v₀ := by
   exact C0Semigroup.perturbedPathOperator_zero _ _ _ _
-
-/-- Duhamel's formula for the actual front coefficient and the concrete principal heat flow. -/
-theorem frontLinearizedMildPathOperator_eq (q : ℝ) (T : NNReal) (v₀ : BUC ℝ (ℂ^n))
-    (t : Icc (0 : ℝ) (T : ℝ)) :
-    let u := frontLinearizedMildPathOperator f D c φ h₁ h₂ q T v₀
-    u t = frontDiffusionFlowBUC D h₁.positive c q t v₀ +
-      ∫ r in 0..(t : ℝ), frontDiffusionFlowBUC D h₁.positive c q ((t : ℝ) - r)
-        (frontReactionMultiplication f D c φ h₁ h₂ (C0Semigroup.extendTimePath u r)) := by
-  let S := frontDiffusionC0Semigroup D h₁.positive c q
-  let B := frontReactionMultiplication f D c φ h₁ h₂
-  let u := frontLinearizedMildPathOperator f D c φ h₁ h₂ q T v₀
-  have h := S.perturbedPathOperator_eq B T v₀ t
-  change u t = S.realOrbit v₀ t + S.perturbationPath B T u t at h
-  change u t = _
-  rw [h, frontDiffusionC0Semigroup_realOrbit D h₁.positive c q t.2.1]
-  congr 1
-  apply intervalIntegral.integral_congr
-  intro r hr
-  have hr' : r ∈ Icc (0 : ℝ) (t : ℝ) := uIcc_of_le t.2.1 ▸ hr
-  exact frontDiffusionC0Semigroup_realOrbit D h₁.positive c q (sub_nonneg.mpr hr'.2) _
 
 end
 

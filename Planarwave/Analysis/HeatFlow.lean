@@ -154,19 +154,6 @@ theorem norm_heatFlow_le {a t C : ℝ} {f : E → F} (hC : ∀ x, ‖f x‖ ≤ 
       exact hC _
     _ = C := by simp
 
-theorem dist_heatFlow_le {a t C Cf Cg : ℝ} {f g : E → F}
-    (hf : Continuous f) (hg : Continuous g)
-    (hCf : ∀ x, ‖f x‖ ≤ Cf) (hCg : ∀ x, ‖g x‖ ≤ Cg)
-    (hC : ∀ x, dist (f x) (g x) ≤ C) (x : E) :
-    dist (heatFlow a t f x) (heatFlow a t g x) ≤ C := by
-  rw [dist_eq_norm]
-  change ‖(∫ z, f (x + heatScale a t • z) ∂(stdGaussian E)) -
-    ∫ z, g (x + heatScale a t • z) ∂(stdGaussian E)‖ ≤ C
-  rw [← integral_sub (integrable_comp_add_heatScale hf Cf hCf x)
-    (integrable_comp_add_heatScale hg Cg hCg x)]
-  exact norm_heatFlow_le (f := fun x => f x - g x)
-    (by simpa [dist_eq_norm] using hC) x
-
 /-- Gaussian averaging preserves uniform continuity. -/
 theorem uniformContinuous_heatFlow {a t C : ℝ} {f : E → F}
     (hf : UniformContinuous f) (hC : ∀ x, ‖f x‖ ≤ C) :
@@ -213,37 +200,6 @@ theorem heatFlow_add_time {a s t C : ℝ} (ha : 0 ≤ a) (hs : 0 ≤ s) (ht : 0 
   rw [← integral_conv hint]
   rw [heatMeasure_conv ha hs ht]
   rw [heatFlow_eq_integral_heatMeasure a (s + t) f hf.continuous x]
-
-/-- At each spatial point, the heat flow converges to the initial value as time tends to zero
-from the right.  Uniform convergence for BUC data is proved after bundling the flow in
-`HeatSemigroup`. -/
-theorem tendsto_heatFlow_zero_apply {a C : ℝ} (_ha : 0 ≤ a) {f : E → F}
-    (hf : Continuous f) (hC : ∀ x, ‖f x‖ ≤ C) (x : E) :
-    Tendsto (fun t ↦ heatFlow a t f x) (nhdsWithin 0 (Set.Ici 0)) (nhds (f x)) := by
-  have hsqrt : Tendsto (fun t : ℝ ↦ heatScale a t) (nhdsWithin 0 (Set.Ici 0)) (nhds 0) := by
-    unfold heatScale
-    have harg : Tendsto (fun t : ℝ ↦ 2 * a * t) (nhdsWithin 0 (Set.Ici 0)) (nhds 0) := by
-      have ht : Tendsto (fun t : ℝ ↦ t) (nhdsWithin 0 (Set.Ici 0)) (nhds 0) :=
-        tendsto_id.mono_left nhdsWithin_le_nhds
-      simpa using (tendsto_const_nhds.mul (tendsto_const_nhds :
-        Tendsto (fun _ : ℝ ↦ a) (nhdsWithin 0 (Set.Ici 0)) (nhds a))).mul ht
-    convert (Real.continuous_sqrt.tendsto 0).comp harg using 1 <;> simp [Function.comp_def]
-  have hmeas : ∀ᶠ t in nhdsWithin (0 : ℝ) (Set.Ici 0),
-      AEStronglyMeasurable (fun z : E ↦ f (x + heatScale a t • z)) (stdGaussian E) := by
-    filter_upwards with t
-    exact (hf.comp (by fun_prop)).aestronglyMeasurable
-  have hbound : ∀ᶠ t in nhdsWithin (0 : ℝ) (Set.Ici 0),
-      ∀ᵐ z ∂(stdGaussian E), ‖f (x + heatScale a t • z)‖ ≤ C := by
-    filter_upwards with t
-    filter_upwards with z
-    exact hC _
-  have hlim : ∀ᵐ z ∂(stdGaussian E),
-      Tendsto (fun t ↦ f (x + heatScale a t • z)) (nhdsWithin 0 (Set.Ici 0)) (nhds (f x)) := by
-    filter_upwards with z
-    exact (hf.tendsto x).comp (by simpa using tendsto_const_nhds.add (hsqrt.smul_const z))
-  simpa [heatFlow] using
-    (tendsto_integral_filter_of_dominated_convergence (fun _ : E ↦ C) hmeas hbound
-      (integrable_const C) hlim)
 
 end HeatFlow
 

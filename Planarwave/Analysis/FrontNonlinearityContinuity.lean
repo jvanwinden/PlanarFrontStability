@@ -46,25 +46,6 @@ theorem frontInverseModulationNonlinearity_zero_phase
         (frontSplitProfileBUC f D c φ h₂) v :=
   inverseModulationNonlinearity_zero_phase f _ D c _ _ v _ _ _
 
-/-- Norm continuity of the concrete front remainder on a positive-time slab. -/
-theorem continuousOn_frontInverseModulationNonlinearity {I : Set ℝ}
-    {v : ℝ → BUC (ℝ^m × ℝ) (ℝ^n)}
-    {v₁ : ℝ → BUC (ℝ^m × ℝ) ((ℝ^m × ℝ) →L[ℝ] ℝ^n)}
-    {v₂ : ℝ → BUC (ℝ^m × ℝ) ((ℝ^m × ℝ) →L[ℝ] (ℝ^m × ℝ) →L[ℝ] ℝ^n)}
-    {s : ℝ → BUC (ℝ^m) (ℝ^m)} {l g : ℝ → BUC (ℝ^m) ℝ}
-    (hv : ContinuousOn v I) (hv₁ : ContinuousOn v₁ I) (hv₂ : ContinuousOn v₂ I)
-    (hs : ContinuousOn s I) (hl : ContinuousOn l I) (hg : ContinuousOn g I) :
-    ContinuousOn (fun t ↦ frontInverseModulationNonlinearity f D c φ ψ h₁ h₂
-      (v t) (v₁ t) (v₂ t) (s t) (l t) (g t)) I := by
-  have hfirst := BUC.continuous_longitudinalDerivativeField.comp_continuousOn hv₁
-  have hsecond := BUC.continuous_longitudinalSecondDerivativeField.comp_continuousOn hv₂
-  have hmixed := BUC.continuous_mixedDerivativeField.comp_continuousOn hv₂
-  simpa only [frontInverseModulationNonlinearity] using!
-    continuousOn_inverseModulationNonlinearity f
-      (h₁.smooth.of_le (WithTop.coe_le_coe.mpr (show (2 : ℕ∞) ≤ ⊤ from le_top)))
-      D c (d_perp D φ ψ) (frontSplitProfileBUC f D c φ h₂)
-      hv hfirst hsecond hmixed hs hl hg
-
 /-- Initial zero phase coefficients give continuity all the way to rough initial
 data; the derivative fields need not have limits at time zero. -/
 theorem continuousOn_frontInverseModulationNonlinearity_of_initial_zero

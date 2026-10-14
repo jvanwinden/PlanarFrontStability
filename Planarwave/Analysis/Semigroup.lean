@@ -91,11 +91,6 @@ protected theorem strongContinuous (S : C0Semigroup 𝕜 E) (x : E) :
     Continuous fun t ↦ S t x :=
   S.strongContinuous' x
 
-/-- Continuity of the norm of an orbit. -/
-theorem continuous_norm_apply (S : C0Semigroup 𝕜 E) (x : E) :
-    Continuous fun t ↦ ‖S t x‖ :=
-  (S.strongContinuous x).norm
-
 /-- Strong continuity at time zero, in filter form. -/
 theorem tendsto_zero (S : C0Semigroup 𝕜 E) (x : E) :
     Filter.Tendsto (fun t ↦ S t x) (nhds 0) (nhds x) := by
@@ -261,10 +256,6 @@ protected theorem strongContinuous (S : ContractionSemigroup 𝕜 E) (x : E) :
 theorem tendsto_zero (S : ContractionSemigroup 𝕜 E) (x : E) :
     Filter.Tendsto (fun t ↦ S t x) (nhds 0) (nhds x) :=
   S.toC0Semigroup.tendsto_zero x
-
-/-- The defining operator-norm contraction estimate. -/
-theorem norm_le_one (S : ContractionSemigroup 𝕜 E) (t : NNReal) : ‖S t‖ ≤ 1 :=
-  S.isContraction' t
 
 /-- The pointwise contraction estimate. -/
 theorem norm_apply_le (S : ContractionSemigroup 𝕜 E) (t : NNReal) (x : E) :

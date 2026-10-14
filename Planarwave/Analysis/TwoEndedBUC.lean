@@ -146,14 +146,6 @@ theorem isCompact_closure_range_of_tendsto_atBot_atTop
     IsCompact (closure (range g)) :=
   (isBounded_range_of_tendsto_atBot_atTop hg hNeg hPos).isCompact_closure
 
-/-- Finite-dimensional real normed-space specialization of the compact-closure theorem. -/
-theorem isCompact_closure_range_of_tendsto_atBot_atTop_finiteDimensional
-    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V]
-    {g : ℝ → V} {gNeg gPos : V} (hg : Continuous g)
-    (hNeg : Tendsto g atBot (𝓝 gNeg)) (hPos : Tendsto g atTop (𝓝 gPos)) :
-    IsCompact (closure (range g)) :=
-  isCompact_closure_range_of_tendsto_atBot_atTop hg hNeg hPos
-
 end BoundedRange
 
 section Bundling
@@ -182,25 +174,6 @@ end Bundling
 section Composition
 
 variable {E F : Type*} [PseudoMetricSpace E] [PseudoMetricSpace F]
-
-/-- A continuous postcomposition of a two-ended function is uniformly continuous.  This version
-uses only continuity of the postcomposed map; its limits are the images of the original limits. -/
-theorem uniformContinuous_comp_of_tendsto_atBot_atTop
-    {g : ℝ → E} {gNeg gPos : E} {q : E → F} (hg : Continuous g)
-    (hNeg : Tendsto g atBot (𝓝 gNeg)) (hPos : Tendsto g atTop (𝓝 gPos))
-    (hq : Continuous q) : UniformContinuous (q ∘ g) := by
-  apply uniformContinuous_of_tendsto_atBot_atTop (hq.comp hg)
-  · exact hq.continuousAt.tendsto.comp hNeg
-  · exact hq.continuousAt.tendsto.comp hPos
-
-/-- A continuous postcomposition of a two-ended function has bounded range. -/
-theorem isBounded_range_comp_of_tendsto_atBot_atTop
-    {g : ℝ → E} {gNeg gPos : E} {q : E → F} (hg : Continuous g)
-    (hNeg : Tendsto g atBot (𝓝 gNeg)) (hPos : Tendsto g atTop (𝓝 gPos))
-    (hq : Continuous q) : IsBounded (range (q ∘ g)) := by
-  apply isBounded_range_of_tendsto_atBot_atTop (hq.comp hg)
-  · exact hq.continuousAt.tendsto.comp hNeg
-  · exact hq.continuousAt.tendsto.comp hPos
 
 /-- It suffices for the postcomposed map to be continuous on the compact closure of the range.
 This form is useful when the coefficient map is only constructed on a neighborhood of the front

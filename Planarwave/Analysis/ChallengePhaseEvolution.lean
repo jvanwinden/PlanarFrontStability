@@ -8,7 +8,9 @@ module
 import all Planarwave.Analysis.ChallengeInitialPhase
 import Planarwave.Analysis.ColeHopfEvolution
 import Planarwave.Analysis.ColeHopfPDE
-import Planarwave.Analysis.HeatEquationOneDimensional
+import Planarwave.Analysis.HeatJointSmoothReal
+import Planarwave.Analysis.HeatSemigroup
+import Mathlib.Analysis.InnerProductSpace.Laplacian
 import Planarwave.Analysis.HeatJointSmoothMultidimensional
 
 /-!
@@ -16,9 +18,9 @@ import Planarwave.Analysis.HeatJointSmoothMultidimensional
 
 The Cole--Hopf construction has the prescribed initial phase and is bounded uniformly continuous
 on finite time slabs. Joint positive-time heat smoothness and the heat equation now discharge the
-full phase solution predicate in every ambient dimension allowed by the challenge. The existence
-theorem at the end packages this phase solution, its initial value, and its uniform smallness
-bound. The reaction--diffusion solution and nonlinear comparison estimate remain separate tasks.
+full phase solution predicate in every ambient dimension allowed by the challenge. This file
+defines that phase evolution and proves its initial-value and uniform smallness bounds.
+The reaction--diffusion construction and nonlinear comparison are handled in other modules.
 -/
 
 open Function Set MeasureTheory
@@ -79,12 +81,6 @@ theorem isVHJSolution_coleHopfEvolution {d : ℕ} (a c : ℝ) (ha : 0 < a)
     simpa only [heatFlowBUC_apply, smul_eq_mul] using
       hasDerivAt_heatFlow_time ha ht (coleHopfBUC (c / (2 * a)) v) y
 
-/-- The ambient-dimension-two specialization of the general phase solution theorem. -/
-theorem isVHJSolution_coleHopfEvolution_two (a c : ℝ) (ha : 0 < a)
-    (v : BUC (ℝ^1) ℝ) :
-    IsVHJSolution (d := 2) c (fun t y => coleHopfEvolution a (c / (2 * a)) t v y) a :=
-  isVHJSolution_coleHopfEvolution (d := 2) a c ha v
-
 variable {d n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
   (φ ψ : ℝ → ℝ^n)
 
@@ -118,15 +114,6 @@ theorem norm_challengePhaseEvolution_le
     ((norm_coleHopfEvolution_le _ _ t _).trans
       (norm_initialPhaseBUC_le f D c φ ψ hd h₂ h₃ hu₀ hclose))
 
-/-- The candidate phase satisfies the full finite-slab continuity requirement. -/
-theorem isBUCOn_challengePhaseEvolution_slab
-    (hd : 2 ≤ d) (h₂ : IsSmoothFront f D c φ)
-    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
-    {u₀ : ℝ^d → ℝ^n} (hu₀ : IsBUC u₀) (T : ℝ) :
-    IsBUCOn (uncurry (challengePhaseEvolution f D c φ ψ hd h₂ h₃ hu₀))
-      (Icc 0 T ×ˢ univ) :=
-  isBUCOn_coleHopfEvolution_slab _ _ T _
-
 /-- The challenge's prescribed unforced phase is a global classical solution for every
 `d ≥ 2`, with no additional heat regularity assumptions. -/
 theorem isVHJSolution_challengePhaseEvolution
@@ -136,29 +123,6 @@ theorem isVHJSolution_challengePhaseEvolution
     IsVHJSolution c (challengePhaseEvolution f D c φ ψ hd h₂ h₃ hu₀)
       (d_perp D φ ψ) :=
   isVHJSolution_coleHopfEvolution (d := d) _ c h₃.transverse_low_wavenumber _
-
-/-- The ambient-dimension-two specialization of the challenge phase solution. -/
-theorem isVHJSolution_challengePhaseEvolution_two
-    (h₂ : IsSmoothFront f D c φ) (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
-    {u₀ : ℝ^2 → ℝ^n} (hu₀ : IsBUC u₀) :
-    IsVHJSolution c (challengePhaseEvolution f D c φ ψ (by omega) h₂ h₃ hu₀)
-      (d_perp D φ ψ) :=
-  isVHJSolution_challengePhaseEvolution f D c φ ψ (by omega) h₂ h₃ hu₀
-
-/-- The complete unforced-phase existence milestone for the challenge: a classical global
-vHJ solution, the prescribed longitudinal initial integral, and the uniform smallness bound.
-The bound even holds for the total extension of the phase to negative times. -/
-theorem exists_challengePhaseSolution
-    (hd : 2 ≤ d) (h₂ : IsSmoothFront f D c φ)
-    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
-    {u₀ : ℝ^d → ℝ^n} (hu₀ : IsBUC u₀) {E₀ : ℝ} (hclose : IsCloseToFront φ u₀ E₀) :
-    ∃ σ : ℝ → ℝ^(d - 1) → ℝ, IsVHJSolution c σ (d_perp D φ ψ) ∧
-      (∀ y, σ 0 y = ∫ z : ℝ, ⟪ψ z, φ z - u₀ (full y z)⟫_ℝ) ∧
-      (∀ t y, ‖σ t y‖ ≤ E₀ * ∫ z : ℝ, ‖ψ z‖) := by
-  refine ⟨challengePhaseEvolution f D c φ ψ hd h₂ h₃ hu₀,
-    isVHJSolution_challengePhaseEvolution f D c φ ψ hd h₂ h₃ hu₀, ?_, ?_⟩
-  · exact challengePhaseEvolution_zero f D c φ ψ hd h₂ h₃ hu₀
-  · exact norm_challengePhaseEvolution_le f D c φ ψ hd h₂ h₃ hu₀ hclose
 
 end
 

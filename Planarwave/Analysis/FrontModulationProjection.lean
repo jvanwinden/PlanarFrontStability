@@ -102,23 +102,6 @@ theorem heatDuhamel_frontModulationSource_eq_trackingResidual
       (continuous_frontDelayedForcing f D c φ ψ h₃ v₀ N)).comp
       (continuous_const.prodMk continuous_id)).intervalIntegrable 0 t
 
-include h₁ h₂ in
-/-- Consequently the full critical amplitude has the source decay rate. -/
-theorem norm_frontModulationSource_critical_decay_le {γ T M t : ℝ} (hγ : 0 ≤ γ)
-    (v₀ : BUC (ℝ^m × ℝ) (ℝ^n)) (N : ℝ → BUC (ℝ^m × ℝ) (ℝ^n))
-    (s : ℝ → BUC (ℝ^m) (ℝ^m)) (l : ℝ → BUC (ℝ^m) ℝ)
-    (hM : 0 ≤ M) (hv₀ : ‖v₀‖ ≤ M) (hNc : ContinuousOn N (Icc 0 T))
-    (hN : ∀ r ∈ Icc 0 T, ‖N r‖ ≤ M * (1 + r) ^ (-γ)) (ht : t ∈ Icc 0 T) :
-    ‖heatFlowBUC (d_perp D φ ψ) t (longitudinalPairing ψ h₃.integrable v₀) +
-      heatDuhamel (d_perp D φ ψ)
-        (fun r ↦ longitudinalPairing ψ h₃.integrable
-          (frontModulationSource f D c φ ψ h₃ (N r) (s r) (l r)
-            (frontDelayedForcing f D c φ ψ h₃ v₀ N r))) t‖ ≤
-      (3 * (3 : ℝ) ^ γ * (∫ z, ‖ψ z‖)) * M * (1 + t) ^ (-γ) := by
-  rw [heatDuhamel_frontModulationSource_eq_trackingResidual f D c φ ψ h₁ h₂ h₃ v₀ N s l ht.1
-    (hNc.mono (Icc_subset_Icc le_rfl ht.2))]
-  exact norm_frontTrackingCriticalResidual_decay_le f D c φ ψ h₃ hγ v₀ N hM hv₀ hNc hN ht
-
 end
 
 end Planarwave

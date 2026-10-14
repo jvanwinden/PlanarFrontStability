@@ -222,21 +222,6 @@ theorem norm_initialPhaseBUC_le
   intro y
   exact norm_initial_phase_le f D c φ ψ hd h₂ h₃ hu₀ ε hclose y
 
-/-- The initial phase map is Lipschitz in the supremum norm, with constant bounded by the
-adjoint profile's `L¹` norm. -/
-theorem norm_initialPhaseBUC_sub_le
-    (hd : 2 ≤ d) (h₂ : IsSmoothFront f D c φ)
-    (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
-    {u₀ v₀ : ℝ^d → ℝ^n} (hu₀ : IsBUC u₀) (hv₀ : IsBUC v₀) :
-    ‖initialPhaseBUC f D c φ ψ hd h₂ h₃ hu₀ -
-        initialPhaseBUC f D c φ ψ hd h₂ h₃ hv₀‖ ≤
-      ‖BUC.ofIsBUC hu₀ - BUC.ofIsBUC hv₀‖ * ∫ z : ℝ, ‖ψ z‖ := by
-  apply (BUC.norm_le (mul_nonneg (norm_nonneg _)
-    (integral_nonneg fun z => norm_nonneg (ψ z)))).2
-  intro y
-  exact norm_initialPhase_sub_le f D c φ ψ h₂ h₃ hu₀ hv₀ y y _
-    (fun z => (BUC.ofIsBUC hu₀ - BUC.ofIsBUC hv₀).norm_apply_le (full y z))
-
 end
 
 end Planarwave

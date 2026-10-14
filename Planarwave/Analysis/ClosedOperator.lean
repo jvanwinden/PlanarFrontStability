@@ -72,17 +72,6 @@ theorem graphMap_apply (A : ClosedOperator 𝕜 X Dom) (x : Dom) :
     A.graphMap x = (A.inclusion x, A.operator x) :=
   rfl
 
-/-- The graph map is injective because the domain inclusion is injective. -/
-theorem graphMap_injective (A : ClosedOperator 𝕜 X Dom) : Injective A.graphMap := by
-  intro x y hxy
-  apply A.inclusion_injective
-  exact congrArg Prod.fst hxy
-
-/-- Restatement of the bundled closed-graph property in terms of `graphMap`. -/
-theorem isClosed_range_graphMap (A : ClosedOperator 𝕜 X Dom) :
-    IsClosed (range A.graphMap) :=
-  A.isClosed_graph
-
 /-- The map `A - λ I` on the fixed domain.  This sign agrees with the resolvent equation in
 `Challenge`. -/
 def resolventMap (A : ClosedOperator 𝕜 X Dom) (z : 𝕜) : Dom →L[𝕜] X :=
@@ -116,25 +105,6 @@ theorem mem_spectrum (A : ClosedOperator 𝕜 X Dom) (z : 𝕜) :
     z ∈ A.spectrum ↔ ¬ A.IsInResolvent z := by
   rfl
 
-/-- Bijectivity of the resolvent map is equivalent to unique solvability of every resolvent
-equation.  This is the form used by `TransverseSpectrum` in `Challenge`. -/
-theorem isInResolvent_iff_existsUnique (A : ClosedOperator 𝕜 X Dom) (z : 𝕜) :
-    A.IsInResolvent z ↔ ∀ y : X, ∃! x : Dom, A.resolventMap z x = y := by
-  constructor
-  · rintro ⟨hinj, hsurj⟩ y
-    obtain ⟨x, hx⟩ := hsurj y
-    refine ⟨x, hx, ?_⟩
-    intro x' hx'
-    exact hinj (hx'.trans hx.symm)
-  · intro h
-    constructor
-    · intro x x' hxx'
-      obtain ⟨w, hw, huniq⟩ := h (A.resolventMap z x)
-      exact (huniq x rfl).trans (huniq x' hxx'.symm).symm
-    · intro y
-      obtain ⟨x, hx, -⟩ := h y
-      exact ⟨x, hx⟩
-
 /-- A bijective resolvent map, upgraded to a continuous linear equivalence by the Banach inverse
 theorem. -/
 noncomputable def resolventEquiv (A : ClosedOperator 𝕜 X Dom) (z : 𝕜)
@@ -165,26 +135,11 @@ theorem resolventMap_resolventInverse (A : ClosedOperator 𝕜 X Dom) (z : 𝕜)
     A.resolventMap z (A.resolventInverse z hz y) = y := by
   exact (A.resolventEquiv z hz).apply_symm_apply y
 
-/-- Explicit existence of a bounded two-sided inverse for a bijective resolvent map. -/
-theorem exists_bounded_resolventInverse (A : ClosedOperator 𝕜 X Dom) (z : 𝕜)
-    (hz : A.IsInResolvent z) :
-    ∃ R : X →L[𝕜] Dom,
-      (∀ x, R (A.resolventMap z x) = x) ∧
-      (∀ y, A.resolventMap z (R y) = y) := by
-  exact ⟨A.resolventInverse z hz, A.resolventInverse_resolventMap z hz,
-    A.resolventMap_resolventInverse z hz⟩
-
 /-- Operator-norm control for the inverse produced by the Banach inverse theorem. -/
 theorem resolventInverse_norm_le (A : ClosedOperator 𝕜 X Dom) (z : 𝕜)
     (hz : A.IsInResolvent z) (y : X) :
     ‖A.resolventInverse z hz y‖ ≤ ‖A.resolventInverse z hz‖ * ‖y‖ :=
   ContinuousLinearMap.le_opNorm _ _
-
-/-- A scalar bound for the graph-norm of the unique solution of the resolvent equation. -/
-theorem exists_resolvent_bound (A : ClosedOperator 𝕜 X Dom) (z : 𝕜)
-    (hz : A.IsInResolvent z) :
-    ∃ C ≥ 0, ∀ y : X, ‖A.resolventInverse z hz y‖ ≤ C * ‖y‖ := by
-  exact ⟨‖A.resolventInverse z hz‖, norm_nonneg _, A.resolventInverse_norm_le z hz⟩
 
 end ClosedOperator
 

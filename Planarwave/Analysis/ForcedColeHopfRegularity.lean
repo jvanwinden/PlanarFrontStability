@@ -160,23 +160,6 @@ theorem IsForcedColeHopfMild.delayed_exists_buc_fderivative {a β T : ℝ}
     (delayedHeatForcingFDeriv ha p N) (continuous_delayedHeatForcingFDeriv ha p N).continuousOn
     (fun t _ x ↦ hasFDerivAt_delayedHeatForcing ha p N t x)
 
-/-- Existence of the actual delayed-forcing solution together with its
-genuine, BUC-norm-continuous first spatial derivative. -/
-theorem exists_delayed_forcedColeHopf_mild_fderivative {a : ℝ} (ha : 0 < a)
-    (β : ℝ) {T : ℝ} (hT : 0 ≤ T) (p : BUC E ℝ) (N : ℝ → BUC E ℝ) :
-    ∃ (ξ : ℝ → BUC E ℝ) (ξ' : ℝ → BUC E (E →L[ℝ] ℝ)),
-      IsForcedColeHopfMild a β (delayedHeatForcing a p N) ξ T ∧ Continuous ξ' ∧
-      (∀ t ∈ Icc 0 T, ∀ x, HasFDerivAt (ξ t) (ξ' t x) x) ∧
-      ∀ t ∈ Icc 0 T, t ≤ 1 / 4 → ξ t = 0 ∧ ξ' t = 0 := by
-  obtain ⟨ξ, hξ, hz⟩ := exists_delayed_forcedColeHopf_mild a β hT p N
-  obtain ⟨ξ', hc, hd, _⟩ := hξ.delayed_exists_buc_fderivative ha hT
-  refine ⟨ξ, ξ', hξ, hc, hd, fun t ht hq ↦ ⟨hz t ht hq, ?_⟩⟩
-  ext x : 1
-  have h := hd t ht x
-  rw [hz t ht hq] at h
-  simpa only [BUC.zero_apply] using
-    h.unique (by simpa using! hasFDerivAt_const (𝕜 := ℝ) (0 : ℝ) x)
-
 end
 
 end Planarwave

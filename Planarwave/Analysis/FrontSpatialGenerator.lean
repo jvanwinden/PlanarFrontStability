@@ -8,11 +8,11 @@ module
 import all Planarwave.Analysis.FrontSpatialSemigroup
 
 /-!
-# Identification of the spatial linearized generator
+# Spatial diffusion generator in the original coordinates
 
 Return from diffusion eigenvector coordinates and identify the generator
-pointwise with `D Δ + c ∂z + f'(φ(z))`. The generator relation itself is a
-supremum-norm right derivative, not just a pointwise differentiation claim.
+pointwise with matrix diffusion and drift. The retained coordinate identity
+is used when identifying the full linearized differential operator.
 -/
 
 open Filter Set Topology
@@ -84,54 +84,6 @@ theorem spatialDiffusionGenerator_coordinates (D : ℝ^n →L[ℝ] ℝ^n) (hD : 
   simp [Complex.real_smul]
 
 end Principal
-
-variable {d : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
-  (φ : ℝ → ℝ^n) (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ)
-  (hd : 2 ≤ d) [Nontrivial (ℝ^n)]
-
-/-- The constructed full spatial semigroup has the paper's differential generator
-on twice BUC differentiable diffusion-coordinate data. -/
-theorem exists_frontSpatial_generator_eq_pde
-    (v : Fin n → BUC (ℝ^d) ℂ) (g : Fin n → BUC (ℝ^d) (ℝ^d →L[ℝ] ℂ))
-    (h : Fin n → BUC (ℝ^d) (ℝ^d →L[ℝ] ℝ^d →L[ℝ] ℂ))
-    (hg : ∀ i x, HasFDerivAt (v i) (g i x) x) (hh : ∀ i x, HasFDerivAt (g i) (h i x) x) :
-    ∃ w : BUC (ℝ^d) (ℂ^n),
-      (frontSpatialC0Semigroup f D c φ h₁ h₂ hd).HasGeneratorAt
-        (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v) w ∧
-      ∀ x, w x =
-        frontComplexifiedDiffusion D (Δ (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v : ℝ^d → ℂ^n) x) +
-          fderiv ℝ (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v) x (frontSpatialDrift hd c) +
-          (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v x) := by
-  refine ⟨_, frontSpatialC0Semigroup_hasGeneratorAt f D c φ h₁ h₂ hd v g h hg hh, ?_⟩
-  intro x
-  rw [BUC.add_apply, spatialDiffusionGenerator_coordinates D h₁.positive _ v g h hg hh,
-    frontSpatialReactionMultiplication_apply]
-
-/-- The data on which the spatial generator has the classical differential
-expression are dense in BUC. This is density in the supremum norm; it does not
-assert the stronger graph-norm core property. -/
-theorem dense_frontSpatial_classicalGenerator :
-    Dense {v : BUC (ℝ^d) (ℂ^n) | ∃ w : BUC (ℝ^d) (ℂ^n),
-      (frontSpatialC0Semigroup f D c φ h₁ h₂ hd).HasGeneratorAt v w ∧
-      ∀ x, w x = frontComplexifiedDiffusion D (Δ (v : ℝ^d → ℂ^n) x) +
-        fderiv ℝ v x (frontSpatialDrift hd c) +
-        (ContinuousLinearMap.complexify (fderiv ℝ f (φ (horizontal x)))) (v x)} := by
-  intro v
-  let J := spatialDiffusionBUCCoordinatesEquiv (E := ℝ^d) D h₁.positive
-  let u : ℝ → BUC (ℝ^d) (ℂ^n) := fun t ↦ J (fun i ↦ heatFlowBUC 1 t (J.symm v i))
-  have hc : Continuous u := J.continuous.comp
-    (continuous_pi fun i ↦ continuous_heatFlowBUC_time 1 (J.symm v i))
-  have hzero : u 0 = v := by simp [u]
-  have hlim : Tendsto u (𝓝[>] (0 : ℝ)) (𝓝 v) := by
-    rw [← hzero]
-    exact hc.continuousAt.tendsto.mono_left nhdsWithin_le_nhds
-  apply isClosed_closure.mem_of_tendsto hlim
-  filter_upwards [self_mem_nhdsWithin] with t ht
-  apply subset_closure
-  choose g h hg hh using fun i : Fin n ↦
-    exists_buc_fderivatives_heatFlow zero_lt_one ht (J.symm v i)
-  exact exists_frontSpatial_generator_eq_pde f D c φ h₁ h₂ hd
-    (fun i ↦ heatFlowBUC 1 t (J.symm v i)) g h hg hh
 
 end
 

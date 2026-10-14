@@ -124,37 +124,6 @@ theorem frontRemainderKernel_eq_integral (t : NNReal) (x : ℝ^m) :
   simp [frontRemainderKernel, frontShiftedRemainderKernel, oscillatoryIntegral,
     complexFrequencyShift, hzero]
 
-/-- Applying the operator kernel to a longitudinal slice agrees with the paper's
-Banach-valued integral. No interchange of conditionally convergent integrals is used. -/
-theorem frontRemainderKernel_apply (t : NNReal) (ht : 0 < t) (x : ℝ^m) (v : BUC ℝ (ℂ^n)) :
-    frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t x v =
-      ∫ ξ : ℝ^m, Complex.exp (Complex.I * (⟪ξ, x⟫_ℝ : ℂ)) •
-        (frontFourierRemainderSymbol f D c φ h₁ h₂ ψ h₃ t (embed ξ) v) := by
-  have hzero : (embed (0 : ℝ^m) : ℂ^m) = 0 := by ext i; simp [embed]
-  have hint := integrable_frontFourierRemainderKernel f D c φ h₁ h₂ ψ h₃ t ht 0 x
-  simp only [complexFrequencyShift, hzero, smul_zero, add_zero] at hint
-  rw [frontRemainderKernel_eq_integral]
-  simpa only [smul_apply] using!
-    ContinuousLinearMap.integral_apply hint v
-
-/-- Evaluation in the longitudinal coordinate also commutes with the integral,
-giving the pointwise kernel appearing in (3.4). -/
-theorem frontRemainderKernel_apply_apply (t : NNReal) (ht : 0 < t) (x : ℝ^m)
-    (v : BUC ℝ (ℂ^n)) (z : ℝ) :
-    frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t x v z =
-      ∫ ξ : ℝ^m, Complex.exp (Complex.I * (⟪ξ, x⟫_ℝ : ℂ)) •
-        (frontFourierRemainderSymbol f D c φ h₁ h₂ ψ h₃ t (embed ξ) v z) := by
-  have hzero : (embed (0 : ℝ^m) : ℂ^m) = 0 := by ext i; simp [embed]
-  have hint := integrable_frontFourierRemainderKernel f D c φ h₁ h₂ ψ h₃ t ht 0 x
-  simp only [complexFrequencyShift, hzero, smul_zero, add_zero] at hint
-  let L : (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) →L[ℂ] ℂ^n :=
-    (BUC.evalCLM (𝕜 := ℂ) z).comp (ContinuousLinearMap.apply ℂ (BUC ℝ (ℂ^n)) v)
-  rw [frontRemainderKernel_eq_integral]
-  simpa only [L, ContinuousLinearMap.comp_apply, ContinuousLinearMap.apply_apply,
-    smul_apply, BUC.evalCLM_apply, BUC.smul_apply] using!
-    (ContinuousLinearMap.integral_comp_comm (𝕜 := ℂ)
-      (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) (Fₗ := ℂ^n) L hint).symm
-
 /-- Integrating the all-frequency estimate gives the basic shifted-kernel bound.
 This is the first estimate in the proof of the off-diagonal proposition. -/
 theorem exists_frontShiftedRemainderKernel_gaussian_bound :

@@ -129,13 +129,6 @@ theorem phaseFunctional_apply
     phaseFunctional ψ hψ v = ∫ z, ⟪embed (ψ z), v z⟫_ℂ :=
   rfl
 
-/-- The operator norm is bounded by the `L¹` norm of the adjoint eigenfunction. -/
-theorem norm_phaseFunctional_le
-    (ψ : ℝ → EuclideanSpace ℝ (Fin n)) (hψ : Integrable ψ) :
-    ‖phaseFunctional ψ hψ‖ ≤ ∫ z, ‖ψ z‖ := by
-  apply LinearMap.mkContinuous_norm_le
-  exact integral_nonneg fun _ ↦ norm_nonneg _
-
 /-- Challenge's normalization says that the phase functional evaluates to one on the embedded
 translation mode.  The BUC representative is supplied explicitly because `Challenge` states
 bounded uniform continuity separately from the bare function `z ↦ embed (deriv φ z)`. -/

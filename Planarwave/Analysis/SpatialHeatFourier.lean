@@ -91,20 +91,6 @@ theorem spatialSlices_convectiveHeat (hd : 2 ≤ d) (a t c : ℝ) (v : BUC (ℝ^
     convectiveHeatFlowBUC_apply, smul_eq_mul]
   rfl
 
-/-- The scalar principal evolution has the paper's transverse inverse Fourier
-representation, as an equality in the longitudinal BUC space. -/
-theorem spatial_convectiveHeat_eq_fourierIntegral (hd : 2 ≤ d) {a t : ℝ}
-    (ha : 0 < a) (ht : 0 < t) (c : ℝ) (v : BUC (ℝ^d) ℂ) (y : ℝ^(d - 1)) :
-    spatialSlices hd (convectiveHeatFlowBUC a t (full 0 c) v) y =
-      ((2 * Real.pi) ^ (d - 1))⁻¹ • ∫ y' : ℝ^(d - 1), ∫ ξ : ℝ^(d - 1),
-        Complex.exp (Complex.I * (⟪ξ, y - y'⟫ : ℂ)) •
-          (Complex.exp (-((a * t : ℝ) : ℂ) * ‖ξ‖ ^ 2) •
-            convectiveHeatFlowBUC a t c (spatialSlices hd v y')) := by
-  rw [spatialSlices_convectiveHeat]
-  simpa only [finrank_euclideanSpace_fin, BUC.postcompCLM_apply, convectiveHeatOperator_apply] using!
-    heatFlowBUC_eq_fourierIntegral ha ht
-      (BUC.postcompCLM (convectiveHeatOperator (E := ℝ) (F := ℂ) a t c) (spatialSlices hd v)) y
-
 end
 
 end Planarwave

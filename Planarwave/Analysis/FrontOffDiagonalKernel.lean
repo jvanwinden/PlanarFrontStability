@@ -126,20 +126,6 @@ theorem exists_frontRemainderKernel_offDiagonal_bound :
     (Real.exp_le_exp.mpr (offDiagonal_exponent_le hκ htpos hx))
     (Real.exp_pos _).le (by positivity)
 
-/-- The pointwise form used for longitudinal slices of BUC perturbations. -/
-theorem exists_frontRemainderKernel_offDiagonal_pointwise_bound :
-    ∃ C > 0, ∃ R > 0, ∃ ν > 0, ∀ (t : NNReal), 1 ≤ t → ∀ x : ℝ^m,
-      R ≤ ‖x‖ / t → ∀ (v : BUC ℝ (ℂ^n)) (z : ℝ),
-      ‖frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t x v z‖ ≤
-        C * Real.exp (-ν * t - ν * ‖x‖ ^ 2 / t) * ‖v‖ := by
-  obtain ⟨C, hC, R, hR, ν, hν, hb⟩ :=
-    exists_frontRemainderKernel_offDiagonal_bound (m := m) f D c φ h₁ h₂ ψ h₃
-  refine ⟨C, hC, R, hR, ν, hν, ?_⟩
-  intro t ht x hx v z
-  exact (BUC.norm_apply_le _ z).trans
-    (((frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t x).le_opNorm v).trans
-      (mul_le_mul_of_nonneg_right (hb t ht x hx) (norm_nonneg v)))
-
 end
 
 end Planarwave

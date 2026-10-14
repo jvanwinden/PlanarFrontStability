@@ -87,17 +87,6 @@ theorem norm_iteratedFDeriv_heatFlow_le_of_age (K k : ℕ) {a δ t : ℝ}
     (le_max_right _ _) k).trans
     (pow_le_pow_right₀ (le_max_left _ _) hk)
 
-/-- Positive-time spatial derivatives are genuine bounded uniformly continuous
-multilinear-map fields, with the fixed-age bound. -/
-theorem exists_buc_iteratedFDeriv_heatFlow (K k : ℕ) {a δ t : ℝ}
-    (ha : 0 < a) (hδ : 0 < δ) (hk : k ≤ K) (ht : δ ≤ t) (f : BUC E F) :
-    ∃ g : BUC E (E [×k]→L[ℝ] F),
-      (∀ x, g x = iteratedFDeriv ℝ k (heatFlow a t f) x) ∧
-      ‖g‖ ≤ (max 1 (heatScale a (δ / (K + 1)))⁻¹) ^ K * ‖f‖ :=
-  exists_buc_iteratedFDeriv_of_bounds (contDiff_nat_heatFlow (k + 1) ha (hδ.trans_le ht) f)
-    (norm_iteratedFDeriv_heatFlow_le_of_age K k ha hδ hk ht f)
-    (norm_iteratedFDeriv_heatFlow_le_of_age (K + 1) (k + 1) ha hδ (Nat.succ_le_succ hk) ht f)
-
 end
 
 end Planarwave

@@ -15,9 +15,9 @@ operator depends on that vector only through the holomorphic quadratic form
 
 `λ₀(ξ) = ∑ i, ξᵢ²`.
 
-This file composes the scalar analytic-parameter construction with that quadratic form.  It
-thereby recovers the paper's multidimensional holomorphic eigenvalue and projection, their
-`O(‖ξ‖⁴)` and `O(‖ξ‖²)` bounds, and the bounded-window spectral separation.
+This file defines the multidimensional eigenvalue and projection by composing the scalar
+analytic-parameter construction with that quadratic form, and transfers their remainder bounds
+to the paper's `O(‖ξ‖⁴)` and `O(‖ξ‖²)` estimates.
 -/
 
 open Filter Function
@@ -110,30 +110,6 @@ theorem frontCriticalProjectionAtComplexFrequency_zero :
       profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃) := by
   simp [frontCriticalProjectionAtComplexFrequency]
 
-/-- Holomorphic dependence of the critical eigenvalue on the complex frequency vector. -/
-theorem contDiffAt_frontCriticalEigenvalueAtComplexFrequency :
-    ContDiffAt ℂ ⊤
-      (frontCriticalEigenvalueAtComplexFrequency (m := m) f D c φ ψ h₁ h₂ h₃) 0 := by
-  have hq : ContDiffAt ℂ ⊤ (complexFrequencyQuadratic : ℂ^m → ℂ) 0 :=
-    (contDiff_complexFrequencyQuadratic (m := m)).contDiffAt
-  have houter : ContDiffAt ℂ ⊤
-      (frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃)
-      (complexFrequencyQuadratic (0 : ℂ^m)) := by
-    simpa using contDiffAt_frontCriticalEigenvalue f D c φ ψ h₁ h₂ h₃
-  exact houter.comp (0 : ℂ^m) hq
-
-/-- Holomorphic dependence of the critical spectral projection on the complex frequency vector. -/
-theorem contDiffAt_frontCriticalProjectionAtComplexFrequency :
-    ContDiffAt ℂ ⊤
-      (frontCriticalProjectionAtComplexFrequency (m := m) f D c φ ψ h₁ h₂ h₃) 0 := by
-  have hq : ContDiffAt ℂ ⊤ (complexFrequencyQuadratic : ℂ^m → ℂ) 0 :=
-    (contDiff_complexFrequencyQuadratic (m := m)).contDiffAt
-  have houter : ContDiffAt ℂ ⊤
-      (frontCriticalProjection f D c φ ψ h₁ h₂ h₃)
-      (complexFrequencyQuadratic (0 : ℂ^m)) := by
-    simpa using contDiffAt_frontCriticalProjection f D c φ ψ h₁ h₂ h₃
-  exact houter.comp (0 : ℂ^m) hq
-
 /-- The multidimensional form of Proposition 2.1(3): one positive constant controls both the
 fourth-order eigenvalue remainder and the second-order projection remainder. -/
 theorem exists_frontCriticalExpansion_complexFrequency_bound :
@@ -171,44 +147,6 @@ theorem exists_frontCriticalExpansion_complexFrequency_bound :
               (translationModeBUC f D c φ ψ h₃)‖ := rfl
       _ ≤ C₀ * ‖complexFrequencyQuadratic ξ‖ := hproj
       _ ≤ C₀ * ‖ξ‖ ^ 2 := mul_le_mul_of_nonneg_left hq hC₀.le
-
-/-- Bounded-window form of Proposition 2.1(1) for multidimensional complex frequencies.  In the
-right spectral half-plane, the only possible spectrum in a fixed disk is the critical branch. -/
-theorem exists_eventually_frontComplexFrequencyPencil_not_bijective_iff_branch_on_bounded_gap :
-    ∃ θ > 0, ∀ R : ℝ,
-      ∀ᶠ ξ : ℂ^m in 𝓝 0, ∀ z : ℂ,
-        ‖z‖ ≤ R → -(θ / 2) ≤ z.re →
-          (¬ Function.Bijective
-              (frontLongitudinalPencil f D c φ h₁ h₂
-                  (complexFrequencyQuadratic ξ) -
-                z • ComplexBUC2.valueCLM (ℂ^n)) ↔
-            z = frontCriticalEigenvalueAtComplexFrequency
-              f D c φ ψ h₁ h₂ h₃ ξ) := by
-  obtain ⟨θ, hθ, hwindow⟩ :=
-    exists_eventually_frontLongitudinalPencil_not_bijective_iff_branch_on_bounded_gap
-      f D c φ ψ h₁ h₂ h₃
-  refine ⟨θ, hθ, ?_⟩
-  intro R
-  filter_upwards [
-    (tendsto_complexFrequencyQuadratic_zero (m := m)).eventually (hwindow R)] with ξ hξ
-  simpa [frontCriticalEigenvalueAtComplexFrequency] using hξ
-
-/-- Near zero complex frequency, the critical projection is rank one and its kernel is the range
-of the longitudinal pencil shifted by the critical eigenvalue. -/
-theorem eventually_frontCriticalProjectionAtComplexFrequency_spectralSplitting :
-    ∀ᶠ ξ : ℂ^m in 𝓝 0,
-      Module.finrank ℂ
-          (LinearMap.range
-            (frontCriticalProjectionAtComplexFrequency
-              f D c φ ψ h₁ h₂ h₃ ξ).toLinearMap) = 1 ∧
-        LinearMap.ker
-            (frontCriticalProjectionAtComplexFrequency
-              f D c φ ψ h₁ h₂ h₃ ξ).toLinearMap =
-          LinearMap.range
-            (frontCriticalShiftedPencil f D c φ ψ h₁ h₂ h₃
-              (complexFrequencyQuadratic ξ)).toLinearMap := by
-  exact (tendsto_complexFrequencyQuadratic_zero (m := m)).eventually
-    (eventually_frontCriticalProjection_spectralSplitting f D c φ ψ h₁ h₂ h₃)
 
 end FrontCriticalFrequency
 
