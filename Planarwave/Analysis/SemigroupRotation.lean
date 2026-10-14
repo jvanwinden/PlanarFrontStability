@@ -8,6 +8,7 @@ module
 public import Planarwave.Analysis.SemigroupSector
 public import Mathlib.Analysis.Complex.RealDeriv
 public import Mathlib.Analysis.Calculus.Deriv.Mul
+public import Mathlib.Analysis.Calculus.Deriv.Linear
 
 @[expose] public section
 

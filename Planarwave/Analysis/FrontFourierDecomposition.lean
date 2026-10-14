@@ -45,8 +45,9 @@ local instance : NormedAddCommGroup (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) 
 local instance : NormedSpace ℝ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
   ContinuousLinearMap.toNormedSpace
 
-local instance : ContinuousENorm (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) := by
-  exact SeminormedAddGroup.toContinuousENorm (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))
+local instance : ContinuousENorm (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
+  (SeminormedAddGroup.toESeminormedAddMonoid
+    (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))).toContinuousENorm
 
 local instance : NormSMulClass ℝ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) := by
   exact NormedSpace.toNormSMulClass (𝕜 := ℝ) (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))

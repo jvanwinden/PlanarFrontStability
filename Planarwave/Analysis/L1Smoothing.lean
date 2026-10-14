@@ -7,6 +7,10 @@ module
 
 public import Planarwave.Analysis.BUCCompactSupport
 public import Mathlib.Analysis.Calculus.ContDiff.Convolution
+public import Mathlib.Analysis.Calculus.ParametricIntegral
+public import Mathlib.Analysis.Calculus.Deriv.Comp
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.MeasureTheory.Group.Integral
 
 @[expose] public section
 

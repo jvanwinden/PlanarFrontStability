@@ -7,6 +7,8 @@ module
 
 public import Planarwave.Analysis.BUCOperatorConvolution
 public import Mathlib.Analysis.Convolution
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.MeasureTheory.Group.Integral
 
 @[expose] public section
 

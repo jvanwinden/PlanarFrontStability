@@ -37,8 +37,9 @@ local instance : NormedAddCommGroup (BUC (ℝ^m) (BUC ℝ (ℂ^n))) := BUC.instN
 local instance : NormedSpace ℂ (BUC (ℝ^m) (BUC ℝ (ℂ^n))) := BUC.instNormedSpace
 local instance : NormedSpace ℝ (BUC (ℝ^m) (BUC ℝ (ℂ^n))) := BUC.instNormedSpace
 
-local instance : ContinuousENorm (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) := by
-  exact SeminormedAddGroup.toContinuousENorm (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))
+local instance : ContinuousENorm (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
+  (SeminormedAddGroup.toESeminormedAddMonoid
+    (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))).toContinuousENorm
 
 /-- The normalized spatial convolution of the Fourier remainder kernel. -/
 def frontRemainderConvolutionCLM (t : NNReal) (ht : 0 < t) :

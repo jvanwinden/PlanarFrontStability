@@ -21,7 +21,7 @@ continuation, and forced/unforced phase comparison.
 This module and its dependencies do not import `Challenge`: the solution-side
 definitions come from `Planarwave.Statement`. This keeps the reference's
 admitted theorem out of the solution environment. Compare the two modules
-using the external comparator and `comparator.json`, not by importing both.
+using `lake comparator` and `comparator.json`, not by importing both.
 -/
 
 open scoped Gradient Laplacian EuclideanGeometry Topology InnerProductSpace ContDiff

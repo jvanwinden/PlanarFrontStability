@@ -34,8 +34,9 @@ variable {m n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
   (φ : ℝ → ℝ^n) (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ)
   [Nontrivial (ℝ^n)] (ψ : ℝ → ℝ^n) (h₃ : IsSpectrallyStableWithAdjoint f D c φ ψ)
 
-local instance : ContinuousENorm (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) := by
-  exact SeminormedAddGroup.toContinuousENorm (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))
+local instance : ContinuousENorm (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
+  (SeminormedAddGroup.toESeminormedAddMonoid
+    (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))).toContinuousENorm
 
 local instance : NormSMulClass ℂ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) := by
   exact NormedSpace.toNormSMulClass (𝕜 := ℂ) (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))

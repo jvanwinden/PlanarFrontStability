@@ -6,6 +6,7 @@ Authors: Joris van Winden, OpenAI
 module
 
 public import Mathlib.Analysis.Calculus.TaylorIntegral
+public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecificLimits.Normed
 public import Mathlib.Analysis.Analytic.Basic
 public import Mathlib.Analysis.Analytic.ChangeOrigin

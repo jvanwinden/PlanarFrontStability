@@ -6,6 +6,7 @@ Authors: Joris van Winden, OpenAI
 module
 
 public import Planarwave.Analysis.BUCSpatialComposition
+public import Mathlib.Analysis.Calculus.Deriv.Comp
 
 @[expose] public section
 

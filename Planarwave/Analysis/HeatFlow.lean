@@ -55,7 +55,7 @@ noncomputable def heatMeasure (a t : ℝ) : Measure E :=
 
 noncomputable instance (a t : ℝ) : IsProbabilityMeasure (heatMeasure (E := E) a t) := by
   unfold heatMeasure
-  exact Measure.isProbabilityMeasure_map (by fun_prop)
+  infer_instance
 
 /-- Gaussian realization of the heat flow `exp (t * a * Δ)`.
 

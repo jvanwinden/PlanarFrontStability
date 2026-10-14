@@ -6,6 +6,7 @@ Authors: Joris van Winden, OpenAI
 module
 
 public import Planarwave.Analysis.HeatSmoothReal
+public import Mathlib.Analysis.SpecialFunctions.Sqrt
 
 @[expose] public section
 
@@ -54,7 +55,8 @@ theorem hasDerivAt_gaussianSmooth_scale (s x : ℝ) (f g : BUC ℝ F)
 /-- Derivative of the positive-time Gaussian scale. -/
 theorem hasDerivAt_heatScale {a t : ℝ} (ha : 0 < a) (ht : 0 < t) :
     HasDerivAt (heatScale a) (a / heatScale a t) t := by
-  have h := ((hasDerivAt_id t).const_mul (2 * a)).sqrt (by positivity)
+  have hscale : 2 * a * t ≠ 0 := ne_of_gt (mul_pos (mul_pos (by norm_num) ha) ht)
+  have h := ((hasDerivAt_id t).const_mul (2 * a)).sqrt (by simpa only [id_eq] using hscale)
   have heq : heatScale a = fun r => Real.sqrt (2 * a * r) := by
     funext r
     rw [heatScale]

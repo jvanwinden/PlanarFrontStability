@@ -9,8 +9,8 @@ This project formalizes one of the main results from [1], following the paper's 
   definitions instead of importing `Challenge`.
 - [`Solution.lean`](Solution.lean) proves the public, root-level theorem
   `vHJ_approximates_planar_front`, with the same statement as the reference.
-- [`comparator.json`](comparator.json) configures the external
-  [Lean comparator](https://github.com/leanprover/comparator) to compare that theorem in
+- [`comparator.json`](comparator.json) configures the built-in
+  [Lean comparator](https://lean-lang.org/doc/reference/latest/Build-Tools-and-Distribution/Lake/) to compare that theorem in
   `Challenge` and `Solution`, allowing only `propext`, `Quot.sound`, and `Classical.choice`.
 
 The reference and solution are alternative environments: **do not import both into one
@@ -18,12 +18,12 @@ Lean module**, since each defines the same statement-level constants. The `Plana
 library root uses only the solution-side environment. Keep the definitions in
 `Planarwave/Statement.lean` synchronized with any authorized changes to `Challenge.lean`.
 
-When you want to run verification, install an external comparator and exporter compatible
-with the pinned Lean toolchain, then run `lake env comparator comparator.json` in its
-supported environment. The comparator builds both targets and checks their theorem
-statements, referenced definitions, and proof axioms. There is no custom `Comparator.lean`
-module or Lake target. An ordinary `lake build` builds the analytic library and `Solution`;
-it does not itself run the external comparator.
+The project pins Lean and mathlib to `v4.35.0`. Run `lake comparator` to use Lean's
+built-in comparator with `comparator.json`; its sandbox requires Linux with `bubblewrap`
+installed. It builds both targets and checks their theorem statements, referenced
+definitions, and proof axioms. There is no custom `Comparator.lean` module or Lake target.
+An ordinary `lake build` builds the analytic library and `Solution`; it does not itself
+run the comparator.
 
 Use `import Solution` to access the public theorem. The previous
 `Planarwave.vHJ_approximates_planar_front_proved` name remains a compatibility alias,

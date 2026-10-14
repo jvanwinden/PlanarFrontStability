@@ -52,6 +52,7 @@ local instance coleDecaySecondTensorNormedSpace : NormedSpace ℝ (E →L[ℝ] E
 local instance coleDecaySecondBUCNormedAddCommGroup : NormedAddCommGroup (BUC E (E →L[ℝ] E →L[ℝ] ℝ)) := inferInstance
 local instance coleDecaySecondBUCNormedSpace : NormedSpace ℝ (BUC E (E →L[ℝ] E →L[ℝ] ℝ)) := inferInstance
 
+set_option maxHeartbeats 800000 in
 /-- Actual first and second derivatives of the mild solution satisfy
 the paper's weighted decay, with constants independent of the horizon. -/
 theorem IsForcedColeHopfMild.exists_buc_second_fderivative_decay {a β T C M : ℝ}

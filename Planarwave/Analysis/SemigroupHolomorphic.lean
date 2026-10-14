@@ -8,6 +8,8 @@ module
 public import Planarwave.Analysis.SemigroupGenerator
 public import Planarwave.Analysis.HolomorphicTimeExtension
 public import Mathlib.Analysis.Analytic.Linear
+public import Mathlib.Analysis.Analytic.Composition
+public import Mathlib.Analysis.Analytic.Constructions
 
 @[expose] public section
 

@@ -85,6 +85,10 @@ theorem precomp_contraction {k : ℕ} {f : BUC E F} {A : ℝ}
   | zero => exact (BUC.norm_comp_le f L L.uniformContinuous).trans hf
   | succ k ih =>
     obtain ⟨hn, q, hq, hd⟩ := hf
+    let _ : NormedAddCommGroup (X →L[ℝ] F) := inferInstance
+    let _ : NormedSpace ℝ (X →L[ℝ] F) := inferInstance
+    let _ : NormedAddCommGroup (E →L[ℝ] F) := inferInstance
+    let _ : NormedSpace ℝ (E →L[ℝ] F) := inferInstance
     let J := (ContinuousLinearMap.compL ℝ X E F).flip L
     have hJ : ‖J‖ ≤ 1 := by
       calc

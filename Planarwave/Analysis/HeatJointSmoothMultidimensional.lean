@@ -7,6 +7,7 @@ module
 
 public import Planarwave.Analysis.HeatEquationMultidimensional
 public import Mathlib.Analysis.Normed.Operator.Prod
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 @[expose] public section
 
