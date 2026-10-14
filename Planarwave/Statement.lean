@@ -117,14 +117,14 @@ end SpectralStability
 section NonlinearStability
 
 /-- Extract the horizontal coordinate from x. -/
-noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then x ⟨d - 1, by grind⟩ else 0
+noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then x ⟨d - 1, by omega⟩ else 0
 
 /-- Extract the transverse coordinates from x. -/
-def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x ⟨i, by grind⟩)
+def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x (Fin.castLE (by omega) i))
 
 /-- Assemble the full coordinate x from y and z. -/
 def full (y : ℝ^(d - 1)) (z : ℝ) : ℝ^d :=
-  .toLp 2 (fun i ↦ if h : i < d - 1 then y ⟨i, by grind⟩ else z)
+  .toLp 2 (fun i ↦ if h : i < d - 1 then y ⟨i, h⟩ else z)
 
 /-- Define closeness to the front. -/
 def IsCloseToFront (u : ℝ^d → ℝ^n) (ε : ℝ) : Prop := ∀ x, ‖u x - φ (horizontal x)‖ ≤ ε
