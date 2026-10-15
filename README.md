@@ -3,9 +3,7 @@
 This project formalizes Theorem 1.6 from [1], following the paper's proof.
 
 The most important files are the following:
-- [`Definitions.lean`](Definitions.lean) contains the definitions needed to formulate
-  the theorem statement.
-- [`Challenge.lean`](Challenge.lean) contains the main theorem `vHJ_approximates_planar_front_solution`,
+- [`Challenge.lean`](Challenge.lean) contains the necessary definitions and the main theorem `vHJ_approximates_planar_front_solution`,
   without proof.
 - [`Solution.lean`](Solution.lean) contains the main theorem with proof, using the results in the `Planarwave`
   module.
@@ -23,5 +21,4 @@ Your solution is okay!
 
 The project is pinned to Lean and Mathlib version `v4.35.0`.
 
-[1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
-  nonlocalized perturbations.", arXiv.2601.05832.
+[1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under nonlocalized perturbations.", arXiv.2601.05832.

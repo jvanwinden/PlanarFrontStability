@@ -120,7 +120,8 @@ section NonlinearStability
 noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then x ⟨d - 1, by omega⟩ else 0
 
 /-- Extract the transverse coordinates from x. -/
-def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x (Fin.castLE (by omega) i))
+def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x (Fin.castLE (by simp only [tsub_le_iff_right,
+  le_add_iff_nonneg_right, zero_le]) i))
 
 /-- Assemble the full coordinate x from y and z. -/
 def full (y : ℝ^(d - 1)) (z : ℝ) : ℝ^d :=
