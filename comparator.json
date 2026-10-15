@@ -2,7 +2,7 @@
   "challenge_module": "Challenge",
   "solution_module": "Solution",
   "theorem_names": [
-    "vHJ_approximates_planar_front"
+    "Planarwave.vHJ_approximates_planar_front"
   ],
   "permitted_axioms": [
     "propext",
