@@ -39,7 +39,7 @@ variable (u : ℝ → ℝ^d → ℝ^n) (σ : ℝ → ℝ^(d - 1) → ℝ)
 /-- A solution to the RDE which starts close to a planar front is well-approximated by the front
 shifted according to a viscous Hamilton-Jacobi equation.
 -/
-theorem vHJ_approximates_planar_front
+theorem Planarwave.vHJ_approximates_planar_front
   (hn : 1 ≤ n) (hd : 2 ≤ d)
   (h₁ : IsSmoothParabolic f D)
   (h₂ : IsSmoothFront f D c φ)
