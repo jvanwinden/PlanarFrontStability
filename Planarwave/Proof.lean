@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-public import Definitions
+public import Planarwave.Definitions
 import all Planarwave.Analysis.FrontTrackingGlobal
 import all Planarwave.Analysis.FrontTrackingVHJComparison
 

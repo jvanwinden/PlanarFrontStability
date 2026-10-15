@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-import all Definitions
+import all Planarwave.Definitions
 import all Planarwave.Analysis.PhaseFunctional
 import all Planarwave.Analysis.ProfileProjection
 import all Planarwave.Analysis.TranslationMode

@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI Codex
 -/
 module
 
-import all Definitions
+import all Planarwave.Definitions
 import Planarwave.Analysis.BUC
 
 /-!

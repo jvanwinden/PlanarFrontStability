@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI
 -/
 module
 
-import all Definitions
+import all Planarwave.Definitions
 import all Planarwave.Analysis.ChallengeBridge
 import Planarwave.Analysis.LongitudinalOperator
 import Mathlib.Analysis.InnerProductSpace.Laplacian

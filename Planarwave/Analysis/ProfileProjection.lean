@@ -5,7 +5,7 @@ Authors: Joris van Winden, OpenAI Codex
 -/
 module
 
-import all Definitions
+import all Planarwave.Definitions
 import all Planarwave.Analysis.PhaseFunctional
 import all Planarwave.Analysis.ChallengeBridge
 import all Planarwave.Analysis.ComplexBUC2

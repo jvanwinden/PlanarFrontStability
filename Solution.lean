@@ -6,7 +6,7 @@ Authors: Joris van Winden
 module
 
 public import Mathlib
-public import Definitions
+public import Planarwave.Definitions
 public import Planarwave.Proof
 
 @[expose] public section
