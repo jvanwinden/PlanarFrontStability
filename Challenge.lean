@@ -117,11 +117,11 @@ end SpectralStability
 section NonlinearStability
 
 /-- Extract the horizontal coordinate from x. -/
-noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then x ⟨d - 1, by omega⟩ else 0
+noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then
+    x ⟨d - 1, Nat.sub_lt hd zero_lt_one⟩ else 0
 
 /-- Extract the transverse coordinates from x. -/
-def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x (Fin.castLE (by simp only [tsub_le_iff_right,
-  le_add_iff_nonneg_right, zero_le]) i))
+def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x (Fin.castLE (Nat.sub_le d 1) i))
 
 /-- Assemble the full coordinate x from y and z. -/
 def full (y : ℝ^(d - 1)) (z : ℝ) : ℝ^d :=
