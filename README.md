@@ -8,7 +8,7 @@ The most important files are the following:
 - [`Solution.lean`](Solution.lean) contains the main theorem with proof, using the results in the `Planarwave`
   module.
 
-To audit the statement, examine `Definitions.lean` and `Challenge.lean` (note that they only import Mathlib)
+To audit the theorem statement, examine `Challenge.lean` (which imports only Mathlib).
 
 To verify the proof, first run `lake exe cache get` (optional, to fetch the Mathlib cache) and then 
 ```
