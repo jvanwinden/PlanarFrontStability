@@ -15,14 +15,16 @@ local notation "ℝ^" n:arg => EuclideanSpace ℝ (Fin n)
 local notation "ℂ^" n:arg => EuclideanSpace ℂ (Fin n)
 
 /-!
-# Solution-side statement definitions
+# Stability of planar fronts in reaction diffusion systems.
 
-These internal declarations mirror the protected `Challenge.lean`, without
-its admitted main theorem. They live in `Planarwave` so that `Solution.lean`
-can repeat the challenge's public declarations without name collisions.
+This file formalizes the statement that the dynamics near a spectrally stable
+planar front in a reaction-diffusion equation are described by a viscous Hamilton-Jacobi equation.
 
-The analytic library imports this module, never `Challenge`. `Planarwave.Proof`
-transfers the completed proof to the copied predicates in `Solution.lean`.
+The main theorem is `vHJ_approximates_planar_front`, which corresponds to Theorem 1.6 in [1] (with the uniqueness of
+the solutions omitted).
+
+* [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
+  nonlocalized perturbations.", arXiv.2601.05832.
 -/
 
 open scoped Gradient Laplacian EuclideanGeometry Topology InnerProductSpace ContDiff
@@ -37,9 +39,11 @@ variable (u : ℝ → ℝ^d → ℝ^n) (σ : ℝ → ℝ^(d - 1) → ℝ)
 
 section PDESetup
 
+/-- Predicate for bounded uniformly continuous functions. -/
 def IsBUCOn {α β : Type*} [UniformSpace α] [UniformSpace β] [Norm β] (f : α → β) (s : Set α) :=
   UniformContinuousOn f s ∧ ∃ C, ∀ x ∈ s, ‖f x‖ ≤ C
 
+/-- Predicate for bounded uniformly continuous functions. -/
 def IsBUC {α β : Type*} [UniformSpace α] [UniformSpace β] [Norm β] (f : α → β) := IsBUCOn f univ
 
 /-- The PDE is uniformly parabolic and the nonlinearity is smooth. -/
@@ -54,6 +58,7 @@ structure IsRDESolution : Prop where
   smooth : ContDiffOn ℝ ∞ (uncurry u) (Ioi 0 ×ˢ univ)
   pde : ∀ t > 0, ∀ x, deriv (u · x) t = D (Δ (u t ·) x) + f (u t x)
 
+/-- Transverse diffusion coefficient. -/
 noncomputable def d_perp : ℝ := ∫ x, ⟪ψ x, D (deriv φ x)⟫_ℝ
 
 /-- Define our notion of (global) solution for the viscous Hamilton-Jacobi equation. -/
@@ -73,37 +78,39 @@ structure IsSmoothFront : Prop where
 
 public section SpectralStability
 
-/-- Complexify a map from ℝ^n → ℝ^n. -/
+/-- Complexify a map of type `ℝ^n → ℝ^n`. -/
 noncomputable def ContinuousLinearMap.complexify (L : ℝ^n →L[ℝ] ℝ^n) :=
   Matrix.toEuclideanLin.symm L.toLinearMap|>.map (fun x ↦ (x : ℂ))|>.toEuclideanLin
 
-/-- Embed ℝ^n into ℂ^n in the natural way. -/
+/-- Embed `ℝ^n` into `ℂ^n` in the natural way. -/
 noncomputable def embed (x : ℝ^n) : ℂ^n := .toLp 2 fun i ↦ ↑(x i)
 
-/-- Define our notion of solution to the resolvent equation at transverse wavenumber k. -/
+/-- Define our notion of solution to the resolvent equation at transverse wavenumber `k`. -/
 structure IsTransverseResolventSolution (k : ℝ) (l : ℂ) (v w : ℝ → ℂ^n) : Prop where
-  /-- v is twice continuously differentiable. -/
+  /-- `v` is twice continuously differentiable. -/
   smooth : ContDiff ℝ 2 v
-  /-- The first two derivatives of v are bounded uniformly continuous. -/
+  /-- `v` and its first two derivatives are BUC. -/
   buc : ∀ i ≤ 2, IsBUC (iteratedDeriv i (v ·))
-  /-- v satisfies the resolvent equation. -/
+  /-- `v` satisfies the resolvent equation with right-hand side `w`. -/
   pde : ∀ z, ((ContinuousLinearMap.complexify D)) ((Δ v z) - (k ^ 2) • (v z)) +
     c • (deriv v z) + (ContinuousLinearMap.complexify (fderiv ℝ f (φ z))) (v z) - l • v z = w z
 
+/-- The spectrum of the linearized equation at transverse wavenumber `k`.-/
 def TransverseSpectrum (k : ℝ) : Set ℂ :=
   compl {l | ∀ w, IsBUC w → ∃! v, IsTransverseResolventSolution f D c φ k l v w}
 
+/-- The front is (transversally) spectrally stable, and `ψ` is the adjoint eigenfunction. -/
 structure IsSpectrallyStableWithAdjoint : Prop where
-  /-- Integrability of the adjoint eigenfunction. -/
+  /-- `ψ` is integrable. -/
   integrable : Integrable ψ
-  /-- Normalization of the adjoint eigenfunction. -/
+  /-- `ψ` is normalized against the derivative of `φ`. -/
   normalized : ∫ x, ⟪ψ x, deriv φ x⟫_ℝ = 1
-  /-- L₀ has a spectral gap. -/
+  /-- `L₀` has a spectral gap. -/
   horizontal_spectral_gap : ∃ θ > 0, ∀ l ∈ TransverseSpectrum f D c φ 0, l = 0 ∨ l.re ≤ -θ
-  /-- L₀ v = 0 iff v is a multiple of φ'. -/
+  /-- The kernel of `L₀` is spanned by `∂ₓφ`. -/
   horizontal_kernel : ∀ v, IsTransverseResolventSolution f D c φ 0 0 v 0 ↔
     ∃ c : ℂ, ∀ x, v x = c • embed (deriv φ x)
-  /-- L₀ v = w has a solution iff w is orthogonal to ψ. -/
+  /-- `L₀ v = w` has a solution iff `w` is orthogonal to `ψ`. -/
   horizontal_solvability : ∀ w, IsBUC w →
     (∫ z, ⟪embed (ψ z), w z⟫_ℂ = 0 ↔ ∃ v, IsTransverseResolventSolution f D c φ 0 0 v w)
   /-- Transverse spectral stability for small wavenumbers. -/
@@ -116,14 +123,14 @@ end SpectralStability
 
 section NonlinearStability
 
-/-- Extract the horizontal coordinate from x. -/
+/-- Extract the horizontal coordinate from `x`. -/
 noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then
     x ⟨d - 1, Nat.sub_lt hd zero_lt_one⟩ else 0
 
-/-- Extract the transverse coordinates from x. -/
+/-- Extract the transverse coordinates from `x`. -/
 def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x (Fin.castLE (Nat.sub_le d 1) i))
 
-/-- Assemble the full coordinate x from y and z. -/
+/-- Assemble the full coordinate `x` from transver coordinates `y` and horizontal coordinate `z`. -/
 def full (y : ℝ^(d - 1)) (z : ℝ) : ℝ^d :=
   .toLp 2 (fun i ↦ if h : i < d - 1 then y ⟨i, h⟩ else z)
 
@@ -131,8 +138,7 @@ def full (y : ℝ^(d - 1)) (z : ℝ) : ℝ^d :=
 def IsCloseToFront (u : ℝ^d → ℝ^n) (ε : ℝ) : Prop := ∀ x, ‖u x - φ (horizontal x)‖ ≤ ε
 
 /-- A solution to the RDE which starts close to a planar front is well-approximated by the front
-shifted according to a viscous Hamilton-Jacobi equation.
--/
+shifted according to a viscous Hamilton-Jacobi equation. -/
 theorem vHJ_approximates_planar_front
   (hn : 1 ≤ n) (hd : 2 ≤ d)
   (h₁ : IsSmoothParabolic f D)

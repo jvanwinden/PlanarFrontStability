@@ -1,6 +1,6 @@
 # Stability of planar fronts in reaction-diffusion systems
 
-This project formalizes Theorem 1.6 from [1], following the paper's proof.
+A Lean 4 formalization of Theorem 1.6 from [1], following the paper's proof.
 
 The most important files are the following:
 - [`Challenge.lean`](Challenge.lean) contains the necessary definitions and the main theorem `vHJ_approximates_planar_front_solution`,

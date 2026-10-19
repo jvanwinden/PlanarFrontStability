@@ -31,7 +31,7 @@ sources:
     note: >-
       Follows the paper's proof of Theorem 1.6, with uniqueness omitted from
       the formalized conclusion.
-    license: "arXiv.org perpetual, non-exclusive license to distribute"
+    license: ""
     author_endorsement: "participated"
 
 related_formalizations: []
@@ -42,15 +42,12 @@ classification:
 
 status:
   scope: >-
-    Proves Theorem 1.6 (except the uniqueness statement) of the paper under 
-    the original hypothesis.
-  # Excludes the deliberate reference-theorem sorry in Challenge.lean.
+    Proves Theorem 1.6 of the paper under the original hypotheses.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: ["propext, Quot.sound, Classical.choice"]
-  # comparator.json permits propext, Quot.sound, and Classical.choice.
   main_results:
-    - declaration: "vHJ_approximates_planar_front"
+    - declaration: "Planarwave.vHJ_approximates_planar_front"
       file: "Solution.lean"
       sorry_count: 0
       comparator_config: "comparator.json"
@@ -59,7 +56,6 @@ status:
 automation:
   methods:
     - method: "agent"
-      # TODO: Fill in the models used during the proof development.
       models: ["GPT-6 Astra"]
       framework: "OpenAI Codex"
       tool_setup: >-
@@ -69,7 +65,7 @@ automation:
       cost:
         wall_time: "3 days"
         spend_usd: "subscription: chatgpt for academic researchers"
-        hardware: ""
+        hardware: "desktop PC"
       prompting_notes: ""
   spend_usd: "subscription: chatgpt for academic researchers"
   notes:
@@ -85,13 +81,6 @@ review:
   notes:
 
 alignment:
-  namespace: "Planarwave"
-  statements:
-    - source: "arXiv:2601.05832v1, Theorem 1.6"
-      lean: "vHJ_approximates_planar_front"
-      module: "Solution"
-      status: "proved"
-      note:
 
 acknowledgements: >-
   The Lean and mathlib communities for the proof assistant and mathematical
