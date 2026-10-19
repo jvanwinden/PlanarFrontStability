@@ -1,6 +1,7 @@
 # Stability of planar fronts in reaction-diffusion systems
 
 A Lean 4 formalization of Theorem 1.6 from [1], following the paper's proof.
+The theorem statement was formalized by hand, and the proof was autoformalized by GPT-6 Astra using Codex.
 
 The most important files are the following:
 - [`Challenge.lean`](Challenge.lean) contains the necessary definitions and the main theorem `vHJ_approximates_planar_front_solution`,
@@ -20,5 +21,6 @@ Your solution is okay!
 ```
 
 The project is pinned to Lean and Mathlib version `v4.35.0`.
+This work was supported in part by a grant of access to OpenAI models through the ChatGPT for Academic Researchers program.
 
 [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under nonlocalized perturbations.", arXiv.2601.05832.

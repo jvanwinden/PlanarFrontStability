@@ -85,3 +85,4 @@ alignment:
 acknowledgements: >-
   The Lean and mathlib communities for the proof assistant and mathematical
   library; OpenAI Codex for assistance with the formalization.
+  This work was supported in part by a grant of access to OpenAI models through the ChatGPT for Academic Researchers program.
