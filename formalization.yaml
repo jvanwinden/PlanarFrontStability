@@ -25,7 +25,7 @@ sources:
       - "Björn de Rijk"
       - "Joris van Winden"
     id: "https://arxiv.org/abs/2601.05832v1"
-    type: "article"
+    type: "paper"
     location: "Theorem 1.6 (Effective front dynamics), Section 1.4"
     relationship: "formalizes"
     note: >-
@@ -43,9 +43,11 @@ classification:
 status:
   scope: >-
     Proves Theorem 1.6 of the paper under the original hypotheses.
+    The spectral stability is formulated differently from the paper,
+    but is mathematically equivalent.
   sorry_count: 0
   sorry_in_definitions: 0
-  axioms: ["propext, Quot.sound, Classical.choice"]
+  axioms: ["propext", "Quot.sound", "Classical.choice"]
   main_results:
     - declaration: "Planarwave.vHJ_approximates_planar_front"
       file: "Solution.lean"
@@ -68,7 +70,7 @@ automation:
         hardware: "desktop PC"
       prompting_notes: ""
   spend_usd: "subscription: chatgpt for academic researchers"
-  notes:
+  notes: ""
 
 fidelity:
   divergences: >-
@@ -78,7 +80,7 @@ fidelity:
 review:
   status: "author-verified"
   reviewers: ["Joris van Winden"]
-  notes:
+  notes: ""
 
 alignment:
 

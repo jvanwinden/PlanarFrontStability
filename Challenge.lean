@@ -32,7 +32,7 @@ open Filter Function Set MeasureTheory
 
 -- PDE data: dimension, nonlinearity, diffusion matrix.
 variable {d n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n)
--- Front data: speed, profile, transverse diffusion coefficient
+-- Front data: speed, profile, adjoint eigenfunction
 variable (c : ℝ) (φ : ℝ → ℝ^n) (ψ : ℝ → ℝ^n)
 -- Prospective solutions to the relevant PDEs.
 variable (u : ℝ → ℝ^d → ℝ^n) (σ : ℝ → ℝ^(d - 1) → ℝ)
@@ -69,7 +69,7 @@ structure IsVHJSolution (d_perp : ℝ) : Prop where
 
 end PDESetup
 
-/-- The front is twice continuously differentiable, has left and right limits, and satisfies the
+/-- The front is smooth, has left and right limits, and satisfies the
 traveling wave ODE. -/
 structure IsSmoothFront : Prop where
   smooth : ContDiff ℝ ∞ φ
@@ -130,7 +130,7 @@ noncomputable def horizontal (x : ℝ^d) : ℝ := if hd : 1 ≤ d then
 /-- Extract the transverse coordinates from `x`. -/
 def transverse (x : ℝ^d) : ℝ^(d - 1) := .toLp 2 (fun i ↦ x (Fin.castLE (Nat.sub_le d 1) i))
 
-/-- Assemble the full coordinate `x` from transver coordinates `y` and horizontal coordinate `z`. -/
+/-- Assemble the full coordinate `x` from transverse coordinates `y` and horizontal coordinate `z`. -/
 def full (y : ℝ^(d - 1)) (z : ℝ) : ℝ^d :=
   .toLp 2 (fun i ↦ if h : i < d - 1 then y ⟨i, h⟩ else z)
 
