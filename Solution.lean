@@ -24,14 +24,14 @@ The main theorem is `vHJ_approximates_planar_front`, which corresponds to Theore
 the solutions omitted).
 
 * [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
-  nonlocalized perturbations.", arXiv.2601.05832.
+  nonlocalized perturbations", arXiv.2601.05832.
 -/
 
 open Set Planarwave Set InnerProductSpace
 
 -- PDE data: dimension, nonlinearity, diffusion matrix.
 variable {d n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n)
--- Front data: speed, profile, transverse diffusion coefficient
+-- Front data: speed, profile, adjoint eigenfunction
 variable (c : ℝ) (φ : ℝ → ℝ^n) (ψ : ℝ → ℝ^n)
 -- Prospective solutions to the relevant PDEs.
 variable (u : ℝ → ℝ^d → ℝ^n) (σ : ℝ → ℝ^(d - 1) → ℝ)

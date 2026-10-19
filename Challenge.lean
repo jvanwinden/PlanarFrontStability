@@ -24,7 +24,7 @@ The main theorem is `vHJ_approximates_planar_front`, which corresponds to Theore
 the solutions omitted).
 
 * [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under
-  nonlocalized perturbations.", arXiv.2601.05832.
+  nonlocalized perturbations", arXiv:2601.05832.
 -/
 
 open scoped Gradient Laplacian EuclideanGeometry Topology InnerProductSpace ContDiff
