@@ -20,7 +20,7 @@ which should output
 Your solution is okay!
 ```
 
-The project is pinned to Lean and Mathlib version `v4.35.0`.
+The project is pinned to Lean and Mathlib version `v4.36.0`.
 This work was supported in part by a grant of access to OpenAI models through the ChatGPT for Academic Researchers program.
 
 [1]. B. de Rijk and J. van Winden, "Stability and dynamics of planar fronts in reaction-diffusion systems under nonlocalized perturbations.", arXiv:2601.05832.
