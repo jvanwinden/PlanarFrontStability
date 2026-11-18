@@ -79,6 +79,7 @@ theorem frontSpatialC0Semigroup_hasGeneratorAt
         frontSpatialReactionMultiplication f D c φ h₁ h₂ hd (spatialDiffusionBUCCoordinatesEquiv D h₁.positive v)) :=
   (spatialDiffusionC0Semigroup_hasGeneratorAt D h₁.positive h₁.kernel (frontSpatialDrift hd c) v g h hg hh).boundedPerturbation _
 
+omit [Nontrivial (ℝ^n)] in
 /-- The full spatial Duhamel identity used to recover the Fourier representation. -/
 theorem frontSpatialC0Semigroup_mild (v : BUC (ℝ^d) (ℂ^n)) {t : ℝ} (ht : 0 ≤ t) :
     (frontSpatialC0Semigroup f D c φ h₁ h₂ hd).realOrbit v t =
@@ -88,6 +89,7 @@ theorem frontSpatialC0Semigroup_mild (v : BUC (ℝ^d) (ℂ^n)) {t : ℝ} (ht : 0
             ((frontSpatialC0Semigroup f D c φ h₁ h₂ hd).realOrbit v r)) t :=
   C0Semigroup.perturbedOrbit_eq _ _ v ht
 
+omit [Nontrivial (ℝ^n)] in
 /-- A global exponential norm bound for the independently constructed spatial semigroup. -/
 theorem exists_frontSpatialC0Semigroup_bound :
     ∃ M > 0, ∃ ω > 0, ∀ t : NNReal,
@@ -104,6 +106,7 @@ theorem exists_frontSpatialC0Semigroup_bound :
   exact mul_le_mul_of_nonneg_right
     (by simpa only [zero_add] using le_add_of_nonneg_right (show (0 : ℝ) ≤ 1 from zero_le_one)) t.2
 
+omit [Nontrivial (ℝ^n)] in
 /-- The short-time uniform bound invoked in the last paragraph of Section 3. -/
 theorem exists_frontSpatialC0Semigroup_shortTime_bound :
     ∃ C > 0, ∀ t : NNReal, t ≤ 1 → ‖frontSpatialC0Semigroup f D c φ h₁ h₂ hd t‖ ≤ C := by

@@ -35,7 +35,7 @@ section HeatFlow
 variable {E F : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
-  [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+  [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- The spatial standard deviation in the heat flow with diffusivity `a` at time `t`. -/
 noncomputable def heatScale (a t : ℝ) : ℝ := Real.sqrt (2 * a * t)
@@ -103,15 +103,20 @@ theorem heatMeasure_conv {a s t : ℝ} (ha : 0 ≤ a) (hs : 0 ≤ s) (ht : 0 ≤
   push_cast
   ring
 
+omit [BorelSpace E] in
 @[simp]
-theorem heatFlow_zero (a : ℝ) (f : E → F) (x : E) : heatFlow a 0 f x = f x := by
+theorem heatFlow_zero [CompleteSpace F] (a : ℝ) (f : E → F) (x : E) :
+    heatFlow a 0 f x = f x := by
   simp [heatFlow]
 
+omit [BorelSpace E] in
 @[simp]
-theorem heatFlow_const (a t : ℝ) (c : F) : heatFlow a t (fun _ : E => c) = fun _ => c := by
+theorem heatFlow_const [CompleteSpace F] (a t : ℝ) (c : F) :
+    heatFlow a t (fun _ : E => c) = fun _ => c := by
   funext x
   simp [heatFlow]
 
+omit [NormedSpace ℝ F] in
 /-- A bounded continuous integrand is integrable against the standard Gaussian probability
 measure. -/
 theorem integrable_comp_add_heatScale {a t : ℝ} {f : E → F} (hf : Continuous f)
@@ -121,6 +126,7 @@ theorem integrable_comp_add_heatScale {a t : ℝ} {f : E → F} (hf : Continuous
   filter_upwards with z
   simpa using hC (x + heatScale a t • z)
 
+omit [NormedSpace ℝ F] in
 theorem integrable_comp_add_heatMeasure {a t : ℝ} {f : E → F} (hf : Continuous f)
     (C : ℝ) (hC : ∀ x, ‖f x‖ ≤ C) (x : E) :
     Integrable (fun z => f (x + z)) (heatMeasure (E := E) a t) := by
@@ -137,6 +143,7 @@ theorem heatFlow_add_of_bounded_continuous (a t : ℝ) {f g : E → F}
   rw [integral_add (integrable_comp_add_heatScale hf Cf hCf x)
     (integrable_comp_add_heatScale hg Cg hCg x)]
 
+omit [BorelSpace E] in
 theorem heatFlow_smul (a t r : ℝ) (f : E → F) :
     heatFlow a t (fun x => r • f x) = fun x => r • heatFlow a t f x := by
   funext x
@@ -144,6 +151,7 @@ theorem heatFlow_smul (a t r : ℝ) (f : E → F) :
     r • ∫ z, f (x + heatScale a t • z) ∂(stdGaussian E)
   rw [integral_smul]
 
+omit [BorelSpace E] in
 /-- The Gaussian heat flow is a contraction in the supremum norm. -/
 theorem norm_heatFlow_le {a t C : ℝ} {f : E → F} (hC : ∀ x, ‖f x‖ ≤ C) (x : E) :
     ‖heatFlow a t f x‖ ≤ C := by
@@ -186,7 +194,7 @@ theorem continuous_heatFlow {a t C : ℝ} {f : E → F}
   (uniformContinuous_heatFlow hf hC).continuous
 
 /-- Semigroup law for the Gaussian heat flow on bounded uniformly continuous functions. -/
-theorem heatFlow_add_time {a s t C : ℝ} (ha : 0 ≤ a) (hs : 0 ≤ s) (ht : 0 ≤ t)
+theorem heatFlow_add_time [CompleteSpace F] {a s t C : ℝ} (ha : 0 ≤ a) (hs : 0 ≤ s) (ht : 0 ≤ t)
     {f : E → F} (hf : UniformContinuous f) (hC : ∀ x, ‖f x‖ ≤ C) :
     heatFlow a s (heatFlow a t f) = heatFlow a (s + t) f := by
   funext x

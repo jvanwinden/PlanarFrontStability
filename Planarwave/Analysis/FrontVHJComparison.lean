@@ -38,10 +38,10 @@ include h₂
 already constructed bounded translation mode. -/
 theorem lipschitzWith_front_profile :
     LipschitzWith ‖realTranslationModeBUC f D c φ ψ h₃‖₊ φ := by
-  apply lipschitzWith_of_nnnorm_deriv_le (h₂.smooth.differentiable (by norm_num))
+  apply lipschitzWith_of_nnNorm_deriv_le (h₂.smooth.differentiable (by norm_num))
   intro z
   apply NNReal.coe_le_coe.mp
-  simpa only [coe_nnnorm, realTranslationModeBUC_apply] using
+  simpa only [coe_nnNorm, realTranslationModeBUC_apply] using
     (realTranslationModeBUC f D c φ ψ h₃).norm_apply_le z
 
 /-- Changing the phase in a translated front costs at most the bounded
@@ -53,7 +53,7 @@ theorem norm_front_phase_shift_sub_le (σ τ : BUC (ℝ^(d - 1)) ℝ)
   have h := (lipschitzWith_front_profile f D c φ ψ h₂ h₃).dist_le_mul (z - σ y) (z - τ y)
   have h' : ‖φ (z - σ y) - φ (z - τ y)‖ ≤
       ‖realTranslationModeBUC f D c φ ψ h₃‖ * ‖σ y - τ y‖ := by
-    simpa only [dist_eq_norm, coe_nnnorm, sub_sub_sub_cancel_left, norm_sub_rev] using h
+    simpa only [dist_eq_norm, coe_nnNorm, sub_sub_sub_cancel_left, norm_sub_rev] using h
   exact h'.trans (mul_le_mul_of_nonneg_left ((σ - τ).norm_apply_le y) (norm_nonneg _))
 
 /-- Combine the inverse-modulated perturbation and phase errors in the

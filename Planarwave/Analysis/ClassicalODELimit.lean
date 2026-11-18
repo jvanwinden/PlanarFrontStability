@@ -66,17 +66,17 @@ theorem integrable_of_bounded_integral_norm_of_pointwise
     (hi : ∀ j, Integrable (u j)) (hv : Continuous v)
     (hb : ∀ j, (∫ x, ‖u j x‖) ≤ M)
     (hl : ∀ x, Tendsto (fun j ↦ u j x) atTop (𝓝 (v x))) : Integrable v := by
-  refine ⟨hv.aestronglyMeasurable, hasFiniteIntegral_iff_enorm.mpr ?_⟩
+  refine ⟨hv.aestronglyMeasurable, hasFiniteIntegral_iff_eNorm.mpr ?_⟩
   have hfatou : (∫⁻ x, ‖v x‖ₑ) ≤ liminf (fun j ↦ ∫⁻ x, ‖u j x‖ₑ) atTop := by
     calc
       _ = ∫⁻ x, liminf (fun j ↦ ‖u j x‖ₑ) atTop :=
-        lintegral_congr_ae (ae_of_all _ fun x ↦ (hl x).enorm.liminf_eq.symm)
-      _ ≤ _ := lintegral_liminf_le' fun j ↦ (hi j).aestronglyMeasurable.enorm
+        lintegral_congr_ae (ae_of_all _ fun x ↦ (hl x).eNorm.liminf_eq.symm)
+      _ ≤ _ := lintegral_liminf_le' fun j ↦ (hi j).aestronglyMeasurable.eNorm
   have hbound : liminf (fun j ↦ ∫⁻ x, ‖u j x‖ₑ) atTop ≤ ENNReal.ofReal M := by
     apply liminf_le_of_frequently_le'
     apply Frequently.of_forall
     intro j
-    rw [← ofReal_integral_norm_eq_lintegral_enorm (hi j)]
+    rw [← ofReal_integral_norm_eq_lintegral_eNorm (hi j)]
     exact ENNReal.ofReal_le_ofReal (hb j)
   exact (hfatou.trans hbound).trans_lt ENNReal.ofReal_lt_top
 

@@ -99,7 +99,7 @@ theorem exists_continuous_coleHopfInvSlope_on {β T : ℝ} (ξ : ℝ → BUC E �
   let S := fun t ↦ if ht : t ∈ Icc 0 T then coleHopfInvSlopeSmallBUC β (ξ t) (hsmall t ht) else 0
   have heq : ∀ t (ht : t ∈ Icc 0 T), S t = coleHopfInvSlopeSmallBUC β (ξ t) (hsmall t ht) := by
     intro t ht
-    simp only [S, dif_pos ht]
+    simp only [S, dite_eq_left ht]
   refine ⟨S, ?_, fun t ht ↦ ?_⟩
   · intro t ht
     rw [Metric.continuousWithinAt_iff]

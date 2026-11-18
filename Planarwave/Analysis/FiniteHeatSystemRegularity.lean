@@ -63,6 +63,7 @@ def IsFiniteHeatSystemMildOn (a : ι → ℝ) (P : ι → V →L[ℝ] ℝ)
         heatDuhamel (a i) (fun r ↦
           BUC.postcompContinuous (fun v ↦ P i (f v)) ((P i).continuous.comp hf) (u (s + r))) t
 
+omit [CompleteSpace V] [Fintype ι] in
 /-- The coordinate equations at time zero imply all restart equations,
 even though their nonlinear sources couple the components. -/
 theorem isFiniteHeatSystemMildOn_of_mild (a : ι → ℝ) (ha : ∀ i, 0 ≤ a i)

@@ -33,6 +33,7 @@ variable {E F : Type*}
 def heatDuhamel (a : ℝ) (g : ℝ → BUC E F) (t : ℝ) : BUC E F :=
   ∫ r in (0 : ℝ)..t, heatFlowBUC a (t - r) (g r)
 
+omit [CompleteSpace F] in
 @[simp]
 theorem heatDuhamel_zero (a : ℝ) (g : ℝ → BUC E F) : heatDuhamel a g 0 = 0 := by
   simp [heatDuhamel]
@@ -59,10 +60,12 @@ theorem heatDuhamel_add (a : ℝ) {f g : ℝ → BUC E F}
   · exact ((continuous_heatDuhamel_integrand a hg).comp
       (continuous_const.prodMk continuous_id)).intervalIntegrable 0 t
 
+omit [CompleteSpace F] in
 theorem heatDuhamel_smul (a c : ℝ) (g : ℝ → BUC E F) (t : ℝ) :
     heatDuhamel a (fun r ↦ c • g r) t = c • heatDuhamel a g t := by
   simp only [heatDuhamel, heatFlowBUC_smul, intervalIntegral.integral_smul]
 
+omit [CompleteSpace F] in
 /-- Only the source values between zero and the current time enter Duhamel. -/
 theorem heatDuhamel_congr (a : ℝ) {f g : ℝ → BUC E F} {t : ℝ} (ht : 0 ≤ t)
     (h : EqOn f g (Icc 0 t)) : heatDuhamel a f t = heatDuhamel a g t := by
@@ -72,6 +75,7 @@ theorem heatDuhamel_congr (a : ℝ) {f g : ℝ → BUC E F} {t : ℝ} (ht : 0 �
   dsimp only
   rw [h hr]
 
+omit [CompleteSpace F] in
 /-- Contractivity supplies the small time factor in the Volterra bound. -/
 theorem norm_heatDuhamel_le {a t C : ℝ} (g : ℝ → BUC E F) (ht : 0 ≤ t)
     (hg : ∀ r ∈ Icc 0 t, ‖g r‖ ≤ C) : ‖heatDuhamel a g t‖ ≤ C * t := by

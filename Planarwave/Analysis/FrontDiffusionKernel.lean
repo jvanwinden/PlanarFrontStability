@@ -59,6 +59,7 @@ theorem integrable_frontDiffusionKernel (hDinj : Function.Injective D) [Nontrivi
 
 variable [Nontrivial (ℝ^n)]
 
+omit [Nontrivial (ℝ^n)] in
 /-- The kernel's diagonal frequency multiplier is the independently defined principal semigroup. -/
 theorem frontDiffusion_gaussian_symbol (t : NNReal) (ξ : ℝ^m) (v : BUC ℝ (ℂ^n)) :
     diffusionBUCCoordinatesEquiv D hD (fun i ↦

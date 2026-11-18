@@ -56,7 +56,7 @@ theorem integral_sq_norm_stdGaussian :
       exact (b.sum_sq_inner_right z).symm
     _ = ∑ i : Fin (Module.finrank ℝ E),
         ∫ z : E, ⟪b i, z⟫ ^ 2 ∂(stdGaussian E) := by
-      apply integral_finset_sum
+      apply integral_finsetSum
       intro i _
       exact ((innerSL ℝ (b i)).comp_memLp'
         (IsGaussian.memLp_two_id : MemLp (id : E → E) 2 (stdGaussian E))).integrable_sq
@@ -76,7 +76,7 @@ section HermiteKernels
 variable {E F : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
-  [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+  [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- First Hermite kernel for Gaussian smoothing.  At positive scale this is the candidate
 Fréchet derivative of `x ↦ ∫ z, f (x + s • z)`. -/

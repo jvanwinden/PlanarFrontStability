@@ -56,6 +56,7 @@ def heatFDerivOperator {a t : ℝ} (ha : 0 < a) (ht : 0 < t) :
     (heatScale a t)⁻¹ (fun f ↦ by
       simpa only [div_eq_mul_inv, mul_comm] using! norm_heatFDerivBUC_le ha ht f)
 
+omit [CompleteSpace F] in
 @[simp] theorem heatFDerivOperator_apply {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (f : BUC E F) : heatFDerivOperator ha ht f = heatFDerivBUC ha ht f := rfl
 
@@ -65,16 +66,19 @@ def heatGradient {a : ℝ} (ha : 0 < a) (t : ℝ) :
     BUC E F →L[ℝ] BUC E (E →L[ℝ] F) :=
   if ht : 0 < t then heatFDerivOperator ha ht else 0
 
+omit [CompleteSpace F] in
 theorem heatGradient_of_pos {a t : ℝ} (ha : 0 < a) (ht : 0 < t) (f : BUC E F) :
     heatGradient ha t f = heatFDerivBUC ha ht f := by
   simp [heatGradient, ht]
 
+omit [CompleteSpace F] in
 theorem hasFDerivAt_heatFlow_gradient {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (f : BUC E F) (x : E) :
     HasFDerivAt (heatFlowBUC a t f) (heatGradient ha t f x) x := by
   rw [heatGradient_of_pos ha ht]
   exact hasFDerivAt_heatFlow ha ht f x
 
+omit [CompleteSpace F] in
 theorem norm_heatGradient_le {a t : ℝ} (ha : 0 < a) (ht : 0 < t) (f : BUC E F) :
     ‖heatGradient ha t f‖ ≤ ‖f‖ / heatScale a t := by
   rw [heatGradient_of_pos ha ht]

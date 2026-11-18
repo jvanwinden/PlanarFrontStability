@@ -47,6 +47,7 @@ structure IsMaximalMatrixReactionDiffusion
   blowup : ∀ R : ℝ, 0 < R → T = ENNReal.ofReal R →
     Filter.limsup (fun t ↦ (‖u t‖₊ : ℝ≥0∞)) (𝓝[<] R) = (⊤ : ℝ≥0∞)
 
+omit [Nontrivial (ℝ^n)] in
 /-- Every BUC initial datum has a maximal solution, under exactly the
 original smooth parabolic assumptions. -/
 theorem exists_maximal_matrixReactionDiffusion

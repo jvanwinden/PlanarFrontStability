@@ -34,7 +34,7 @@ theorem uniformContinuous_iteratedFDeriv_of_bound {f : E → F} {k : ℕ} {B : �
   have hB : 0 ≤ B := (norm_nonneg _).trans (hb 0)
   have hd : Differentiable ℝ (iteratedFDeriv ℝ k f) :=
     hf.differentiable_iteratedFDeriv (by exact_mod_cast (Nat.lt_succ_self k))
-  apply (lipschitzWith_of_nnnorm_fderiv_le (C := ⟨B, hB⟩) hd ?_).uniformContinuous
+  apply (lipschitzWith_of_nnNorm_fderiv_le (C := ⟨B, hB⟩) hd ?_).uniformContinuous
   intro x
   change ‖fderiv ℝ (iteratedFDeriv ℝ k f) x‖ ≤ B
   rw [norm_fderiv_iteratedFDeriv]

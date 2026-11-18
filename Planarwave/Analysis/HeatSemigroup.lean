@@ -41,6 +41,7 @@ def heatFlowBUC (a t : ℝ) (f : BUC E F) : BUC E F where
   uniformContinuous' :=
     uniformContinuous_heatFlow f.uniformContinuous (fun x ↦ f.norm_apply_le x)
 
+omit [CompleteSpace F] in
 @[simp]
 theorem heatFlowBUC_apply (a t : ℝ) (f : BUC E F) (x : E) :
     heatFlowBUC a t f x = heatFlow a t f x := rfl
@@ -57,6 +58,7 @@ theorem heatFlowBUC_const (a t : ℝ) (c : F) :
   change heatFlow a t (fun _ : E ↦ c) x = c
   simp
 
+omit [CompleteSpace F] in
 theorem heatFlowBUC_add (a t : ℝ) (f g : BUC E F) :
     heatFlowBUC a t (f + g) = heatFlowBUC a t f + heatFlowBUC a t g := by
   ext x
@@ -64,11 +66,13 @@ theorem heatFlowBUC_add (a t : ℝ) (f g : BUC E F) :
     (heatFlow_add_of_bounded_continuous a t f.continuous g.continuous ‖f‖ ‖g‖
       (fun y ↦ f.norm_apply_le y) (fun y ↦ g.norm_apply_le y)) x
 
+omit [CompleteSpace F] in
 theorem heatFlowBUC_smul (a t r : ℝ) (f : BUC E F) :
     heatFlowBUC a t (r • f) = r • heatFlowBUC a t f := by
   ext x
   exact congrFun (heatFlow_smul a t r f) x
 
+omit [CompleteSpace F] in
 /-- The heat flow is a contraction in the BUC supremum norm. -/
 theorem norm_heatFlowBUC_le (a t : ℝ) (f : BUC E F) : ‖heatFlowBUC a t f‖ ≤ ‖f‖ := by
   rw [BUC.norm_le (norm_nonneg f)]
@@ -83,10 +87,12 @@ def heatOperator (a t : ℝ) : BUC E F →L[ℝ] BUC E F :=
       map_smul' := heatFlowBUC_smul a t }
     1 (fun f ↦ by simpa using norm_heatFlowBUC_le a t f)
 
+omit [CompleteSpace F] in
 @[simp]
 theorem heatOperator_apply (a t : ℝ) (f : BUC E F) :
     heatOperator a t f = heatFlowBUC a t f := rfl
 
+omit [CompleteSpace F] in
 theorem norm_heatOperator_le (a t : ℝ) : ‖heatOperator (E := E) (F := F) a t‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound _ (by norm_num)
   intro f
@@ -110,11 +116,13 @@ theorem heatOperator_add_time {a s t : ℝ} (ha : 0 ≤ a) (hs : 0 ≤ s) (ht : 
 def translatedHeatIntegrand (a t : ℝ) (f : BUC E F) (z : E) : BUC E F :=
   BUC.translate (-(heatScale a t • z)) f
 
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [NormedSpace ℝ F] [CompleteSpace F] in
 theorem continuous_translatedHeatIntegrand (a t : ℝ) (f : BUC E F) :
     Continuous (translatedHeatIntegrand a t f) := by
   apply (BUC.continuous_translate f).comp
   fun_prop
 
+omit [NormedSpace ℝ F] [CompleteSpace F] in
 theorem integrable_translatedHeatIntegrand (a t : ℝ) (f : BUC E F) :
     Integrable (translatedHeatIntegrand a t f) (stdGaussian E) := by
   refine Integrable.mono' (integrable_const ‖f‖)

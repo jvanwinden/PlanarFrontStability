@@ -36,7 +36,7 @@ theorem continuous_eval_joint : Continuous (fun p : BUC A F × A ↦ p.1 p.2) :=
 theorem continuousOn_uncurry {s : Set ℝ} {u : ℝ → BUC A F} (hu : ContinuousOn u s) :
     ContinuousOn (fun p : ℝ × A ↦ u p.1 p.2) (s ×ˢ univ) := by
   exact continuous_eval_joint.comp_continuousOn
-    ((hu.comp continuousOn_fst (fun _ hp ↦ hp.1)).prodMk continuousOn_snd)
+    ((hu.comp continuousOn_fst (fun _ (hp : _ ∈ s ×ˢ (univ : Set A)) ↦ hp.1)).prodMk continuousOn_snd)
 
 /-- Compact families of BUC fields have a common spatial modulus. -/
 theorem equiuniformContinuous_of_isCompact {K : Set (BUC A F)} (hK : IsCompact K)

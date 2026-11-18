@@ -57,7 +57,7 @@ theorem BUCSpatialRegularOn.of_locallyWithin {s : Set ℝ} {k : ℕ}
       if ht : t ∈ s then (hex t ht).choose else 0
     have hq : ∀ t ∈ s, ∀ x, HasFDerivAt (f t) (q t x) x := by
       intro t ht
-      simpa only [q, dif_pos ht] using (hex t ht).choose_spec
+      simpa only [q, dite_eq_left ht] using (hex t ht).choose_spec
     refine ⟨hc, q, ih ?_, hq⟩
     intro t ht
     obtain ⟨r, hrs, htr, hr, _, p, hp, hd⟩ := hlocal t ht

@@ -48,11 +48,13 @@ def frontDiffusionC0Semigroup (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (c
   conjugatedDiagonalDiffusionC0Semigroup (diffusionEigenvalues D hD)
     (diffusionEigenvalues_nonneg D hD) c q (diffusionBUCCoordinatesEquiv D hD)
 
+omit [Nontrivial (ℝ^n)] in
 @[simp]
 theorem frontDiffusionC0Semigroup_apply (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive)
     (c q : ℝ) (t : NNReal) (v : BUC ℝ (ℂ^n)) :
     frontDiffusionC0Semigroup D hD c q t v = frontDiffusionFlowBUC D hD c q t v := rfl
 
+omit [Nontrivial (ℝ^n)] in
 @[simp]
 theorem frontDiffusionFlowBUC_zero (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive)
     (c q : ℝ) (v : BUC ℝ (ℂ^n)) : frontDiffusionFlowBUC D hD c q 0 v = v := by
@@ -213,6 +215,7 @@ theorem hasDerivWithinAt_frontDiffusionFlowBUC_zero
   rw [diffusion_generator_coordinates D hD c q v] at h
   exact h
 
+omit [Nontrivial (ℝ^n)] in
 /-- The real-orbit convention for abstract semigroups agrees with the explicit flow at
 nonnegative time. -/
 theorem frontDiffusionC0Semigroup_realOrbit (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive)

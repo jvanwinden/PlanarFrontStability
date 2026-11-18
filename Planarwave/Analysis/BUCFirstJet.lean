@@ -67,7 +67,7 @@ theorem continuous_firstJetBUC :
 
 /-- The linear subspace of jets satisfying the actual derivative identity. -/
 def firstJetSubmodule : Submodule ℝ (BUC E (FirstJet E F)) where
-  carrier u := ∀ x, HasFDerivAt (firstJetValue u) (firstJetDerivative u x) x
+  carrier := {u | ∀ x, HasFDerivAt (firstJetValue u) (firstJetDerivative u x) x}
   zero_mem' := by intro x; simpa using! hasFDerivAt_const (𝕜 := ℝ) (0 : F) x
   add_mem' := by
     intro u v hu hv x

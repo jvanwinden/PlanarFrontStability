@@ -66,6 +66,7 @@ variable (sys : LocalTrajectorySystem P x₀)
 
 include sys
 
+omit sys in
 /-- A local solution has lifetime below or equal to the supremum. -/
 theorem le_maximalTime {T : ℝ} {u : ℝ → X} (hu : IsLocalTrajectory P x₀ T u) :
     ENNReal.ofReal T ≤ localMaximalTime P x₀ :=
@@ -77,12 +78,13 @@ theorem lt_maximalTime {T : ℝ} {u : ℝ → X} (hu : IsLocalTrajectory P x₀ 
     ENNReal.ofReal T < localMaximalTime P x₀ := by
   obtain ⟨S, hST, v, hv⟩ := sys.extend hu
   exact ((ENNReal.ofReal_lt_ofReal_iff_of_nonneg hu.nonneg).2 hST).trans_le
-    (sys.le_maximalTime hv)
+    (le_maximalTime hv)
 
 theorem maximalTime_pos : 0 < localMaximalTime P x₀ := by
   obtain ⟨T, hT, u, hu⟩ := sys.positive
-  exact (ENNReal.ofReal_pos.2 hT).trans_le (sys.le_maximalTime hu)
+  exact (ENNReal.ofReal_pos.2 hT).trans_le (le_maximalTime hu)
 
+omit sys in
 /-- Every time strictly before the supremum is covered by a longer local
 solution interval. -/
 theorem exists_local_after {t : ℝ} (ht : 0 ≤ t)
@@ -98,7 +100,7 @@ theorem agrees {T : ℝ} {u : ℝ → X} (hu : IsLocalTrajectory P x₀ T u) :
   intro t ht
   have hex : ∃ S, ∃ v, IsLocalTrajectory P x₀ S v ∧ t ∈ Icc 0 S :=
     ⟨T, u, hu, ht⟩
-  rw [localMaximalTrajectory, dif_pos hex]
+  rw [localMaximalTrajectory, dite_eq_left hex]
   have hchosen := hex.choose_spec.choose_spec
   exact sys.compatible hchosen.1 hu
     ⟨ht.1, le_min hchosen.2.2 ht.2⟩
@@ -108,7 +110,7 @@ interval strictly before the maximal lifetime. -/
 theorem «local» {S : ℝ} (hS : 0 ≤ S)
     (hmax : ENNReal.ofReal S < localMaximalTime P x₀) :
     IsLocalTrajectory P x₀ S (localMaximalTrajectory P x₀) := by
-  obtain ⟨T, hST, u, hu⟩ := sys.exists_local_after hS hmax
+  obtain ⟨T, hST, u, hu⟩ := exists_local_after hS hmax
   have hsub : Icc 0 S ⊆ Icc 0 T := Icc_subset_Icc_right hST.le
   have heq := (sys.agrees hu).mono hsub
   exact ⟨hS, (hu.continuous.mono hsub).congr heq,
@@ -124,7 +126,7 @@ right continuity at the initial time. -/
 theorem continuous : ContinuousOn (localMaximalTrajectory P x₀)
     {t | 0 ≤ t ∧ ENNReal.ofReal t < localMaximalTime P x₀} := by
   intro t ht
-  obtain ⟨T, htT, u, hu⟩ := sys.exists_local_after ht.1 ht.2
+  obtain ⟨T, htT, u, hu⟩ := exists_local_after ht.1 ht.2
   have hcont : ContinuousOn (localMaximalTrajectory P x₀) (Icc 0 T) :=
     hu.continuous.congr (sys.agrees hu)
   apply (hcont t ⟨ht.1, htT.le⟩).mono_of_mem_nhdsWithin

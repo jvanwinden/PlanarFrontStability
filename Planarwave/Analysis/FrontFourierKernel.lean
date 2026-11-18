@@ -52,6 +52,7 @@ local instance : ContinuousENorm (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) :=
 local instance : NormSMulClass ℂ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) := by
   exact NormedSpace.toNormSMulClass (𝕜 := ℂ) (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))
 
+omit [Nontrivial (ℝ^n)] in
 /-- The shifted remainder symbol, restricted to a real Fourier contour, is norm-continuous. -/
 theorem continuous_frontFourierRemainderSymbol_shift (t : NNReal) (η : ℝ^m) :
     Continuous (fun ξ : ℝ^m ↦ frontFourierRemainderSymbol f D c φ h₁ h₂ ψ h₃ t
@@ -115,6 +116,7 @@ theorem continuous_frontRemainderKernel (t : NNReal) (ht : 0 < t) :
     Continuous (frontRemainderKernel (m := m) f D c φ h₁ h₂ ψ h₃ t) :=
   continuous_frontShiftedRemainderKernel f D c φ h₁ h₂ ψ h₃ t ht 0
 
+omit [Nontrivial (ℝ^n)] in
 /-- At zero shift this is exactly the inner integral in the definition of `H`. -/
 theorem frontRemainderKernel_eq_integral (t : NNReal) (x : ℝ^m) :
     frontRemainderKernel f D c φ h₁ h₂ ψ h₃ t x =

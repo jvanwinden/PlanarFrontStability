@@ -28,6 +28,7 @@ noncomputable section
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
 
+omit [CompleteSpace F] in
 /-- Spatial differentiation commutes with heat flow followed by constant translation. -/
 theorem hasDerivAt_convectiveHeatFlow_space (a t c : ℝ) (f g : BUC ℝ F)
     (hfg : ∀ x, HasDerivAt f (g x) x) (x : ℝ) :

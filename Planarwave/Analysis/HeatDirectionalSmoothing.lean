@@ -27,19 +27,19 @@ noncomputable section
 variable {E F : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
-  [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+  [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- Restrict a BUC function to a line through a point in the orthogonal Gaussian slice. -/
 def gaussianOrthogonalSlice (s : ℝ) (v : E) (f : BUC E F) (x z : E) : BUC ℝ F :=
   f.comp (fun r : ℝ => x + s • (z - ⟪v, z⟫ • v) + r • v)
     (uniformContinuous_const.add (ContinuousLinearMap.toSpanSingleton ℝ v).uniformContinuous)
 
-omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [NormedSpace ℝ F] [CompleteSpace F] in
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [NormedSpace ℝ F] in
 @[simp]
 theorem gaussianOrthogonalSlice_apply (s : ℝ) (v : E) (f : BUC E F) (x z : E) (r : ℝ) :
     gaussianOrthogonalSlice s v f x z r = f (x + s • (z - ⟪v, z⟫ • v) + r • v) := rfl
 
-omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [NormedSpace ℝ F] [CompleteSpace F] in
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [NormedSpace ℝ F] in
 /-- Restricting to the slice cannot increase the BUC norm. -/
 theorem norm_gaussianOrthogonalSlice_le (s : ℝ) (v : E) (f : BUC E F) (x z : E) :
     ‖gaussianOrthogonalSlice s v f x z‖ ≤ ‖f‖ := BUC.norm_comp_le _ _ _
@@ -159,7 +159,7 @@ theorem lipschitzWith_heatFlow {a t : ℝ} (ha : 0 < a) (ht : 0 < t) (f : BUC E 
   let C : NNReal := ⟨‖f‖ / heatScale a t, div_nonneg (norm_nonneg _) (heatScale_pos_of_pos ha ht).le⟩
   have hline (v : E) (hv : ‖v‖ = 1) (x : E) :
       LipschitzWith C (fun r : ℝ => heatFlow a t f (x + r • v)) := by
-    apply lipschitzWith_of_nnnorm_deriv_le
+    apply lipschitzWith_of_nnNorm_deriv_le
       (fun r => (hasDerivAt_heatFlow_unit_direction_kernel ha ht v hv f x r).differentiableAt)
     intro r
     rw [(hasDerivAt_heatFlow_unit_direction_kernel ha ht v hv f x r).deriv]

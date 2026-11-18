@@ -47,7 +47,7 @@ theorem Icc_subset_coleHopfDomain_of_small_radius {β R : ℝ}
 theorem lipschitzOnWith_coleHopfInv_Icc {β R : ℝ}
     (hsmall : |β| * R ≤ 1 / 2) :
     LipschitzOnWith 2 (coleHopfInv β) (Icc (-R) R) := by
-  apply Convex.lipschitzOnWith_of_nnnorm_deriv_le
+  apply Convex.lipschitzOnWith_of_nnNorm_deriv_le
   · intro x hx
     exact (hasDerivAt_coleHopfInv (Icc_subset_coleHopfDomain_of_small_radius hsmall hx)).differentiableAt
   · intro x hx
@@ -134,7 +134,7 @@ theorem exists_continuous_coleHopfInv_on {β T : ℝ} (ξ : ℝ → BUC E ℝ)
   let σ := fun t ↦ if ht : t ∈ Icc 0 T then coleHopfInvSmallBUC β (ξ t) (hsmall t ht) else 0
   have heq : ∀ t (ht : t ∈ Icc 0 T), σ t = coleHopfInvSmallBUC β (ξ t) (hsmall t ht) := by
     intro t ht
-    simp only [σ, dif_pos ht]
+    simp only [σ, dite_eq_left ht]
   refine ⟨σ, ?_, ?_⟩
   · intro t ht
     rw [Metric.continuousWithinAt_iff]

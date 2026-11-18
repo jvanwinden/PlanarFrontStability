@@ -87,6 +87,7 @@ theorem hasDerivAt_heatDuhamel_zero (a : ℝ) {f : ℝ → BUC E F} (hf : Contin
         ht0 (a := 0) (b := 1)
   simpa only [slope, vsub_eq_sub, sub_zero, heatDuhamel_zero] using heq
 
+omit [CompleteSpace F] in
 /-- Change the origin of time in a Duhamel interval. -/
 theorem heatDuhamel_shift (a s t : ℝ) (f : ℝ → BUC E F) :
     heatDuhamel a (fun r ↦ f (s + r)) (t - s) =

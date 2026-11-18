@@ -349,7 +349,7 @@ theorem eq_smul_kernelCandidate_of_affinePencil_eq_zero
   let x₀ : S.domainComplement := S.domainComplementPart x
   let k : S.domainComplement := S.kernelCorrection B q z
   have hx : x = a • S.mode + (x₀ : Dom) := by
-    simpa [a, x₀] using S.domain_eq_neutral_add_complement x
+    simp [a, x₀]
   have hprojected :
       a • S.complementProjection (S.affinePencil B q z S.mode) +
         S.complementPencil B q z x₀ = 0 := by
@@ -777,7 +777,7 @@ theorem criticalComplementSolution_criticalPencil
       simpa only [map_add] using heig'
     exact eq_neg_of_add_eq_zero_left hsum
   have hx : x = a • S.mode + (x₀ : Dom) := by
-    simpa [a, x₀] using S.domain_eq_neutral_add_complement x
+    simp [a, x₀]
   have hpencil :
       S.criticalPencil B q x =
         S.criticalPencil B q ((x₀ - a • u : S.domainComplement) : Dom) := by
@@ -812,7 +812,7 @@ theorem criticalCokernelFunctional_criticalPencil
       simpa only [map_add] using heig'
     exact eq_neg_of_add_eq_zero_left hsum
   have hx : x = a • S.mode + (x₀ : Dom) := by
-    simpa [a, x₀] using S.domain_eq_neutral_add_complement x
+    simp [a, x₀]
   have hpencil :
       S.criticalPencil B q x =
         S.criticalPencil B q ((x₀ - a • u : S.domainComplement) : Dom) := by

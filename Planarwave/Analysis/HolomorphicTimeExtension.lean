@@ -116,7 +116,7 @@ theorem exists_analytic_extension_positiveTimeNeighborhood {f : ℝ → F} {η :
   have heq (t : {t : ℝ // 0 < t}) {z : ℂ}
       (hz : z ∈ Metric.ball (t.val : ℂ) (η * min t.val 1)) : g z = G t z := by
     have hzU : z ∈ positiveTimeNeighborhood η := mem_iUnion.mpr ⟨t, hz⟩
-    simp only [g, dif_pos hzU]
+    simp only [g, dite_eq_left hzU]
     apply eqOn_inter_real_centered_balls_of_analytic
       (hG ((hcover hzU).choose)) (hG t) _ ⟨(hcover hzU).choose_spec, hz⟩
     intro x hx

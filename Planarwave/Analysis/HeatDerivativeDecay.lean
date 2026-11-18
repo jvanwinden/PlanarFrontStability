@@ -76,6 +76,7 @@ local instance heatDecaySecondTensorNormedSpace : NormedSpace ℝ (E →L[ℝ] E
 local instance heatDecaySecondBUCNormedAddCommGroup : NormedAddCommGroup (BUC E (E →L[ℝ] E →L[ℝ] F)) := inferInstance
 local instance heatDecaySecondBUCNormedSpace : NormedSpace ℝ (BUC E (E →L[ℝ] E →L[ℝ] F)) := inferInstance
 
+omit [CompleteSpace F] in
 /-- Smoothing applied to an existing first derivative. -/
 theorem norm_heatFlow_fderivative_le {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (f : BUC E F) (q : BUC E (E →L[ℝ] F))
@@ -106,6 +107,7 @@ theorem norm_heatFlow_second_fderivative_le {a t : ℝ} (ha : 0 < a) (ht : 0 < t
   rw [heq']
   exact norm_heatSecondFDerivBUC_le ha ht f
 
+omit [CompleteSpace F] in
 /-- The first-derivative estimate with the nonsingular `(1+t)^(-1/2)` weight. -/
 theorem norm_heatFlow_fderivative_decay_le {a t M : ℝ} (ha : 0 < a) (ht : 0 ≤ t)
     (f : BUC E F) (q : BUC E (E →L[ℝ] F))
@@ -140,6 +142,7 @@ theorem norm_heatFlow_second_fderivative_decay_le {a t M : ℝ} (ha : 0 < a) (ht
     ((norm_nonneg f).trans hf) (by norm_num : (0 : ℝ) ≤ 1) ht
     ((norm_heatFlowBUC_le a t h).trans hh) hs
 
+omit [CompleteSpace F] in
 /-- Integrating the first heat derivative preserves the half-power decay. -/
 theorem norm_heatDuhamel_fderivative_decay_le {a t M : ℝ} (ha : 0 < a)
     (ht : 0 ≤ t) (hM : 0 ≤ M) (f : ℝ → BUC E F) (q : ℝ → BUC E (E →L[ℝ] F))

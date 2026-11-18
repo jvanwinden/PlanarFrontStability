@@ -89,7 +89,7 @@ theorem exists_holomorphic_sector_extension (S : C0Semigroup ℂ E)
   let G : ℂ → (E →L[ℂ] E) := fun z ↦ if hz : z ∈ complexTimeSector η then
     H (hcover hz).choose z else 0
   have heq (n) {z : ℂ} (hz : z ∈ U n) : G z = H n z := by
-    simp only [G, dif_pos hz.1]
+    simp only [G, dite_eq_left hz.1]
     exact hcompat _ n ⟨(hcover hz.1).choose_spec, hz⟩
   refine ⟨G, ?_, ?_, ?_, ?_⟩
   · intro z hz

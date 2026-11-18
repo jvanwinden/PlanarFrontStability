@@ -46,6 +46,7 @@ variable {m n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
 local instance : NormSMulClass ℂ (BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n)) := by
   exact NormedSpace.toNormSMulClass (𝕜 := ℂ) (E := BUC ℝ (ℂ^n) →L[ℂ] BUC ℝ (ℂ^n))
 
+omit [Nontrivial (ℝ^n)] in
 /-- The product-coordinate contour integral is exactly the previously defined shifted kernel. -/
 theorem integral_piFourier_front_eq_shiftedKernel (t : NNReal) (η x : ℝ^m) :
     (∫ ξ : Fin m → ℝ,

@@ -106,6 +106,7 @@ theorem exists_frontTrackingRemainder_decay (hd : 2 ≤ d) (K : ℝ) :
     (frontTrackingSpatialSource f D c φ ψ h₃ hd v₀ N s l) (by positivity) hi hsource t ht
   simpa only [frontTrackingRemainder, mul_assoc] using! h
 
+omit [Nontrivial (ℝ^n)] in
 /-- The tracking remainder occurs in the exact spatial Duhamel
 decomposition. Time-continuity of the three supplied paths justifies
 the integrals; the delayed forcing is already continuous. -/

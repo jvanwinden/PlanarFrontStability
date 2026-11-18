@@ -50,6 +50,7 @@ theorem trackingCutoff_shift_ne (n k : ℕ) {τ : ℝ} (hτ : τ ∈ Icc (0 : �
     apply trackingCutoff_eq_zero_of_le
     linarith [hτ.2]
 
+omit [CompleteSpace F] in
 /-- Before the first completed source block, forcing consists only of initial data. -/
 theorem delayedHeatForcing_initial (a : ℝ) (p : BUC E F) (N : ℝ → BUC E F)
     {t : ℝ} (ht : t ≤ 1) :
@@ -58,11 +59,13 @@ theorem delayedHeatForcing_initial (a : ℝ) (p : BUC E F) (N : ℝ → BUC E F)
     trackingCutoff_eq_zero_of_le (by have := Nat.cast_nonneg (α := ℝ) k; linarith)
   simp only [delayedHeatForcing, hzero, zero_smul, tsum_zero, add_zero]
 
+omit [CompleteSpace F] in
 /-- The forcing vanishes on the whole initial quarter-unit interval. -/
 theorem delayedHeatForcing_eq_zero_of_le_quarter (a : ℝ) (p : BUC E F) (N : ℝ → BUC E F)
     {t : ℝ} (ht : t ≤ 1 / 4) : delayedHeatForcing a p N t = 0 := by
   rw [delayedHeatForcing_initial a p N (by linarith), trackingCutoff_eq_zero_of_le ht, zero_smul]
 
+omit [CompleteSpace F] in
 /-- On every bounded-above time interval the defining series is a fixed
 finite sum. This justifies regularity without any summability hypothesis. -/
 theorem delayedHeatForcing_eq_sum (a : ℝ) (p : BUC E F) (N : ℝ → BUC E F)
@@ -78,6 +81,7 @@ theorem delayedHeatForcing_eq_sum (a : ℝ) (p : BUC E F) (N : ℝ → BUC E F)
   have hcast : (K : ℝ) ≤ k := by exact_mod_cast hkn
   rw [trackingCutoff_eq_zero_of_le (by linarith : t - ((k : ℝ) + 1) ≤ 1 / 4), zero_smul]
 
+omit [CompleteSpace F] in
 /-- The exact block formula: no values of the source after `n+1` occur. -/
 theorem delayedHeatForcing_block (a : ℝ) (p : BUC E F) (N : ℝ → BUC E F)
     (n : ℕ) {τ : ℝ} (hτ : τ ∈ Icc (0 : ℝ) 1) :
@@ -89,6 +93,7 @@ theorem delayedHeatForcing_block (a : ℝ) (p : BUC E F) (N : ℝ → BUC E F)
     tsum_eq_single n (fun k hk ↦ by rw [trackingCutoff_shift_ne n k hτ hk, zero_smul])]
   congr 2 <;> ring
 
+omit [CompleteSpace F] in
 /-- The block only depends on the source on its own integration interval. -/
 theorem delayedHeatBlock_congr (a : ℝ) {N M : ℝ → BUC E F} (n : ℕ)
     (h : EqOn N M (Icc (n : ℝ) ((n : ℝ) + 1))) :
@@ -99,6 +104,7 @@ theorem delayedHeatBlock_congr (a : ℝ) {N M : ℝ → BUC E F} (n : ℕ)
   dsimp only
   rw [h hr]
 
+omit [CompleteSpace F] in
 /-- The causality needed for the paper's blockwise nonlinear iteration:
 forcing on `[n,n+1]` uses only source values on `[0,n]`. -/
 theorem delayedHeatForcing_causal (a : ℝ) (p : BUC E F) {N M : ℝ → BUC E F}
@@ -112,6 +118,7 @@ theorem delayedHeatForcing_causal (a : ℝ) (p : BUC E F) {N M : ℝ → BUC E F
     rw [delayedHeatBlock_congr a n (fun r hr ↦ h ⟨(Nat.cast_nonneg n).trans hr.1, by
       simpa only [Nat.cast_succ] using hr.2⟩)]
 
+omit [CompleteSpace F] in
 /-- A uniform source bound on one unit block bounds its accumulated heat evolution. -/
 theorem norm_delayedHeatBlock_le (a : ℝ) (N : ℝ → BUC E F) (n : ℕ) {M : ℝ}
     (hN : ∀ r ∈ Icc (n : ℝ) ((n : ℝ) + 1), ‖N r‖ ≤ M) :
@@ -124,6 +131,7 @@ theorem norm_delayedHeatBlock_le (a : ℝ) (N : ℝ → BUC E F) (n : ℕ) {M : 
   simpa only [delayedHeatBlock, add_sub_cancel_left, abs_one, mul_one] using
     intervalIntegral.norm_integral_le_of_norm_le_const hb
 
+omit [CompleteSpace F] in
 theorem norm_delayedHeatForcing_initial_le (a : ℝ) (p : BUC E F) (N : ℝ → BUC E F)
     {t : ℝ} (ht : t ≤ 1) :
     ‖delayedHeatForcing a p N t‖ ≤ trackingCutoff t * ‖p‖ := by
@@ -131,6 +139,7 @@ theorem norm_delayedHeatForcing_initial_le (a : ℝ) (p : BUC E F) (N : ℝ → 
     abs_of_nonneg (trackingCutoff_nonneg t)]
   exact mul_le_mul_of_nonneg_left (norm_heatFlowBUC_le _ _ _) (trackingCutoff_nonneg t)
 
+omit [CompleteSpace F] in
 /-- The basic supremum bound for the delayed forcing, before using Lemma 4.2. -/
 theorem norm_delayedHeatForcing_block_le (a : ℝ) (p : BUC E F) (N : ℝ → BUC E F)
     (n : ℕ) {τ M : ℝ} (hτ : τ ∈ Icc (0 : ℝ) 1)

@@ -67,6 +67,7 @@ theorem IsFiniteHeatSystemMildOn.coordinate_hasDerivAt
     (hreg.contDiff ⟨ht.1.le, ht.2.le⟩).contDiffAt.laplacian_CLM_comp_left (l := P i)
   simpa only [hlap, smul_eq_mul] using! hd
 
+omit [CompleteSpace V] in
 /-- Reconstructing the coordinate derivatives gives the original
 matrix reaction--diffusion PDE pointwise, with a genuine time derivative. -/
 theorem IsFiniteHeatSystemMildOn.hasDerivAt

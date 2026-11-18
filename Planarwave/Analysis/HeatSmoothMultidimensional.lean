@@ -29,7 +29,7 @@ noncomputable section
 variable {E F : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E] [BorelSpace E]
-  [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+  [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- A modulus of continuity for the datum gives one for the first Hermite kernel. -/
 theorem norm_gaussianGradientKernel_sub_le (s : ℝ) (f : BUC E F) (x y : E)
@@ -134,7 +134,7 @@ theorem fderiv_heatFlow_of_hasFDerivAt (a t : ℝ) (f : BUC E F)
   exact (hasFDerivAt_heatFlow_of_hasFDerivAt a t f g hg x).fderiv
 
 /-- Gaussian smoothing is spatially continuously differentiable to every finite order. -/
-theorem contDiff_nat_heatFlow (k : ℕ) {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
+theorem contDiff_nat_heatFlow [CompleteSpace F] (k : ℕ) {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (f : BUC E F) : ContDiff ℝ k (heatFlow a t f) := by
   induction k generalizing t f with
   | zero => exact contDiff_zero.mpr (heatFlowBUC a t f).continuous

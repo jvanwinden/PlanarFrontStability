@@ -51,6 +51,7 @@ theorem hasDerivAt_gaussianAverage_scale (s : ℝ) (f : BUC E F)
       simpa [Function.comp_def] using (hg (x + r • z)).comp_hasDerivAt r
         (((hasDerivAt_id r).smul_const z).const_add x))).2
 
+omit [CompleteSpace F] in
 /-- The trace of the first Hermite kernel applied to the derivative datum. -/
 theorem laplacian_heatFlow_of_hasFDerivAt {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (f : BUC E F) (g : BUC E (E →L[ℝ] F)) (hg : ∀ x, HasFDerivAt f (g x) x) (x : E) :
@@ -79,6 +80,7 @@ theorem laplacian_heatFlow_of_hasFDerivAt {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
   rw [hsum]
   simp only [s, one_smul]
 
+omit [CompleteSpace F] in
 /-- The classical heat equation for initial data with a BUC Fréchet derivative. -/
 theorem hasDerivAt_heatFlow_time_of_hasFDerivAt {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (f : BUC E F) (g : BUC E (E →L[ℝ] F)) (hg : ∀ x, HasFDerivAt f (g x) x) (x : E) :

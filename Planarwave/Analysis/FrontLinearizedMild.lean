@@ -58,6 +58,7 @@ def frontLinearizedMildPathOperator (q : ℝ) (T : NNReal) :
   (frontDiffusionC0Semigroup D h₁.positive c q).perturbedPathOperator
     (frontReactionMultiplication f D c φ h₁ h₂) T
 
+omit [Nontrivial (ℝ^n)] in
 /-- The constructed path starts at the prescribed longitudinal BUC datum. -/
 @[simp]
 theorem frontLinearizedMildPathOperator_zero (q : ℝ) (T : NNReal) (v₀ : BUC ℝ (ℂ^n)) :

@@ -45,6 +45,7 @@ theorem diagonalDiffusionC0Semigroup_apply
       (Real.exp ((-q * a i) * (t : ℝ)) : ℂ) •
         convectiveHeatFlowBUC (a i) t c (v i) := rfl
 
+omit [Fintype ι] in
 /-- The `i`-th coordinate semigroup has the expected Fourier damping bound. -/
 theorem norm_diagonalDiffusionC0Semigroup_coordinate_le
     (a : ι → ℝ) (ha : ∀ i, 0 ≤ a i) (c q : ℝ) (t : NNReal) (i : ι) :
@@ -139,6 +140,7 @@ theorem exists_pos_le_diffusionEigenvalues
   rw [heig] at hi
   simpa [real_inner_smul_left] using hi
 
+omit [Nontrivial (ℝ^n)] in
 /-- In particular, every diffusion eigenvalue is nonnegative. -/
 theorem diffusionEigenvalues_nonneg
     (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) (i : Fin n) :

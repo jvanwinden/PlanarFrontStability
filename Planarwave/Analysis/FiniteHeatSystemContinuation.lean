@@ -34,7 +34,7 @@ def finiteHeatSystemSplice (S : ℝ) (u v : ℝ → X) (t : ℝ) : X :=
   if t ≤ S then u t else v (t - S)
 
 theorem finiteHeatSystemSplice_of_le {S t : ℝ} (u v : ℝ → X) (ht : t ≤ S) :
-    finiteHeatSystemSplice S u v t = u t := if_pos ht
+    finiteHeatSystemSplice S u v t = u t := ite_eq_left ht
 
 theorem finiteHeatSystemSplice_of_ge {S t : ℝ} {u v : ℝ → X}
     (hinit : v 0 = u S) (ht : S ≤ t) :
@@ -42,7 +42,7 @@ theorem finiteHeatSystemSplice_of_ge {S t : ℝ} {u v : ℝ → X}
   by_cases h : t ≤ S
   · have heq : t = S := le_antisymm h ht
     simp only [heq, finiteHeatSystemSplice, le_refl, ite_true, sub_self, hinit]
-  · exact if_neg h
+  · exact ite_eq_right h
 
 theorem finiteHeatSystemSplice_zero {S : ℝ} (u v : ℝ → X) (hS : 0 ≤ S) :
     finiteHeatSystemSplice S u v 0 = u 0 := finiteHeatSystemSplice_of_le u v hS
@@ -73,6 +73,7 @@ variable {E V ι : Type}
   [NormedAddCommGroup V] [NormedSpace ℝ V] [ProperSpace V] [CompleteSpace V]
   [Fintype ι]
 
+omit [CompleteSpace V] [Fintype ι] in
 /-- A compatible restarted local solution extends a mild solution. The
 coordinate Duhamel equation across the join follows from heat evolution
 and the translated-source restart formula. -/

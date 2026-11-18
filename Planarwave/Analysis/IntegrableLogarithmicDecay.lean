@@ -71,6 +71,7 @@ variable {E F : Type*}
   [MeasurableSpace E] [BorelSpace E]
   [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
 
+omit [CompleteSpace F] in
 /-- Heat contractivity converts the improved forcing weight to a
 uniform bound on its restarted Duhamel contribution. -/
 theorem norm_heat_integral_le_logarithmic_decay (a : ℝ) (g : ℝ → BUC E F)

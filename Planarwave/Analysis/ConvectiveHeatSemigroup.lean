@@ -35,6 +35,7 @@ variable {E F : Type*}
 def convectiveHeatFlowBUC (a t : ℝ) (b : E) (f : BUC E F) : BUC E F :=
   BUC.translate (-(t • b)) (heatFlowBUC a t f)
 
+omit [CompleteSpace F] in
 @[simp]
 theorem convectiveHeatFlowBUC_apply (a t : ℝ) (b : E) (f : BUC E F) (x : E) :
     convectiveHeatFlowBUC a t b f x = heatFlow a t f (x + t • b) := by
@@ -45,23 +46,27 @@ theorem convectiveHeatFlowBUC_zero (a : ℝ) (b : E) (f : BUC E F) :
     convectiveHeatFlowBUC a 0 b f = f := by
   simp [convectiveHeatFlowBUC]
 
+omit [CompleteSpace F] in
 theorem convectiveHeatFlowBUC_add (a t : ℝ) (b : E) (f g : BUC E F) :
     convectiveHeatFlowBUC a t b (f + g) =
       convectiveHeatFlowBUC a t b f + convectiveHeatFlowBUC a t b g := by
   ext x
   simp [convectiveHeatFlowBUC, heatFlowBUC_add]
 
+omit [CompleteSpace F] in
 theorem convectiveHeatFlowBUC_smul (a t r : ℝ) (b : E) (f : BUC E F) :
     convectiveHeatFlowBUC a t b (r • f) = r • convectiveHeatFlowBUC a t b f := by
   ext x
   simp [convectiveHeatFlowBUC, heatFlowBUC_smul]
 
+omit [CompleteSpace F] in
 /-- Convective heat flow is a contraction in the supremum norm. -/
 theorem norm_convectiveHeatFlowBUC_le (a t : ℝ) (b : E) (f : BUC E F) :
     ‖convectiveHeatFlowBUC a t b f‖ ≤ ‖f‖ := by
   rw [convectiveHeatFlowBUC, BUC.norm_translate]
   exact norm_heatFlowBUC_le a t f
 
+omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [NormedSpace ℝ F] [CompleteSpace F] in
 /-- Translation preserves distances in `BUC`. -/
 theorem dist_translate_eq (b : E) (f g : BUC E F) :
     dist (BUC.translate b f) (BUC.translate b g) = dist f g := by
@@ -79,10 +84,12 @@ def convectiveHeatOperator (a t : ℝ) (b : E) : BUC E F →L[ℝ] BUC E F :=
       map_smul' := fun r f ↦ convectiveHeatFlowBUC_smul a t r b f }
     1 (fun f ↦ by simpa using norm_convectiveHeatFlowBUC_le a t b f)
 
+omit [CompleteSpace F] in
 @[simp]
 theorem convectiveHeatOperator_apply (a t : ℝ) (b : E) (f : BUC E F) :
     convectiveHeatOperator a t b f = convectiveHeatFlowBUC a t b f := rfl
 
+omit [CompleteSpace F] in
 /-- This is the classical operator-norm estimate invoked in the first paragraph of the proof of
 Lemma 2.2. -/
 theorem norm_convectiveHeatOperator_le (a t : ℝ) (b : E) :
@@ -97,6 +104,7 @@ theorem convectiveHeatOperator_zero (a : ℝ) (b : E) :
   ext f
   simp
 
+omit [CompleteSpace F] in
 /-- Heat flow commutes with spatial translation. -/
 theorem heatFlowBUC_translate (a t : ℝ) (b : E) (f : BUC E F) :
     heatFlowBUC a t (BUC.translate b f) = BUC.translate b (heatFlowBUC a t f) := by

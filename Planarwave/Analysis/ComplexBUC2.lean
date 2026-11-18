@@ -28,16 +28,16 @@ noncomputable section
 namespace Planarwave
 
 variable (F : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [NormedSpace ℂ F]
-  [SMulCommClass ℝ ℂ F] [CompleteSpace F]
+  [SMulCommClass ℝ ℂ F]
 
 /-- The complex-linear subspace of BUC jets satisfying the derivative identities. -/
 def complexBUC2Submodule : Submodule ℂ (BUC2Jet F) where
-  carrier p := ∀ x,
+  carrier := {p | ∀ x,
     HasDerivAt (p.1.1 : ℝ → F) (p.1.2 x) x ∧
-    HasDerivAt (p.1.2 : ℝ → F) (p.2 x) x
+    HasDerivAt (p.1.2 : ℝ → F) (p.2 x) x}
   zero_mem' := by
     intro x
-    constructor <;> simpa using (hasDerivAt_const x (0 : F))
+    constructor <;> simp
   add_mem' := by
     intro p q hp hq x
     exact ⟨(hp x).1.add (hq x).1, (hp x).2.add (hq x).2⟩
@@ -53,8 +53,8 @@ theorem isClosed_complexBUC2Submodule :
 /-- The complex Banach graph domain `BUC²(ℝ,F)`. -/
 abbrev ComplexBUC2 := complexBUC2Submodule F
 
-noncomputable instance : CompleteSpace (ComplexBUC2 F) := by
-  letI : IsClosed (complexBUC2Submodule F : Set (BUC2Jet F)) :=
+noncomputable instance [CompleteSpace F] : CompleteSpace (ComplexBUC2 F) := by
+  let : IsClosed (complexBUC2Submodule F : Set (BUC2Jet F)) :=
     isClosed_complexBUC2Submodule F
   infer_instance
 

@@ -23,6 +23,7 @@ noncomputable section
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
 
+omit [CompleteSpace F] in
 /-- Translation leaves the first heat-kernel derivative bound unchanged. -/
 theorem norm_convectiveHeatFlow_derivative_le {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (c : ℝ) (f g : BUC ℝ F)
@@ -39,6 +40,7 @@ theorem norm_convectiveHeatFlow_derivative_le {a t : ℝ} (ha : 0 < a) (ht : 0 <
   rw [(hg x).unique hd']
   exact norm_deriv_heatFlow_real_le ha ht f _
 
+omit [CompleteSpace F] in
 /-- The second derivative has the usual inverse-time heat bound, also in BUC norm. -/
 theorem norm_convectiveHeatFlow_second_derivative_le {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (c : ℝ) (f g h : BUC ℝ F)
@@ -64,6 +66,7 @@ theorem norm_convectiveHeatFlow_second_derivative_le {a t : ℝ} (ha : 0 < a) (h
   rw [hh'.unique (by simpa only [Function.comp_def, one_smul] using! hd')]
   exact norm_second_deriv_heatFlow_real_le ha ht f _
 
+omit [CompleteSpace F] in
 /-- For short times the first derivative costs at most `1 / (sqrt (2 μ) t)`.
 This deliberately weaker form combines with the second derivative in the generator estimate. -/
 theorem time_mul_norm_convectiveHeatFlow_derivative_le {a μ t : ℝ}
@@ -97,6 +100,7 @@ theorem mul_exp_neg_le_one (r : ℝ) :
       mul_le_mul_of_nonneg_right h (Real.exp_pos _).le
     _ = 1 := by rw [← Real.exp_add]; simp
 
+omit [CompleteSpace F] in
 /-- The complete damped scalar generator has a `1/t` bound uniform in `q ≥ 0`.
 The three terms are estimated separately, as in the diagonal heat calculation. -/
 theorem time_mul_norm_dampedConvectiveHeat_generator_le {a μ t q : ℝ}

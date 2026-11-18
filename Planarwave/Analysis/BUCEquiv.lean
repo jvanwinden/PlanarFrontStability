@@ -6,7 +6,8 @@ Authors: Joris van Winden, OpenAI Codex
 module
 
 public import Planarwave.Analysis.BUC
-public import Mathlib.Topology.Algebra.Module.Equiv
+public import Mathlib.Topology.Algebra.Module.Equiv.Basic
+public import Mathlib.Topology.Algebra.Module.Equiv.Pi
 
 @[expose] public section
 

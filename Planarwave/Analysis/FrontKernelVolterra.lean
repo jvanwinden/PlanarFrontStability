@@ -45,6 +45,7 @@ variable (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
   (φ : ℝ → ℝ^n) (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ)
   [Nontrivial (ℝ^n)]
 
+omit [Nontrivial (ℝ^n)] in
 /-- Strong continuity of the real-contour amplitude for a fixed longitudinal datum. -/
 theorem continuous_frontFourierSymbol_apply (t : NNReal) (v : BUC ℝ (ℂ^n)) :
     Continuous (fun ξ : ℝ^m ↦ frontFourierSemigroupSymbol f D c φ h₁ h₂ t (embed ξ) v) := by

@@ -24,7 +24,7 @@ namespace Planarwave
 
 noncomputable section
 
-variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- The first derivative of a positive-time heat orbit is uniformly continuous, since its
 derivative has a global bound. -/
@@ -33,7 +33,7 @@ theorem uniformContinuous_deriv_heatFlow_real {a t : ℝ} (ha : 0 < a) (ht : 0 <
   have hd : Differentiable ℝ (deriv (heatFlow a t f)) := by
     rw [deriv_heatFlow_real ha ht f]
     exact fun x => (hasDerivAt_gaussianSmoothD1 _ (heatScale_pos_of_pos ha ht) f x).differentiableAt
-  apply (lipschitzWith_of_nnnorm_deriv_le (C := ⟨‖f‖ / (a * t), by positivity⟩) hd ?_).uniformContinuous
+  apply (lipschitzWith_of_nnNorm_deriv_le (C := ⟨‖f‖ / (a * t), by positivity⟩) hd ?_).uniformContinuous
   intro x
   exact norm_second_deriv_heatFlow_real_le ha ht f x
 
@@ -88,7 +88,7 @@ theorem deriv_heatFlow_of_hasDerivAt (a t : ℝ) (f g : BUC ℝ F)
   exact (hasDerivAt_heatFlow_of_hasDerivAt a t f g hg x).deriv
 
 /-- Gaussian smoothing is continuously differentiable to every finite order. -/
-theorem contDiff_nat_heatFlow_real (k : ℕ) {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
+theorem contDiff_nat_heatFlow_real [CompleteSpace F] (k : ℕ) {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (f : BUC ℝ F) : ContDiff ℝ k (heatFlow a t f) := by
   induction k generalizing t f with
   | zero => exact contDiff_zero.mpr (heatFlowBUC a t f).continuous

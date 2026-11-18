@@ -71,6 +71,7 @@ theorem frontFourierSemigroupSymbol_embed (t : NNReal) (ξ : ℝ^m) :
     frontLinearizedC0Semigroup_eq_pencil]
   norm_cast
 
+omit [Nontrivial (ℝ^n)] in
 /-- The full pencil has joint strong continuity, even where operator-norm time
 continuity is unavailable. -/
 theorem continuous_frontPencil_realOrbit_joint :

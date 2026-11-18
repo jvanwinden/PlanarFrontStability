@@ -68,6 +68,7 @@ theorem continuousOn_heatGradient_integrand {a t : ℝ} (ha : 0 < a)
   intro r hr
   exact ⟨sub_pos.mpr hr.2, mem_univ _⟩
 
+omit [CompleteSpace F] in
 theorem norm_heatGradient_integrand_le {a t C : ℝ} (ha : 0 < a)
     {f : ℝ → BUC E F} (hb : ∀ r ∈ Icc 0 t, ‖f r‖ ≤ C)
     {r : ℝ} (hr : r ∈ Ioo 0 t) :
@@ -99,6 +100,7 @@ def heatDuhamelGradient {a : ℝ} (ha : 0 < a) (f : ℝ → BUC E F) (t : ℝ) :
     BUC E (E →L[ℝ] F) :=
   ∫ r in Ioo 0 t, heatGradient ha (t - r) (f r)
 
+omit [CompleteSpace F] in
 theorem norm_heatDuhamelGradient_le {a t C : ℝ} (ha : 0 < a) (ht : 0 ≤ t)
     {f : ℝ → BUC E F} (hb : ∀ r ∈ Icc 0 t, ‖f r‖ ≤ C) :
     ‖heatDuhamelGradient ha f t‖ ≤ (C / Real.sqrt (2 * a)) * (2 * Real.sqrt t) := by

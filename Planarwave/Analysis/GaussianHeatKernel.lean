@@ -177,6 +177,7 @@ theorem normalized_oscillatoryIntegral_gaussian_smul {b : ℝ} (hb : 0 < b)
 
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
 
+omit [CompleteSpace F] in
 /-- Lebesgue convolution formula for the existing Gaussian heat flow. -/
 theorem heatFlow_eq_integral_gaussianDensity {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (f : V → F) (hf : Continuous f) (x : V) :

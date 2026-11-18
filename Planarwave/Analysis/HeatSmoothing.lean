@@ -127,7 +127,7 @@ end GaussianPreliminaries
 
 section KernelRepresentations
 
-variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- Gaussian smoothing with spatial scale `s`.  For `s = sqrt (2at)` this is `heatFlow a t`. -/
 def gaussianSmooth (s : ℝ) (f : ℝ → F) (x : ℝ) : F :=
@@ -358,7 +358,7 @@ theorem hasDerivAt_gaussianSmooth (s : ℝ) (hs : 0 < s) (f : BUC ℝ F) (x : �
   have hshift' : HasDerivAt (fun h => gaussianSmooth s f (x + h))
       (gaussianSmoothD1 s f x) (x - x) := by simpa using hshift
   have hcomp := hshift'.comp_sub_const x x
-  convert hcomp using 1 <;> simp
+  convert hcomp using 1; simp
 
 @[simp]
 theorem deriv_gaussianSmooth (s : ℝ) (hs : 0 < s) (f : BUC ℝ F) :
@@ -508,8 +508,7 @@ theorem hasDerivAt_gaussianSmoothD1 (s : ℝ) (hs : 0 < s) (f : BUC ℝ F) (x : 
       simpa [B] using gaussianSmoothD1_add_eq_integral_exp s hs0 f f.continuous x h
     rw [heq]
     convert hparam using 1
-    simp only [B', gaussianSmoothD2, zero_div, sub_zero, zero_mul, zero_pow,
-      OfNat.ofNat_ne_zero, not_false_eq_true, Real.exp_zero, mul_one]
+    simp only [B', gaussianSmoothD2, zero_div, sub_zero, zero_mul]
     congr 1
     funext z
     congr 1
@@ -518,7 +517,7 @@ theorem hasDerivAt_gaussianSmoothD1 (s : ℝ) (hs : 0 < s) (f : BUC ℝ F) (x : 
   have hshift' : HasDerivAt (fun h => gaussianSmoothD1 s f (x + h))
       (gaussianSmoothD2 s f x) (x - x) := by simpa using hshift
   have hcomp := hshift'.comp_sub_const x x
-  convert hcomp using 1 <;> simp
+  convert hcomp using 1; simp
 
 @[simp]
 theorem deriv_gaussianSmoothD1 (s : ℝ) (hs : 0 < s) (f : BUC ℝ F) :
@@ -530,7 +529,7 @@ theorem second_deriv_gaussianSmooth (s : ℝ) (hs : 0 < s) (f : BUC ℝ F) :
     deriv (deriv (gaussianSmooth s f)) = gaussianSmoothD2 s f := by
   rw [deriv_gaussianSmooth s hs f, deriv_gaussianSmoothD1 s hs f]
 
-private theorem integrable_gaussianSmoothD1NormDominating (s C : ℝ) (hs : 0 < s) :
+private theorem integrable_gaussianSmoothD1NormDominating (s C : ℝ) (_hs : 0 < s) :
     Integrable (fun z : ℝ => (|z| / s) * C) (stdGaussian ℝ) := by
   have hout := (integrable_abs_stdGaussian.const_mul (1 / s)).mul_const C
   convert hout using 1
@@ -543,7 +542,7 @@ private theorem integrable_abs_sq_sub_one_stdGaussian :
   filter_upwards with z
   simp only [Pi.sub_apply, Real.norm_eq_abs]
 
-private theorem integrable_gaussianSmoothD2NormDominating (s C : ℝ) (hs : 0 < s) :
+private theorem integrable_gaussianSmoothD2NormDominating (s C : ℝ) (_hs : 0 < s) :
     Integrable (fun z : ℝ => (|z ^ 2 - 1| / s ^ 2) * C) (stdGaussian ℝ) := by
   have hout := (integrable_abs_sq_sub_one_stdGaussian.const_mul (1 / s ^ 2)).mul_const C
   convert hout using 1

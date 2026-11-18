@@ -435,7 +435,7 @@ theorem continuous_translate (f : BUC α E) : Continuous fun a ↦ translate a f
       Tendsto (fun b : α ↦ b - a) (nhds a) (nhds (a - a)))
   have hzero := (tendsto_translate_zero (translate a f)).comp hsub
   show Tendsto (fun b ↦ translate b f) (nhds a) (nhds (translate a f))
-  convert hzero using 1 <;> simp [Function.comp_def, translate_add]
+  convert hzero using 1; simp [Function.comp_def, translate_add]
 
 variable {𝕜 : Type*} [NormedField 𝕜] [NormedSpace 𝕜 E]
 

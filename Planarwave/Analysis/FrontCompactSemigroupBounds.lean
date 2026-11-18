@@ -79,6 +79,7 @@ theorem frontComplexFrequencyC0Semigroup_eq_pencil (ξ₀ ξ₁ : ℝ^m) :
   rw [frontComplexFrequencyC0Semigroup_hasGeneratorAt_iff,
     frontPencilC0Semigroup_hasGeneratorAt_iff]
 
+omit [Nontrivial (ℝ^n)] in
 /-- Uniformization for a continuous complex pencil parameter on a compact set. -/
 theorem exists_uniform_frontPencil_bound_on {P : Type*} [TopologicalSpace P]
     {K : Set P} (hK : IsCompact K) {q : P → ℂ} (hq : ContinuousOn q K) {ω : ℝ}

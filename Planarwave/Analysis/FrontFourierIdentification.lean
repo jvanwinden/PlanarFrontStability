@@ -57,7 +57,7 @@ theorem frontReactionKernelOperator_apply {s : ℝ} (hs : 0 < s)
     frontReactionKernelOperator f D c φ h₁ h₂ s v =
       operatorConvolution (μ := volume) (frontDiffusionKernel D h₁.positive c s.toNNReal)
         (BUC.postcompCLM (frontReactionMultiplication f D c φ h₁ h₂) v) := by
-  rw [frontReactionKernelOperator, dif_pos hs]
+  rw [frontReactionKernelOperator, dite_eq_left hs]
   rfl
 
 /-- A time-uniform bound for the Volterra coefficient, including arbitrarily small lags. -/
@@ -94,7 +94,7 @@ theorem intervalIntegrable_frontFourier_operator_forcing (t : NNReal)
   apply hi.congr_uIoo
   intro r hr
   have hr' : r ∈ Ioo 0 (t : ℝ) := uIoo_of_le (show 0 ≤ (t : ℝ) from t.2) ▸ hr
-  simp only [frontReactionKernelOperator, dif_pos (sub_pos.mpr hr'.2),
+  simp only [frontReactionKernelOperator, dite_eq_left (sub_pos.mpr hr'.2),
     ContinuousLinearMap.comp_apply, operatorConvolutionCLM_apply]
   simp_rw [frontBoundedDuhamelInverse_eq_kernel_integral f D c φ h₁ h₂ ψ h₃ t hr']
   exact frontKernel_forcing_on_bounded_data f D c φ h₁ h₂ ψ h₃ _ _
@@ -111,7 +111,7 @@ theorem frontFourierConvolution_operator_volterra (t : NNReal) (ht : 0 < t)
   congr 1
   apply intervalIntegral.integral_congr_Ioo_of_le (show 0 ≤ (t : ℝ) from t.2)
   intro r hr
-  simp only [frontReactionKernelOperator, dif_pos (sub_pos.mpr hr.2),
+  simp only [frontReactionKernelOperator, dite_eq_left (sub_pos.mpr hr.2),
     ContinuousLinearMap.comp_apply, operatorConvolutionCLM_apply]
 
 /-- The spatial trajectory's operator-form forcing is integrable after transverse evaluation. -/
@@ -129,7 +129,7 @@ theorem intervalIntegrable_frontSpatial_operator_forcing (hd : 2 ≤ d) (t : NNR
   apply hie.congr_uIoo
   intro r hr
   have hr' : r ∈ Ioo 0 (t : ℝ) := uIoo_of_le (show 0 ≤ (t : ℝ) from t.2) ▸ hr
-  simp only [frontReactionKernelOperator, dif_pos (sub_pos.mpr hr'.2),
+  simp only [frontReactionKernelOperator, dite_eq_left (sub_pos.mpr hr'.2),
     ContinuousLinearMap.comp_apply, operatorConvolutionCLM_apply]
 
 /-- The independent spatial semigroup satisfies the same operator Volterra equation. -/
@@ -152,7 +152,7 @@ theorem frontSpatialC0Semigroup_operator_volterra (hd : 2 ≤ d) (t : NNReal) (h
   congr 1
   apply intervalIntegral.integral_congr_Ioo_of_le (show 0 ≤ (t : ℝ) from t.2)
   intro r hr
-  simp only [frontReactionKernelOperator, dif_pos (sub_pos.mpr hr.2),
+  simp only [frontReactionKernelOperator, dite_eq_left (sub_pos.mpr hr.2),
     ContinuousLinearMap.comp_apply, operatorConvolutionCLM_apply]
 
 /-- The first Fourier representation in the paper: the actual spatial evolution

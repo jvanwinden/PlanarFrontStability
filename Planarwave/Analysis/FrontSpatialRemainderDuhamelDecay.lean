@@ -93,6 +93,7 @@ theorem exists_frontSpatialRemainderDuhamel_decay (hd : 2 ≤ d) :
     _ _ hinit hsource
   simpa only [frontSpatialRemainderDuhamel, mul_assoc] using h
 
+omit [Nontrivial (ℝ^n)] in
 /-- The remainder really is the difference between the spatial Duhamel
 trajectory and its critical heat trajectory. Both integrals are justified
 by strong continuity on the time interval. -/

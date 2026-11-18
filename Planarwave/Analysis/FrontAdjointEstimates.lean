@@ -112,7 +112,7 @@ theorem exists_frontAdjoint_lipschitzRepresentative :
   obtain ⟨C, hC, hb⟩ := exists_frontAdjointRegularization_sup_bound f D c φ ψ h₁ h₂ h₃
   let K : ℝ≥0 := ⟨C * (∫ z, ‖ψ z‖), mul_nonneg hC.le (integral_nonneg fun _ ↦ norm_nonneg _)⟩
   have hLip (j : ℕ) : LipschitzWith K (frontAdjointRegularization f D c φ ψ h₃ j) := by
-    apply lipschitzWith_of_nnnorm_deriv_le
+    apply lipschitzWith_of_nnNorm_deriv_le
       ((contDiff_longitudinalMollification h₃.integrable j).differentiable (by simp))
     intro z
     exact_mod_cast (hb j).2 z

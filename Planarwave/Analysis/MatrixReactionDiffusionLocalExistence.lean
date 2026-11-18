@@ -36,6 +36,7 @@ variable {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
   {n : ℕ} [Nontrivial (ℝ^n)]
 
+omit [Nontrivial (ℝ^n)] in
 /-- Local mild existence for the original diffusion and reaction. Both
 the lifetime and the solution bound precede the choice of initial datum. -/
 theorem exists_local_matrixReactionDiffusion

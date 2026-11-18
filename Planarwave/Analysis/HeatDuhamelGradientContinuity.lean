@@ -49,6 +49,7 @@ theorem aestronglyMeasurable_heatGradient {a : ℝ} (ha : 0 < a)
   · simp [hs]
   · simp [hs, heatGradient]
 
+omit [CompleteSpace F] in
 /-- The reversed-time representation fixes the singular heat age at zero. -/
 theorem heatDuhamelGradient_eq_reversed {a t : ℝ} (ha : 0 < a) (ht : 0 ≤ t)
     (f : ℝ → BUC E F) :
@@ -59,6 +60,7 @@ theorem heatDuhamelGradient_eq_reversed {a t : ℝ} (ha : 0 < a) (ht : 0 ≤ t)
     intervalIntegral.integral_comp_sub_left
       (fun s ↦ heatGradient ha s (f (t - s))) t (a := 0) (b := t)
 
+omit [CompleteSpace F] in
 theorem heatDuhamelGradient_congr {a t : ℝ} (ha : 0 < a)
     {f g : ℝ → BUC E F} (h : EqOn f g (Icc 0 t)) :
     heatDuhamelGradient ha f t = heatDuhamelGradient ha g t := by

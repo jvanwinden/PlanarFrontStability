@@ -58,6 +58,7 @@ def spatialDiffusionC0Semigroup (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) 
     complexConvectiveHeatC0Semigroup (diffusionEigenvalues D hD i) (diffusionEigenvalues_nonneg D hD i) b).conjugate
       (spatialDiffusionBUCCoordinatesEquiv D hD)
 
+omit [Nontrivial (ℝ^n)] in
 /-- Explicit Gaussian formula for each eigenvector coordinate. -/
 theorem spatialDiffusionC0Semigroup_apply (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive)
     (b : E) (t : NNReal) (v : BUC E (ℂ^n)) :
@@ -65,6 +66,7 @@ theorem spatialDiffusionC0Semigroup_apply (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.Is
       (fun i ↦ convectiveHeatFlowBUC (diffusionEigenvalues D hD i) t b
         ((spatialDiffusionBUCCoordinatesEquiv D hD).symm v i)) := rfl
 
+omit [Nontrivial (ℝ^n)] in
 /-- The full principal evolution is uniformly bounded by the fixed eigenbasis condition number. -/
 theorem norm_spatialDiffusionC0Semigroup_le (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive)
     (b : E) (t : NNReal) :
@@ -78,6 +80,7 @@ theorem norm_spatialDiffusionC0Semigroup_le (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.
   simpa only [mul_one, spatialDiffusionC0Semigroup] using!
     (C0Semigroup.norm_conjugate_le_of_norm_le _ (spatialDiffusionBUCCoordinatesEquiv D hD) t hdiag)
 
+omit [Nontrivial (ℝ^n)] in
 /-- A strictly positive uniform principal-semigroup bound, independent of drift and time. -/
 theorem exists_uniform_spatialDiffusion_bound (D : ℝ^n →L[ℝ] ℝ^n) (hD : D.IsPositive) :
     ∃ M > 0, ∀ (b : E) (t : NNReal), ‖spatialDiffusionC0Semigroup D hD b t‖ ≤ M := by

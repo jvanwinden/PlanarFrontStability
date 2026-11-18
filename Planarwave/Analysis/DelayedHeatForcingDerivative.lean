@@ -66,6 +66,7 @@ theorem hasFDerivAt_trackingHeatPulse {a : ℝ} (ha : 0 < a) (f : BUC E F) (t : 
   simpa only [trackingHeatPulseFDeriv, BUC.smul_apply] using!
     (hasFDerivAt_heatFlow_of_hasFDerivAt a (t - 1 / 8) _ _ hd x).const_smul (trackingCutoff t)
 
+omit [CompleteSpace F] in
 theorem norm_trackingHeatPulseFDeriv_le {a : ℝ} (ha : 0 < a) (f : BUC E F) (t : ℝ) :
     ‖trackingHeatPulseFDeriv ha f t‖ ≤ trackingCutoff t * (‖f‖ / heatScale a (1 / 8)) := by
   rw [trackingHeatPulseFDeriv, norm_smul, Real.norm_eq_abs,
@@ -80,6 +81,7 @@ def delayedHeatForcingFDeriv {a : ℝ} (ha : 0 < a) (p : BUC E F) (N : ℝ → B
   trackingHeatPulseFDeriv ha p t +
     ∑' k : ℕ, trackingHeatPulseFDeriv ha (delayedHeatBlock a N k) (t - ((k : ℝ) + 1))
 
+omit [CompleteSpace F] in
 theorem delayedHeatForcingFDeriv_eq_sum {a : ℝ} (ha : 0 < a)
     (p : BUC E F) (N : ℝ → BUC E F) (K : ℕ) {t : ℝ} (ht : t ≤ (K : ℝ) + 1) :
     delayedHeatForcingFDeriv ha p N t = trackingHeatPulseFDeriv ha p t +

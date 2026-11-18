@@ -51,6 +51,7 @@ theorem spatialSlices_diffusionCoordinates_symm (hd : 2 ≤ d) (D : ℝ^n →L[�
 
 variable [Nontrivial (ℝ^n)]
 
+omit [Nontrivial (ℝ^n)] in
 /-- The full spatial principal semigroup, factored in its actual diffusion
 coordinates into transverse and longitudinal Gaussian evolutions. -/
 theorem spatialDiffusionC0Semigroup_slices (hd : 2 ≤ d) (D : ℝ^n →L[ℝ] ℝ^n)

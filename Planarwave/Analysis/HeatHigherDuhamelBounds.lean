@@ -31,6 +31,7 @@ variable {E : Type} {F : Type u}
   [MeasurableSpace E] [BorelSpace E]
   [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
 
+omit [CompleteSpace F] in
 /-- Heat contractivity bounds the Duhamel norm by any continuous source majorant. -/
 theorem norm_heatDuhamel_le_integral_on (a : ℝ) {T : ℝ}
     (f : ℝ → BUC E F) {A : ℝ → ℝ} (hA : ContinuousOn A (Icc 0 T))

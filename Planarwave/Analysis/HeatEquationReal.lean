@@ -64,6 +64,7 @@ theorem hasDerivAt_heatScale {a t : ℝ} (ha : 0 < a) (ht : 0 < t) :
   simpa only [heatScale, id_eq, mul_one,
     mul_div_mul_left _ _ (two_ne_zero : (2 : ℝ) ≠ 0)] using h
 
+omit [CompleteSpace F] in
 /-- The heat equation on initial data with bounded uniformly continuous derivative. -/
 theorem hasDerivAt_heatFlow_time_of_hasDerivAt {a t : ℝ} (ha : 0 < a) (ht : 0 < t)
     (f g : BUC ℝ F) (hg : ∀ x, HasDerivAt f (g x) x) (x : ℝ) :

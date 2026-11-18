@@ -112,7 +112,7 @@ theorem eigenpairLinearization_leftInverse :
     have hproj : S.complementProjection
         (S.operator (u : Dom) - a • S.inclusion S.mode) = S.complementOperator u := by
       apply Subtype.ext
-      simp [S.functional_operator, S.normalized]
+      simp [S.functional_operator]
     rw [hproj, S.complementInverse_complementOperator]
 
 theorem eigenpairLinearization_rightInverse :
@@ -218,7 +218,7 @@ theorem hasFDerivAt_eigenpairEquation (B : Dom →L[ℂ] X) :
     S.eigenpairEigenvalueCoordinate.hasFDerivAt
   have hi := S.inclusion.hasFDerivAt.comp p₀ hu
   have h := (hA.sub (hq.smul hB)).sub (hlambda.smul hi)
-  convert h using 1 <;> try rfl <;> try exact Subsingleton.elim _ _
+  convert h using 1 <;> try rfl
   apply ContinuousLinearMap.ext
   intro p
   simp [eigenpairEquationDerivative, p₀]

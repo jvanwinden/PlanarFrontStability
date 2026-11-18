@@ -29,6 +29,7 @@ variable {E F : Type*}
   [MeasurableSpace E] [BorelSpace E]
   [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
 
+omit [CompleteSpace F] in
 /-- Equality of the old source determines every forcing value through the
 end of the next unit block, not only the value at its right endpoint. -/
 theorem delayedHeatForcing_eqOn_of_past (a : ℝ) (p : BUC E F)
@@ -67,7 +68,7 @@ def trackingPastSource (N : ℝ → F) (k : ℕ) (t : ℝ) : F :=
 theorem trackingPastSource_eqOn (N : ℝ → F) (k : ℕ) :
     EqOn (trackingPastSource N k) N (Icc 0 (k : ℝ)) := by
   intro t ht
-  exact if_pos ht.2
+  exact ite_eq_left ht.2
 
 /-- The source bootstrap extends to all future times for the auxiliary
 source. It is not an assertion about the as-yet unconstructed true source. -/

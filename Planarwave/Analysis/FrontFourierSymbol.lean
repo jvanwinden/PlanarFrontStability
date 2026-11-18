@@ -30,6 +30,7 @@ variable {m n : ℕ} (f : ℝ^n → ℝ^n) (D : ℝ^n →L[ℝ] ℝ^n) (c : ℝ)
   (φ : ℝ → ℝ^n) (h₁ : IsSmoothParabolic f D) (h₂ : IsSmoothFront f D c φ)
   [Nontrivial (ℝ^n)]
 
+omit [Nontrivial (ℝ^n)] in
 /-- At fixed time the full longitudinal semigroup is entire in the analytic pencil parameter. -/
 theorem contDiff_frontPencilSemigroup_parameter (t : NNReal) :
     ContDiff ℂ ω (fun q : ℂ ↦ frontPencilC0Semigroup f D c φ h₁ h₂ q t) := by
@@ -47,6 +48,7 @@ theorem frontFourierSemigroupSymbol_shift (t : NNReal) (ξ₀ ξ₁ : ℝ^m) :
   rw [frontComplexFrequencyC0Semigroup_eq_pencil]
   rfl
 
+omit [Nontrivial (ℝ^n)] in
 /-- Entire operator-norm dependence on the complex transverse Fourier vector. -/
 theorem contDiff_frontFourierSemigroupSymbol (t : NNReal) :
     ContDiff ℂ ω (frontFourierSemigroupSymbol (m := m) f D c φ h₁ h₂ t) :=
@@ -60,6 +62,7 @@ def frontFourierRemainderSymbol (t : NNReal) (ξ : ℂ^m) : BUC ℝ (ℂ^n) →L
     Complex.exp (-(t * d_perp D φ ψ : ℂ) * complexFrequencyQuadratic ξ) •
       profileProjection ψ h₃.integrable (translationModeBUC f D c φ ψ h₃)
 
+omit [Nontrivial (ℝ^n)] in
 /-- The remainder symbol is entire, as needed to shift the Fourier contour. -/
 theorem contDiff_frontFourierRemainderSymbol (t : NNReal) :
     ContDiff ℂ ω (frontFourierRemainderSymbol (m := m) f D c φ h₁ h₂ ψ h₃ t) := by

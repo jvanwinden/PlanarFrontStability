@@ -55,6 +55,7 @@ theorem exists_frontLinearized_highFrequency_bound :
   apply Real.exp_le_exp.mpr
   nlinarith [mul_le_mul_of_nonneg_right hrate t.2]
 
+omit [Nontrivial (ℝ^n)] in
 /-- The final bounded-perturbation step of Lemma 2.4. A real-frequency decay estimate extends
 to the shifted contour, with half the Gaussian decay retained. This is also applicable to the
 combined mid- and high-frequency real estimate once the mid-frequency bound is available. -/

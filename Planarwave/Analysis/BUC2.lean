@@ -27,19 +27,19 @@ noncomputable section
 
 namespace Planarwave
 
-variable (F : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+variable (F : Type u) [NormedAddCommGroup F] [NormedSpace ℝ F]
 
 /-- The ambient space of a function and its first two proposed derivatives. -/
 abbrev BUC2Jet := (BUC ℝ F × BUC ℝ F) × BUC ℝ F
 
 /-- The linear subspace of BUC jets satisfying the two derivative identities. -/
 def buc2Submodule : Submodule ℝ (BUC2Jet F) where
-  carrier p := ∀ x,
+  carrier := {p | ∀ x,
     HasDerivAt (p.1.1 : ℝ → F) (p.1.2 x) x ∧
-    HasDerivAt (p.1.2 : ℝ → F) (p.2 x) x
+    HasDerivAt (p.1.2 : ℝ → F) (p.2 x) x}
   zero_mem' := by
     intro x
-    constructor <;> simpa using (hasDerivAt_const x (0 : F))
+    constructor <;> simp
   add_mem' := by
     intro p q hp hq x
     exact ⟨(hp x).1.add (hq x).1, (hp x).2.add (hq x).2⟩
@@ -79,8 +79,8 @@ theorem isClosed_buc2Submodule : IsClosed (buc2Submodule F : Set (BUC2Jet F)) :=
 /-- The Banach graph domain `BUC²(ℝ,F)`. -/
 abbrev BUC2 := buc2Submodule F
 
-noncomputable instance : CompleteSpace (BUC2 F) := by
-  letI : IsClosed (buc2Submodule F : Set (BUC2Jet F)) := isClosed_buc2Submodule F
+noncomputable instance [CompleteSpace F] : CompleteSpace (BUC2 F) := by
+  let : IsClosed (buc2Submodule F : Set (BUC2Jet F)) := isClosed_buc2Submodule F
   infer_instance
 
 namespace BUC2
